@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 
 import Head from "next/head";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 
 import { ActionButton } from "@/components/button";
@@ -91,32 +92,36 @@ const FollowingsIndex = () => {
         </div>
         <div className="mt-[136.2px]"></div>
 
-        <main className="p-4 flex flex-col gap-4">
+        <main className=" flex flex-col">
           {followings?.map((follow: { following: FollowType }) => {
             const isUserFollowing = isFollowing(
               currentUser?.followings,
               follow?.following?.id,
             );
-            console.log(isUserFollowing);
             return (
-              <div
+              <Link
                 key={crypto.randomUUID()}
-                className="flex items-center justify-between"
+                href={`/profile/${follow?.following?.id}`}
               >
-                <Follows follow={follow?.following}></Follows>
-                {follow?.following?.id === currentUser.id ? (
-                  <></>
-                ) : isUserFollowing ? (
-                  <ActionButton
-                    className="bg-background border border-white text-white hover:border-red-500 hover:bg-red-500/10! hover:text-red-500 transition-all"
-                    hoverText="Unfollow"
-                  >
-                    Following
-                  </ActionButton>
-                ) : (
-                  <ActionButton>Follow</ActionButton>
-                )}
-              </div>
+                <div
+                  key={crypto.randomUUID()}
+                  className="p-4 flex items-center justify-between hover:bg-secondary/40 transition-all cursor-pointer"
+                >
+                  <Follows follow={follow?.following}></Follows>
+                  {follow?.following?.id === currentUser.id ? (
+                    <></>
+                  ) : isUserFollowing ? (
+                    <ActionButton
+                      className="bg-background border border-white text-white hover:border-red-500 hover:bg-red-500/10! hover:text-red-500 transition-all"
+                      hoverText="Unfollow"
+                    >
+                      Following
+                    </ActionButton>
+                  ) : (
+                    <ActionButton>Follow</ActionButton>
+                  )}
+                </div>
+              </Link>
             );
           })}
         </main>

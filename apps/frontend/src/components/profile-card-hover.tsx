@@ -14,10 +14,14 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 
+import { isFollowing } from "@/lib/utils";
+
 import { User } from "@/types/user";
 
 export function ProfileHoverCard({ user }: Readonly<{ user: User }>) {
   const currentUser = useUser((state) => state.user) as User;
+  const isUserFollowing =
+    user && isFollowing(currentUser?.followings, user?.id);
   return (
     <HoverCard>
       <HoverCardTrigger asChild>
@@ -27,9 +31,18 @@ export function ProfileHoverCard({ user }: Readonly<{ user: User }>) {
       </HoverCardTrigger>
       <HoverCardContent className="w-80 shadow-xl shadow-secondary bg-background relative">
         <Activity mode={currentUser.id === user?.id ? "hidden" : "visible"}>
-          <ActionButton className="hover:bg-primary! absolute right-0 mr-4 bg-primary text-white">
-            Follow
-          </ActionButton>
+          {isUserFollowing ? (
+            <ActionButton
+              className="absolute right-0 mr-4 bg-primary text-white hover:border-red-500 hover:bg-red-500/10! hover:text-red-500 transition-all"
+              hoverText="Unfollow"
+            >
+              Following
+            </ActionButton>
+          ) : (
+            <ActionButton className="hover:bg-primary! absolute right-0 mr-4 bg-primary text-white">
+              Follow
+            </ActionButton>
+          )}
         </Activity>
 
         <div className="flex flex-col justify-between">

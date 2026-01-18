@@ -18,18 +18,37 @@ import { ActionButton } from "@/components/button";
 import postApi from "@/lib/api/post";
 import { isFollowing } from "@/lib/utils";
 
+import { FollowType } from "@/types/follow";
 import { PostType } from "@/types/post";
 import { User } from "@/types/user";
 
 const ProfileSideButton = ({
+  pathId,
+  currentUserFollowings,
   currentUserId,
   visitedUserId,
-  isUserFollowing,
 }: {
+  pathId: number;
+  currentUserFollowings: Array<{ following: FollowType }>;
   currentUserId: number;
   visitedUserId: number;
-  isUserFollowing: boolean;
 }) => {
+  const [isUserFollowing, setIsUserFollowing] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const setIsCurrentUserFollowing = () => {
+      if (visitedUserId) {
+        const isCurrentUserFollowing = isFollowing(
+          currentUserFollowings,
+          visitedUserId,
+        ) as boolean;
+        console.log(isCurrentUserFollowing);
+        setIsUserFollowing(isCurrentUserFollowing);
+      }
+    };
+    setIsCurrentUserFollowing();
+  }, [visitedUserId, pathId]);
+
   if (currentUserId && visitedUserId) {
     if (currentUserId === visitedUserId) {
       return (
@@ -38,6 +57,7 @@ const ProfileSideButton = ({
         </ActionButton>
       );
     } else if (isUserFollowing) {
+      console.log(isUserFollowing);
       return (
         <ActionButton
           className="absolute right-0 mr-4 bg-primary text-white hover:border-red-500 hover:bg-red-500/10! hover:text-red-500 transition-all"
@@ -46,7 +66,7 @@ const ProfileSideButton = ({
           Following
         </ActionButton>
       );
-    } else {
+    } else if (isUserFollowing === false) {
       return (
         <ActionButton className="hover:bg-primary! absolute right-0 mr-4 bg-primary text-white">
           Follow
@@ -58,12 +78,10 @@ const ProfileSideButton = ({
 
 const Profile = () => {
   const setVisitedUser = useUser((state) => state.setVisitedUser);
-  const visitedUser = useUser((state) => state.visitedUser) as User;
   const currentUser = useUser((state) => state.user) as User;
   const [feedType, setFeedType] = useState<"posts" | "replies" | "likes">(
     "posts",
   );
-
   const router = useRouter();
   const params = useParams();
   const queryClient = useQueryClient();
@@ -120,9 +138,6 @@ const Profile = () => {
       }
     }
   };
-
-  const isCurrentUserFollowing =
-    visitedUser && isFollowing(currentUser?.followings, visitedUser?.id);
 
   return (
     <>
@@ -188,9 +203,10 @@ const Profile = () => {
           {/* profile information */}
           <div className="flex-1 p-4 relative border-x border-x-border">
             <ProfileSideButton
+              pathId={Number(id)}
+              currentUserFollowings={currentUser?.followings}
               currentUserId={currentUser?.id}
               visitedUserId={user?.id!}
-              isUserFollowing={isCurrentUserFollowing!}
             ></ProfileSideButton>
             <div className="mt-[64px]"></div>
             <div className="flex flex-col items-start">

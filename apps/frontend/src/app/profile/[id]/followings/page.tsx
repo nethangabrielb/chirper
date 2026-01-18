@@ -54,8 +54,6 @@ const FollowingsIndex = () => {
     document.title = `Twitter / @${visitedUser.username} Followings`;
   }, [params.id]);
 
-  console.log(height);
-
   return (
     <>
       <Head>

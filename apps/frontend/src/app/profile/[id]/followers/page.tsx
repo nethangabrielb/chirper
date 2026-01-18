@@ -135,8 +135,11 @@ const FollowersIndex = () => {
                     >
                       Following
                     </ActionButton>
-                  ) : (
+                  ) : isUserFollowing! &&
+                    currentUser?.id === visitedUser?.id ? (
                     <ActionButton>Follow back</ActionButton>
+                  ) : (
+                    <ActionButton>Follow</ActionButton>
                   )}
                 </div>
               </Link>

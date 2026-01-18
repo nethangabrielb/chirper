@@ -153,7 +153,7 @@ const Profile = () => {
           <div className="bg-transparent flex-1 p-2 border-b border-b-border font-bold flex items-center gap-8">
             <button
               className="p-2 rounded-full hover:bg-neutral-500/20 transition-all cursor-pointer"
-              onClick={() => router.back()}
+              onClick={() => router.push("/home")}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

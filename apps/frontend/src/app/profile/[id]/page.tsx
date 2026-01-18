@@ -16,17 +16,54 @@ import { useParams, useRouter } from "next/navigation";
 import { ActionButton } from "@/components/button";
 
 import postApi from "@/lib/api/post";
+import { isFollowing } from "@/lib/utils";
 
 import { PostType } from "@/types/post";
 import { User } from "@/types/user";
 
+const ProfileSideButton = ({
+  currentUserId,
+  visitedUserId,
+  isUserFollowing,
+}: {
+  currentUserId: number;
+  visitedUserId: number;
+  isUserFollowing: boolean;
+}) => {
+  if (currentUserId && visitedUserId) {
+    if (currentUserId === visitedUserId) {
+      return (
+        <ActionButton className="hover:bg-primary! absolute right-0 mr-4 bg-primary text-white">
+          Edit profile
+        </ActionButton>
+      );
+    } else if (isUserFollowing) {
+      return (
+        <ActionButton
+          className="absolute right-0 mr-4 bg-primary text-white hover:border-red-500 hover:bg-red-500/10! hover:text-red-500 transition-all"
+          hoverText="Unfollow"
+        >
+          Following
+        </ActionButton>
+      );
+    } else {
+      return (
+        <ActionButton className="hover:bg-primary! absolute right-0 mr-4 bg-primary text-white">
+          Follow
+        </ActionButton>
+      );
+    }
+  }
+};
+
 const Profile = () => {
   const setVisitedUser = useUser((state) => state.setVisitedUser);
-  const visitedUser = useUser((state) => state.visitedUser);
+  const visitedUser = useUser((state) => state.visitedUser) as User;
   const currentUser = useUser((state) => state.user) as User;
   const [feedType, setFeedType] = useState<"posts" | "replies" | "likes">(
     "posts",
   );
+
   const router = useRouter();
   const params = useParams();
   const queryClient = useQueryClient();
@@ -84,7 +121,8 @@ const Profile = () => {
     }
   };
 
-  console.log(visitedUser);
+  const isCurrentUserFollowing =
+    visitedUser && isFollowing(currentUser?.followings, visitedUser?.id);
 
   return (
     <>
@@ -149,15 +187,11 @@ const Profile = () => {
 
           {/* profile information */}
           <div className="flex-1 p-4 relative border-x border-x-border">
-            {currentUser.id === user?.id ? (
-              <ActionButton className="hover:bg-primary! absolute right-0 mr-4 bg-primary text-white">
-                Edit profile
-              </ActionButton>
-            ) : (
-              <ActionButton className="hover:bg-primary! absolute right-0 mr-4 bg-primary text-white">
-                Follow
-              </ActionButton>
-            )}
+            <ProfileSideButton
+              currentUserId={currentUser?.id}
+              visitedUserId={user?.id!}
+              isUserFollowing={isCurrentUserFollowing!}
+            ></ProfileSideButton>
             <div className="mt-[64px]"></div>
             <div className="flex flex-col items-start">
               <p className="text-[22px] text-text font-bold">{user?.name}</p>

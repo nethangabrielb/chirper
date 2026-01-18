@@ -114,7 +114,7 @@ const FollowingsIndex = () => {
                     Following
                   </ActionButton>
                 ) : (
-                  <ActionButton>Follow back</ActionButton>
+                  <ActionButton>Follow</ActionButton>
                 )}
               </div>
             );

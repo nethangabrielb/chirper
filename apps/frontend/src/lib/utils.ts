@@ -20,8 +20,14 @@ export function isFollowing(
   currentUserFollowings: Array<{ following: FollowType }>,
   followerId: number,
 ) {
-  const isUserFollowing = currentUserFollowings.find((followings) => {
-    return followings.following.id === followerId;
-  });
-  return isUserFollowing;
+  if (currentUserFollowings) {
+    const isUserFollowing = currentUserFollowings.find((followings) => {
+      return followings.following.id === followerId;
+    });
+    if (isUserFollowing) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

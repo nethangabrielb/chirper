@@ -2,10 +2,11 @@
 
 import Follows from "@/app/profile/components/follows-row";
 import LinkButton from "@/app/profile/components/link-button";
+import useBoxHeight from "@/hooks/useBoxHeight";
 import useUser from "@/stores/user.store";
 import { useQuery } from "@tanstack/react-query";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 import Head from "next/head";
 import Link from "next/link";
@@ -23,6 +24,8 @@ const FollowingsIndex = () => {
   const router = useRouter();
   const visitedUser = useUser((state) => state.visitedUser) as User;
   const currentUser = useUser((state) => state.user) as User;
+  const { height, setHeight } = useBoxHeight();
+  const elementRef = useRef<HTMLDivElement>(null);
   const params = useParams();
   const { data: followings } = useQuery({
     queryKey: [params.id],
@@ -35,8 +38,23 @@ const FollowingsIndex = () => {
   });
 
   useEffect(() => {
+    if (elementRef?.current?.getBoundingClientRect()) {
+      setHeight(elementRef?.current?.getBoundingClientRect().height);
+    }
+  }, [elementRef]);
+
+  useEffect(() => {
+    window.addEventListener("resize", () => {
+      const currentElement = elementRef.current;
+      setHeight(currentElement?.getBoundingClientRect().height!);
+    });
+  }, []);
+
+  useEffect(() => {
     document.title = `Twitter / @${visitedUser.username} Followings`;
   }, [params.id]);
+
+  console.log(height);
 
   return (
     <>
@@ -48,7 +66,10 @@ const FollowingsIndex = () => {
         />
       </Head>
       <div className="lg:w-[600px] h-full relative border-l border-r border-l-border border-r-border">
-        <div className="flex backdrop-blur-lg absolute top-0 w-full flex-col border-b border-b-border">
+        <div
+          className="flex backdrop-blur-lg absolute top-0 w-full flex-col border-b border-b-border"
+          ref={elementRef}
+        >
           <div className="bg-transparent flex-1 p-2 font-bold flex items-center gap-8">
             <button
               className="p-2 rounded-full hover:bg-neutral-500/20 transition-all cursor-pointer"
@@ -90,7 +111,7 @@ const FollowingsIndex = () => {
             </LinkButton>
           </div>
         </div>
-        <div className="mt-[136.2px]"></div>
+        <div style={{ marginTop: `${height}px` }}></div>
 
         <main className=" flex flex-col">
           {followings?.map((follow: { following: FollowType }) => {

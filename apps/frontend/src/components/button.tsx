@@ -89,7 +89,9 @@ const ActionButton = ({
   type,
   hoverText,
 }: ActionButtonProps) => {
-  const [btnText, setBtnText] = useState<string | undefined>(children);
+  const [hover, setHover] = useState<boolean | null>(null);
+
+  const text = hover && hoverText ? hoverText : children;
   return (
     <Button
       className={`hover:!bg-foreground bg-foreground text-background
@@ -97,14 +99,10 @@ const ActionButton = ({
       onClick={onClick}
       disabled={disabled}
       type={type}
-      onMouseEnter={() => {
-        if (hoverText) {
-          setBtnText(hoverText);
-        }
-      }}
-      onMouseLeave={() => setBtnText(children)}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
     >
-      {btnText}
+      {text}
     </Button>
   );
 };

@@ -29,7 +29,7 @@ const ProfileSideButton = ({
   visitedUserId,
 }: {
   pathId: number;
-  currentUserFollowings: Array<{ following: FollowType }>;
+  currentUserFollowings: Array<{ id: number; following: FollowType }>;
   currentUserId: number;
   visitedUserId: number;
 }) => {
@@ -52,7 +52,9 @@ const ProfileSideButton = ({
         <ActionButton
           className="absolute right-0 mr-4 bg-primary text-white hover:border-red-500 hover:bg-red-500/10! hover:text-red-500 transition-all"
           hoverText="Unfollow"
-          onClick={() => unfollowMutation.mutate()}
+          onClick={() => {
+            unfollowMutation.mutate();
+          }}
         >
           Following
         </ActionButton>

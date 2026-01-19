@@ -18,8 +18,8 @@ const userSchema = z.object({
     Post: z.number(),
   }),
   Post: z.array(postSchema),
-  followers: z.array(z.object({ follower: followSchema })),
-  followings: z.array(z.object({ following: followSchema })),
+  followers: z.array(z.object({ id: z.number(), follower: followSchema })),
+  followings: z.array(z.object({ id: z.number(), following: followSchema })),
 });
 
 export { userSchema };

@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 
-import { useEffect, useOptimistic, useState } from "react";
+import { startTransition, useEffect, useOptimistic, useState } from "react";
 
 import followApi from "@/lib/api/follow";
 import { isFollowing } from "@/lib/utils";
@@ -11,7 +11,13 @@ type Props = {
   pathId?: number;
   currentUserId: number;
   visitedUserId: number;
-  currentUserFollowings: Array<{ following: FollowType }>;
+  currentUserFollowings: Array<{ id: number; following: FollowType }>;
+};
+
+type Follow = {
+  id: number;
+  followerId: number;
+  followingId: number;
 };
 
 const useFollows = ({
@@ -22,10 +28,7 @@ const useFollows = ({
 }: Props) => {
   // Follow information between current user and visited user for mutation calls that
   // needs information on the specific follow (e.g., Follow ID)
-  const [follow, setFollow] = useState<{
-    id: number;
-    following: FollowType;
-  } | null>(null);
+  const [follow, setFollow] = useState<Follow | null>(null);
 
   // Following state between current and visited user
   const [isUserFollowing, setIsUserFollowing] = useState<boolean | null>(null);
@@ -39,13 +42,16 @@ const useFollows = ({
 
   const followMutation = useMutation({
     mutationFn: async () => {
-      addOptimisticFollow(true);
+      startTransition(() => {
+        addOptimisticFollow(true);
+      });
       const res = await followApi.createFollow(currentUserId, visitedUserId);
       return res;
     },
-    onSuccess: (data: { status: string; message: string }) => {
+    onSuccess: (data: { status: string; message: string; data: Follow }) => {
       if (data.status === "success") {
         setIsUserFollowing(true);
+        setFollow(data.data);
       } else {
         setIsUserFollowing(false);
       }
@@ -54,15 +60,18 @@ const useFollows = ({
 
   const unfollowMutation = useMutation({
     mutationFn: async () => {
-      addOptimisticFollow(false);
+      startTransition(() => {
+        addOptimisticFollow(false);
+      });
       const res = await followApi.deleteFollow(follow?.id ?? 0);
       return res;
     },
     onSuccess: (data: { status: string; message: string }) => {
       if (data.status === "success") {
-        setIsUserFollowing(true);
-      } else {
         setIsUserFollowing(false);
+        setFollow(null);
+      } else {
+        setIsUserFollowing(true);
       }
     },
   });
@@ -75,12 +84,13 @@ const useFollows = ({
           visitedUserId,
         );
         setIsUserFollowing(isCurrentUserFollowing?.following as boolean);
-        setFollow(
-          isCurrentUserFollowing?.follow as {
-            id: number;
-            following: FollowType;
-          },
-        );
+        if (isCurrentUserFollowing?.following) {
+          setFollow({
+            id: isCurrentUserFollowing?.follow?.id ?? 0,
+            followerId: currentUserId,
+            followingId: visitedUserId,
+          });
+        }
       }
     };
     setIsCurrentUserFollowing();

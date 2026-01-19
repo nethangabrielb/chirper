@@ -11,7 +11,6 @@ const followsController = (() => {
   ) => {
     try {
       const follow = await FollowService.createNewFollow(req.body);
-
       res.json({
         status: 'success',
         message: 'Follow success',

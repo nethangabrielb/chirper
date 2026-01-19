@@ -17,7 +17,7 @@ export function formatDateFeedPost(date: Date) {
 }
 
 export function isFollowing(
-  currentUserFollowings: Array<{ following: FollowType }>,
+  currentUserFollowings: Array<{ id: number; following: FollowType }>,
   followerId: number,
 ) {
   if (currentUserFollowings) {

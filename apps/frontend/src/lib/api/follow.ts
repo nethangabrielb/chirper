@@ -33,6 +33,9 @@ const followApi = (() => {
 
   const createFollow = async (followerId: number, followingId: number) => {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API}/api/follows`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
       credentials: "include",
       method: "POST",
       body: JSON.stringify({ followerId, followingId }),

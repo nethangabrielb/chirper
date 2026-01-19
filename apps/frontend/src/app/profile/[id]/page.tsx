@@ -33,8 +33,9 @@ const ProfileSideButton = ({
   currentUserId: number;
   visitedUserId: number;
 }) => {
-  const { isUserFollowing } = useFollows({
+  const { optimisticFollow, followMutation } = useFollows({
     pathId,
+    currentUserId,
     currentUserFollowings,
     visitedUserId,
   });
@@ -46,7 +47,7 @@ const ProfileSideButton = ({
           Edit profile
         </ActionButton>
       );
-    } else if (isUserFollowing) {
+    } else if (optimisticFollow) {
       return (
         <ActionButton
           className="absolute right-0 mr-4 bg-primary text-white hover:border-red-500 hover:bg-red-500/10! hover:text-red-500 transition-all"
@@ -55,9 +56,12 @@ const ProfileSideButton = ({
           Following
         </ActionButton>
       );
-    } else if (isUserFollowing === false) {
+    } else if (optimisticFollow === false) {
       return (
-        <ActionButton className="hover:bg-primary! absolute right-0 mr-4 bg-primary text-white">
+        <ActionButton
+          className="hover:bg-primary! absolute right-0 mr-4 bg-primary text-white"
+          onClick={() => followMutation.mutate()}
+        >
           Follow
         </ActionButton>
       );

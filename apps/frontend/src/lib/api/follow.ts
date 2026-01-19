@@ -31,7 +31,22 @@ const followApi = (() => {
     return data;
   };
 
-  return { getFollowers, getFollowings };
+  const createFollow = async (followerId: number, followingId: number) => {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API}/api/follows`, {
+      credentials: "include",
+      method: "POST",
+      body: JSON.stringify({ followerId, followingId }),
+    });
+
+    if (!res.ok) {
+      throw new Error("There was a problem following the user.");
+    }
+
+    const data = await res.json();
+    return data;
+  };
+
+  return { getFollowers, getFollowings, createFollow };
 })();
 
 export default followApi;

@@ -2,6 +2,7 @@
 
 import FeedPost from "@/app/home/components/feed-post";
 import { FeedControlBtn } from "@/app/home/page";
+import useFollows from "@/hooks/useFollows";
 import useUser from "@/stores/user.store";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
@@ -16,7 +17,6 @@ import { useParams, useRouter } from "next/navigation";
 import { ActionButton } from "@/components/button";
 
 import postApi from "@/lib/api/post";
-import { isFollowing } from "@/lib/utils";
 
 import { FollowType } from "@/types/follow";
 import { PostType } from "@/types/post";
@@ -33,21 +33,11 @@ const ProfileSideButton = ({
   currentUserId: number;
   visitedUserId: number;
 }) => {
-  const [isUserFollowing, setIsUserFollowing] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    const setIsCurrentUserFollowing = () => {
-      if (visitedUserId) {
-        const isCurrentUserFollowing = isFollowing(
-          currentUserFollowings,
-          visitedUserId,
-        ) as boolean;
-        console.log(isCurrentUserFollowing);
-        setIsUserFollowing(isCurrentUserFollowing);
-      }
-    };
-    setIsCurrentUserFollowing();
-  }, [visitedUserId, pathId]);
+  const { isUserFollowing } = useFollows({
+    pathId,
+    currentUserFollowings,
+    visitedUserId,
+  });
 
   if (currentUserId && visitedUserId) {
     if (currentUserId === visitedUserId) {
@@ -57,7 +47,6 @@ const ProfileSideButton = ({
         </ActionButton>
       );
     } else if (isUserFollowing) {
-      console.log(isUserFollowing);
       return (
         <ActionButton
           className="absolute right-0 mr-4 bg-primary text-white hover:border-red-500 hover:bg-red-500/10! hover:text-red-500 transition-all"

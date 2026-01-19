@@ -49,7 +49,24 @@ const followApi = (() => {
     return data;
   };
 
-  return { getFollowers, getFollowings, createFollow };
+  const deleteFollow = async (followId: number) => {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API}/api/follows/${followId}`,
+      {
+        credentials: "include",
+        method: "DELETE",
+      },
+    );
+
+    if (!res.ok) {
+      throw new Error("There was a problem unfollowing the user.");
+    }
+
+    const data = await res.json();
+    return data;
+  };
+
+  return { getFollowers, getFollowings, createFollow, deleteFollow };
 })();
 
 export default followApi;

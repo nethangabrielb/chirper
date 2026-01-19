@@ -25,9 +25,9 @@ export function isFollowing(
       return followings.following.id === followerId;
     });
     if (isUserFollowing) {
-      return true;
+      return { following: true, follow: isUserFollowing };
     } else {
-      return false;
+      return { following: false, follow: isUserFollowing };
     }
   }
 }

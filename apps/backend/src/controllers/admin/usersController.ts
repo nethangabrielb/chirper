@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 
 import { decode } from 'base64-arraybuffer';
 
+import followRepository from '../../repositories/followRepository';
 import UserService from '../../services/userService';
 import { client } from '../../supabase/client';
 import type { RegistrationBody } from '../../types/auth';
@@ -25,6 +26,8 @@ const userController = (() => {
     try {
       if (_req.query.current) {
         const user: User = _req.user as User;
+        const followers = await followRepository.findFollowers(user.id);
+        const followings = await followRepository.findFollowings(user.id);
         const modifiedUser = {
           id: user.id,
           name: user.name,
@@ -32,6 +35,8 @@ const userController = (() => {
           email: user.email,
           avatar: user.avatar,
           onboarded: user.onboarded,
+          followers,
+          followings,
         };
         res.json({ status: 'success', data: modifiedUser });
       } else {

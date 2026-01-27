@@ -24,6 +24,28 @@ const FollowService = {
     }
     return { followers, followings };
   },
+  getUserFollowers: async (userId: number) => {
+    const followers: Array<{ follower: Partial<User> }> =
+      await followRepository.findFollowers(userId);
+
+    if (!followers) {
+      throw new Error(
+        'There was an error fetching data in the database. Please try again'
+      );
+    }
+    return followers;
+  },
+  getUserFollowings: async (userId: number) => {
+    const followings: Array<{ following: Partial<User> }> =
+      await followRepository.findFollowings(userId);
+
+    if (!followings) {
+      throw new Error(
+        'There was an error fetching data in the database. Please try again'
+      );
+    }
+    return followings;
+  },
   deleteFollow: async (followId: number) => {
     return followRepository.deleteById(followId);
   },

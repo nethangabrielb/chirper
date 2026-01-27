@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -24,7 +24,8 @@ type ActionButtonProps = {
   className?: string;
   disabled?: boolean;
   type?: "submit";
-  onClick?: () => void;
+  hoverText?: string;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 };
 
 const FormButton = ({
@@ -86,7 +87,11 @@ const ActionButton = ({
   onClick,
   disabled,
   type,
+  hoverText,
 }: ActionButtonProps) => {
+  const [hover, setHover] = useState<boolean | null>(null);
+
+  const text = hover && hoverText ? hoverText : children;
   return (
     <Button
       className={`hover:!bg-foreground bg-foreground text-background
@@ -94,8 +99,10 @@ const ActionButton = ({
       onClick={onClick}
       disabled={disabled}
       type={type}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
     >
-      {children}
+      {text}
     </Button>
   );
 };

@@ -121,12 +121,10 @@ const postApi = (() => {
         credentials: "include",
       },
     );
-    console.log(res);
     if (!res.ok) {
       throw new Error("There was an error processing this request.");
     }
     const data = await res.json();
-    console.log(data);
 
     return data;
   };

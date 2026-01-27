@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { followSchema } from "@/schemas/follow";
 import { postSchema } from "@/schemas/post";
 
 const userSchema = z.object({
@@ -17,6 +18,8 @@ const userSchema = z.object({
     Post: z.number(),
   }),
   Post: z.array(postSchema),
+  followers: z.array(z.object({ id: z.number(), follower: followSchema })),
+  followings: z.array(z.object({ id: z.number(), following: followSchema })),
 });
 
 export { userSchema };

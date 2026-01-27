@@ -7,7 +7,8 @@ const followRouter = Router();
 
 followRouter.use(authMiddleware);
 
-followRouter.get('/:userId', followsController.getFollows);
+followRouter.get('/followers/:userId', followsController.getFollowers);
+followRouter.get('/followings/:userId', followsController.getFollowings);
 followRouter.post('/', followsController.createFollow);
 followRouter.delete('/:followId', followsController.deleteFollow);
 

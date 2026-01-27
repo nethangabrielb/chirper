@@ -2,27 +2,79 @@
 
 import FeedPost from "@/app/home/components/feed-post";
 import { FeedControlBtn } from "@/app/home/page";
-import { useQuery } from "@tanstack/react-query";
-import { useQueryClient } from "@tanstack/react-query";
+import useFollows from "@/hooks/useFollows";
+import useUser from "@/stores/user.store";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { Calendar } from "lucide-react";
 
-import { useEffect } from "react";
-import { useState } from "react";
-import { Activity } from "react";
+import { Activity, useEffect, useState } from "react";
 
 import Head from "next/head";
-import { useParams } from "next/navigation";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
 
 import { ActionButton } from "@/components/button";
 
 import postApi from "@/lib/api/post";
 
+import { FollowType } from "@/types/follow";
 import { PostType } from "@/types/post";
 import { User } from "@/types/user";
 
+const ProfileSideButton = ({
+  pathId,
+  currentUserFollowings,
+  currentUserId,
+  visitedUserId,
+}: {
+  pathId: number;
+  currentUserFollowings: Array<{ id: number; following: FollowType }>;
+  currentUserId: number;
+  visitedUserId: number;
+}) => {
+  const { optimisticFollow, followMutation, unfollowMutation } = useFollows({
+    pathId,
+    currentUserId,
+    currentUserFollowings,
+    visitedUserId,
+  });
+
+  if (currentUserId && visitedUserId) {
+    if (currentUserId === visitedUserId) {
+      return (
+        <ActionButton className="hover:bg-primary! border border-primary absolute right-0 mr-4 bg-primary text-white">
+          Edit profile
+        </ActionButton>
+      );
+    } else if (optimisticFollow) {
+      return (
+        <ActionButton
+          className="absolute right-0 mr-4 bg-primary border border-primary! text-white hover:border-red-500! hover:bg-red-500/10! hover:text-red-500 transition-all hover:border"
+          hoverText="Unfollow"
+          onClick={() => {
+            unfollowMutation.mutate();
+          }}
+        >
+          Following
+        </ActionButton>
+      );
+    } else if (optimisticFollow === false) {
+      return (
+        <ActionButton
+          className="hover:bg-primary! border border-primary! absolute right-0 mr-4 bg-primary text-white"
+          onClick={() => followMutation.mutate()}
+        >
+          Follow
+        </ActionButton>
+      );
+    }
+  }
+};
+
 const Profile = () => {
+  const setVisitedUser = useUser((state) => state.setVisitedUser);
+  const currentUser = useUser((state) => state.user) as User;
   const [feedType, setFeedType] = useState<"posts" | "replies" | "likes">(
     "posts",
   );
@@ -44,6 +96,7 @@ const Profile = () => {
         throw new Error("Error fetching from the server.");
       }
       const data = await res.json();
+      setVisitedUser(data.data);
       return data.data as User;
     },
   });
@@ -96,7 +149,7 @@ const Profile = () => {
           <div className="bg-transparent flex-1 p-2 border-b border-b-border font-bold flex items-center gap-8">
             <button
               className="p-2 rounded-full hover:bg-neutral-500/20 transition-all cursor-pointer"
-              onClick={() => router.back()}
+              onClick={() => router.push("/home")}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -127,7 +180,7 @@ const Profile = () => {
           <div className="flex-1 h-[50%] border-x border-x-border">
             <img
               src="/blue.jpg"
-              alt="Default cover photo"
+              alt="Default profile cover"
               className="h-full w-full object-cover"
             />
           </div>
@@ -145,9 +198,12 @@ const Profile = () => {
 
           {/* profile information */}
           <div className="flex-1 p-4 relative border-x border-x-border">
-            <ActionButton className="hover:text-black absolute right-0 mr-4 bg-transparent border border-white text-white">
-              Edit profile
-            </ActionButton>
+            <ProfileSideButton
+              pathId={Number(id)}
+              currentUserFollowings={currentUser?.followings}
+              currentUserId={currentUser?.id}
+              visitedUserId={user?.id!}
+            ></ProfileSideButton>
             <div className="mt-[64px]"></div>
             <div className="flex flex-col items-start">
               <p className="text-[22px] text-text font-bold">{user?.name}</p>
@@ -164,14 +220,20 @@ const Profile = () => {
               </div>
             )}
             <div className="flex gap-4">
-              <p className="text-darker">
-                <span className="text-white">{user?._count.Followers}</span>{" "}
-                followers
-              </p>
-              <p className="text-darker">
+              <Link
+                className="text-darker hover:underline"
+                href={`/profile/${user?.id}/followers`}
+              >
                 <span className="text-white">{user?._count.Followings}</span>{" "}
-                followers
-              </p>
+                Followers
+              </Link>
+              <Link
+                className="text-darker hover:underline"
+                href={`/profile/${user?.id}/followings`}
+              >
+                <span className="text-white">{user?._count.Followers}</span>{" "}
+                Followings
+              </Link>
             </div>
           </div>
         </section>

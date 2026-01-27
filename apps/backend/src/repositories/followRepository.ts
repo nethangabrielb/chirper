@@ -9,6 +9,7 @@ const followRepository = {
         followerId: userId,
       },
       select: {
+        id: true,
         following: {
           select: {
             id: true,
@@ -25,6 +26,7 @@ const followRepository = {
         followingId: userId,
       },
       select: {
+        id: true,
         follower: {
           select: {
             id: true,

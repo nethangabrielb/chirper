@@ -35,6 +35,8 @@ model Follow {
   followerId  Int
   following   User @relation("Followings", fields: [followingId], references: [id])
   follower    User @relation("Followers", fields: [followerId], references: [id])
+
+  @@unique([followerId, followingId])
 }
 
 model Post {

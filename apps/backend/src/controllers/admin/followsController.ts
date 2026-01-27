@@ -15,6 +15,7 @@ const followsController = (() => {
           status: 'error',
           message: 'A user cannot follow itself',
         });
+        return;
       }
 
       const follow = await FollowService.createNewFollow(req.body);

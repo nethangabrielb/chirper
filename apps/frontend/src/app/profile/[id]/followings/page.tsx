@@ -12,10 +12,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 
-import { ActionButton } from "@/components/button";
-
 import followApi from "@/lib/api/follow";
-import { isFollowing } from "@/lib/utils";
 
 import { FollowType } from "@/types/follow";
 import { User } from "@/types/user";

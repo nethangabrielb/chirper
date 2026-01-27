@@ -10,6 +10,13 @@ const followsController = (() => {
     res: Response
   ) => {
     try {
+      if (req.body.followerId === req.body.followingId) {
+        res.status(400).json({
+          status: 'error',
+          message: 'A user cannot follow itself',
+        });
+      }
+
       const follow = await FollowService.createNewFollow(req.body);
       res.json({
         status: 'success',

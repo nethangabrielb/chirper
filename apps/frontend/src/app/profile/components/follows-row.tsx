@@ -12,6 +12,7 @@ type Props = {
   currentUserId: number;
   visitedUserId: number;
   currentUserFollowings: Array<{ id: number; following: FollowType }>;
+  followerId?: number;
 };
 
 const Follows = ({
@@ -21,12 +22,13 @@ const Follows = ({
   currentUserId,
   currentUserFollowings,
   visitedUserId,
+  followerId,
 }: Props) => {
   const { optimisticFollow, followMutation, unfollowMutation } = useFollows({
     pathId: Number(pathId),
     currentUserId,
     currentUserFollowings,
-    visitedUserId,
+    visitedUserId: followerId as number,
   });
 
   return (
@@ -66,7 +68,7 @@ const Follows = ({
         >
           Following
         </ActionButton>
-      ) : optimisticFollow! && isUser ? (
+      ) : optimisticFollow === false && currentUserId === visitedUserId ? (
         <ActionButton
           onClick={(e) => {
             e.preventDefault();

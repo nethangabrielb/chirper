@@ -67,7 +67,6 @@ const CreateReply = ({ refetch, postId, className }: Props) => {
       return res;
     },
     onSuccess: async (data) => {
-      console.log(data);
       if (data.status === "success") {
         resetField("content");
         toast.success(data.message, {

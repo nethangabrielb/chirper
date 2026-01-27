@@ -119,7 +119,8 @@ const FollowersIndex = () => {
                   isUser={follow?.follower?.id === currentUser?.id}
                   pathId={Number(params?.id) as number}
                   currentUserId={currentUser?.id}
-                  visitedUserId={follow?.follower?.id}
+                  followerId={follow?.follower?.id}
+                  visitedUserId={visitedUser?.id}
                   currentUserFollowings={currentUser?.followings}
                 ></Follows>
               </Link>

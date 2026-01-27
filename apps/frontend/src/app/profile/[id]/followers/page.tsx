@@ -12,10 +12,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 
-import { ActionButton } from "@/components/button";
-
 import followApi from "@/lib/api/follow";
-import { isFollowing } from "@/lib/utils";
 
 import { FollowType } from "@/types/follow";
 import { User } from "@/types/user";
@@ -112,36 +109,19 @@ const FollowersIndex = () => {
         <div style={{ marginTop: `${height}px` }}></div>
         <main className="flex flex-col">
           {followers?.map((follow: { follower: FollowType }) => {
-            const isUserFollowing = isFollowing(
-              currentUser?.followings,
-              follow?.follower?.id,
-            );
             return (
               <Link
                 key={crypto.randomUUID()}
                 href={`/profile/${follow?.follower?.id}`}
               >
-                <div
-                  key={crypto.randomUUID()}
-                  className="p-4 flex items-center justify-between hover:bg-secondary/40 cursor-pointer transition-all"
-                >
-                  <Follows follow={follow?.follower}></Follows>
-                  {follow?.follower?.id === currentUser?.id ? (
-                    <></>
-                  ) : isUserFollowing ? (
-                    <ActionButton
-                      className="bg-background border border-white text-white hover:border-red-500 hover:bg-red-500/10! hover:text-red-500 transition-all"
-                      hoverText="Unfollow"
-                    >
-                      Following
-                    </ActionButton>
-                  ) : isUserFollowing! &&
-                    currentUser?.id === visitedUser?.id ? (
-                    <ActionButton>Follow back</ActionButton>
-                  ) : (
-                    <ActionButton>Follow</ActionButton>
-                  )}
-                </div>
+                <Follows
+                  follow={follow?.follower}
+                  isUser={follow?.follower?.id === currentUser?.id}
+                  pathId={Number(params?.id) as number}
+                  currentUserId={currentUser?.id}
+                  visitedUserId={follow?.follower?.id}
+                  currentUserFollowings={currentUser?.followings}
+                ></Follows>
               </Link>
             );
           })}

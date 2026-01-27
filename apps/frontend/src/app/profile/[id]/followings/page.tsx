@@ -113,33 +113,19 @@ const FollowingsIndex = () => {
 
         <main className=" flex flex-col">
           {followings?.map((follow: { following: FollowType }) => {
-            const isUserFollowing = isFollowing(
-              currentUser?.followings,
-              follow?.following?.id,
-            );
             return (
               <Link
                 key={crypto.randomUUID()}
                 href={`/profile/${follow?.following?.id}`}
               >
-                <div
-                  key={crypto.randomUUID()}
-                  className="p-4 flex items-center justify-between hover:bg-secondary/40 transition-all cursor-pointer"
-                >
-                  <Follows follow={follow?.following}></Follows>
-                  {follow?.following?.id === currentUser.id ? (
-                    <></>
-                  ) : isUserFollowing ? (
-                    <ActionButton
-                      className="bg-background border border-white text-white hover:border-red-500 hover:bg-red-500/10! hover:text-red-500 transition-all"
-                      hoverText="Unfollow"
-                    >
-                      Following
-                    </ActionButton>
-                  ) : (
-                    <ActionButton>Follow</ActionButton>
-                  )}
-                </div>
+                <Follows
+                  follow={follow?.following}
+                  isUser={follow?.following?.id === currentUser?.id}
+                  pathId={Number(params?.id) as number}
+                  currentUserId={currentUser?.id}
+                  visitedUserId={follow?.following?.id}
+                  currentUserFollowings={currentUser?.followings}
+                ></Follows>
               </Link>
             );
           })}

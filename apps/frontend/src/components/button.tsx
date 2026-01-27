@@ -25,7 +25,7 @@ type ActionButtonProps = {
   disabled?: boolean;
   type?: "submit";
   hoverText?: string;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 };
 
 const FormButton = ({

@@ -5,8 +5,7 @@ import type {
   QueryObserverResult,
   RefetchOptions,
 } from "@tanstack/react-query";
-import { useMutation } from "@tanstack/react-query";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Heart, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 
@@ -17,8 +16,7 @@ import Link from "next/link";
 import { ProfileHoverCard } from "@/components/profile-card-hover";
 
 import postApi from "@/lib/api/post";
-import { cn } from "@/lib/utils";
-import { formatDateFeedPost } from "@/lib/utils";
+import { cn, formatDateFeedPost } from "@/lib/utils";
 
 import { PostType } from "@/types/post";
 import { ReplyType } from "@/types/reply";

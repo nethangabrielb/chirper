@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { startTransition, useEffect, useOptimistic, useState } from "react";
 
@@ -26,6 +26,8 @@ const useFollows = ({
   currentUserFollowings,
   visitedUserId,
 }: Props) => {
+  const queryClient = useQueryClient();
+
   // Follow information between current user and visited user for mutation calls that
   // needs information on the specific follow (e.g., Follow ID)
   const [follow, setFollow] = useState<Follow | null>(null);
@@ -50,6 +52,7 @@ const useFollows = ({
     },
     onSuccess: (data: { status: string; message: string; data: Follow }) => {
       if (data.status === "success") {
+        resetUserQueryCache();
         setIsUserFollowing(true);
         setFollow(data.data);
       } else {
@@ -68,6 +71,7 @@ const useFollows = ({
     },
     onSuccess: (data: { status: string; message: string }) => {
       if (data.status === "success") {
+        resetUserQueryCache();
         setIsUserFollowing(false);
         setFollow(null);
       } else {
@@ -95,6 +99,10 @@ const useFollows = ({
     };
     setIsCurrentUserFollowing();
   }, [visitedUserId, pathId]);
+
+  const resetUserQueryCache = async () => {
+    await queryClient.refetchQueries({ queryKey: ["user"] });
+  };
 
   return {
     optimisticFollow,

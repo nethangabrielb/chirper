@@ -1,3 +1,4 @@
+import useFollows from "@/hooks/useFollows";
 import useUser from "@/stores/user.store";
 import { format } from "date-fns";
 import { Calendar } from "lucide-react";
@@ -14,14 +15,16 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 
-import { isFollowing } from "@/lib/utils";
-
 import { User } from "@/types/user";
 
 export function ProfileHoverCard({ user }: Readonly<{ user: User }>) {
   const currentUser = useUser((state) => state.user) as User;
-  const isUserFollowing =
-    user && isFollowing(currentUser?.followings, user?.id);
+  const { isUserFollowing, followMutation, unfollowMutation } = useFollows({
+    currentUserId: currentUser?.id,
+    currentUserFollowings: currentUser?.followings,
+    visitedUserId: user?.id,
+  });
+
   return (
     <HoverCard>
       <HoverCardTrigger asChild>
@@ -35,11 +38,21 @@ export function ProfileHoverCard({ user }: Readonly<{ user: User }>) {
             <ActionButton
               className="absolute right-0 mr-4 bg-primary text-white hover:border-red-500 hover:bg-red-500/10! hover:text-red-500 transition-all"
               hoverText="Unfollow"
+              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                e.stopPropagation();
+                unfollowMutation.mutate();
+              }}
             >
               Following
             </ActionButton>
           ) : (
-            <ActionButton className="hover:bg-primary! absolute right-0 mr-4 bg-primary text-white">
+            <ActionButton
+              className="hover:bg-primary! absolute right-0 mr-4 bg-primary text-white"
+              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                e.stopPropagation();
+                followMutation.mutate();
+              }}
+            >
               Follow
             </ActionButton>
           )}

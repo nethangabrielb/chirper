@@ -43,14 +43,14 @@ const ProfileSideButton = ({
   if (currentUserId && visitedUserId) {
     if (currentUserId === visitedUserId) {
       return (
-        <ActionButton className="hover:bg-primary! absolute right-0 mr-4 bg-primary text-white">
+        <ActionButton className="hover:bg-primary! border border-primary absolute right-0 mr-4 bg-primary text-white">
           Edit profile
         </ActionButton>
       );
     } else if (optimisticFollow) {
       return (
         <ActionButton
-          className="absolute right-0 mr-4 bg-primary text-white hover:border-red-500 hover:bg-red-500/10! hover:text-red-500 transition-all"
+          className="absolute right-0 mr-4 bg-primary border border-primary! text-white hover:border-red-500! hover:bg-red-500/10! hover:text-red-500 transition-all hover:border"
           hoverText="Unfollow"
           onClick={() => {
             unfollowMutation.mutate();
@@ -62,7 +62,7 @@ const ProfileSideButton = ({
     } else if (optimisticFollow === false) {
       return (
         <ActionButton
-          className="hover:bg-primary! absolute right-0 mr-4 bg-primary text-white"
+          className="hover:bg-primary! border border-primary! absolute right-0 mr-4 bg-primary text-white"
           onClick={() => followMutation.mutate()}
         >
           Follow

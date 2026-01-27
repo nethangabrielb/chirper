@@ -36,7 +36,7 @@ export function ProfileHoverCard({ user }: Readonly<{ user: User }>) {
         <Activity mode={currentUser.id === user?.id ? "hidden" : "visible"}>
           {isUserFollowing ? (
             <ActionButton
-              className="absolute right-0 mr-4 bg-primary text-white hover:border-red-500 hover:bg-red-500/10! hover:text-red-500 transition-all"
+              className="absolute right-0 mr-4 bg-primary text-white hover:border-red-500! hover:bg-red-500/10! hover:text-red-500 transition-all hover:border border border-primary!"
               hoverText="Unfollow"
               onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                 e.stopPropagation();

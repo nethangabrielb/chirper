@@ -56,7 +56,7 @@ const Follows = ({
         <></>
       ) : optimisticFollow ? (
         <ActionButton
-          className="bg-background border border-white text-white hover:border-red-500 hover:bg-red-500/10! hover:text-red-500 transition-all"
+          className="bg-background border border-white text-white hover:border hover:border-red-500 hover:bg-red-500/10! hover:text-red-500 transition-all"
           hoverText="Unfollow"
           onClick={(e) => {
             e.preventDefault();

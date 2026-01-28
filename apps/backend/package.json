@@ -17,6 +17,7 @@
   "dependencies": {
     "@prisma/client": "6.16.2",
     "@supabase/supabase-js": "^2.79.0",
+    "@twitter-clone/shared": "workspace:*",
     "@types/multer": "^2.0.0",
     "base64-arraybuffer": "^1.0.2",
     "bcryptjs": "^3.0.2",
@@ -31,6 +32,7 @@
     "multer": "^2.0.2",
     "passport": "^0.7.0",
     "passport-google-oidc": "^0.1.0",
+    "socket.io": "^4.8.3",
     "unique-username-generator": "^1.5.1"
   },
   "devDependencies": {

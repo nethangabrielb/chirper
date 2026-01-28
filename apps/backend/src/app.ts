@@ -4,7 +4,9 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import session from 'express-session';
+import { createServer } from 'node:http';
 import passport from 'passport';
+import { Server } from 'socket.io';
 
 import '../src/config/passport';
 import commentRouter from './routes/admin/commentRoutes';
@@ -13,8 +15,17 @@ import likesRouter from './routes/admin/likeRoutes';
 import postRouter from './routes/admin/postRoutes';
 import userRouter from './routes/admin/userRoutes';
 import authRouter from './routes/guest/authRoutes';
+import { initSocket } from './sockets';
 
 const app = express();
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: process.env.CLIENT_URL,
+  },
+});
+
+initSocket(io);
 
 app.use(express.static('public'));
 app.use(express.json());
@@ -40,4 +51,4 @@ app.use('/api/likes', likesRouter);
 
 const PORT = process.env.PORT! || 5000;
 
-app.listen(PORT, () => console.log(`Server listening at port ${PORT}`));
+httpServer.listen(PORT, () => console.log(`Server listening at port ${PORT}`));

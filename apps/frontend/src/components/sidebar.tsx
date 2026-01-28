@@ -1,15 +1,14 @@
 "use client";
 
+import { socket } from "@/socket/client";
 import useUser from "@/stores/user.store";
-import { useQuery } from "@tanstack/react-query";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { Activity, ReactNode, useEffect, useState } from "react";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import { ActionButton } from "@/components/button";
 import Icon from "@/components/icon";
@@ -65,20 +64,22 @@ const Sidebar = ({ children }: Props) => {
   const { data } = useQuery({
     queryKey: ["user"],
     queryFn: async () => {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API}/api/users?current=true`,
-        {
-          credentials: "include",
-        },
-      );
+      if (path !== "/") {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API}/api/users?current=true`,
+          {
+            credentials: "include",
+          },
+        );
 
-      if (!res.ok) {
-        throw new Error("Error fetching from the server.");
+        if (!res.ok) {
+          throw new Error("Error fetching from the server.");
+        }
+        const data = await res.json();
+        const user = data.data;
+        setUser(user);
+        return user;
       }
-      const data = await res.json();
-      const user = data.data;
-      setUser(user);
-      return user;
     },
   });
   const mutation = useMutation({
@@ -88,6 +89,7 @@ const Sidebar = ({ children }: Props) => {
     },
     onSuccess: (data) => {
       if (data.status === "success") {
+        socket.disconnect();
         router.push("/");
       } else {
         toast.error("Error logging out", { description: data.message });

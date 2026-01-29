@@ -1,19 +1,41 @@
+"use client";
+
 import ConfirmForm from "@/app/onboarding/components/form";
+import useUser from "@/stores/user.store";
+import { useQuery } from "@tanstack/react-query";
 
 import { redirect } from "next/navigation";
 
-import userApi from "@/lib/api/user";
+const Onboarding = () => {
+  const setUser = useUser((state) => state.setUser);
+  const { data: user } = useQuery({
+    queryKey: ["currentUser"],
+    queryFn: async () => {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API}/api/users?current=true`,
+        {
+          credentials: "include",
+        },
+      );
 
-import { User } from "@/types/user";
+      if (!res.ok) {
+        throw new Error("Error fetching from the server.");
+      }
+      const data = await res.json();
+      const user = data.data;
+      return user;
+    },
+    refetchOnWindowFocus: false,
+  });
 
-const Onboarding = async () => {
-  const user: User = await userApi.getUser();
-
-  if (user.onboarded) {
-    redirect(`/home`);
-  } else {
-    // onboarding page should fetch user info using token
-    return <ConfirmForm user={user}></ConfirmForm>;
+  if (user) {
+    if (user?.onboarded) {
+      setUser(user);
+      redirect(`/home`);
+    } else {
+      // onboarding page should fetch user info using token
+      return <ConfirmForm user={user} setUser={setUser}></ConfirmForm>;
+    }
   }
 };
 

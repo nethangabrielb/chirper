@@ -1,6 +1,5 @@
 "use client";
 
-import { socket } from "@/socket/client";
 import useUser from "@/stores/user.store";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -58,6 +57,7 @@ let links: Array<{ title: string; url: string }> = [
 const Sidebar = ({ children }: Props) => {
   const router = useRouter();
   const setUser = useUser((state) => state.setUser);
+  const removeUser = useUser((state) => state.removeUser);
   const user = useUser((state) => state.user) as User;
   const [visible, setVisible] = useState<boolean>(false);
   const path = usePathname();
@@ -81,6 +81,7 @@ const Sidebar = ({ children }: Props) => {
         return user;
       }
     },
+    refetchOnWindowFocus: false,
   });
   const mutation = useMutation({
     mutationFn: async () => {
@@ -89,7 +90,7 @@ const Sidebar = ({ children }: Props) => {
     },
     onSuccess: (data) => {
       if (data.status === "success") {
-        socket.disconnect();
+        removeUser();
         router.push("/");
       } else {
         toast.error("Error logging out", { description: data.message });

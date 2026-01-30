@@ -3,9 +3,10 @@ export const SOCKET_EVENTS = {
 } as const;
 
 export interface ChatMessage {
-  id: string;
-  senderId: number;
-  receiverId: number;
+  id: number;
   content: string;
   createdAt: Date;
+  roomId: number;
+  receiverId: number;
+  senderId: number;
 }

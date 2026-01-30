@@ -13,6 +13,7 @@ import commentRouter from './routes/admin/commentRoutes';
 import followRouter from './routes/admin/followRoutes';
 import likesRouter from './routes/admin/likeRoutes';
 import postRouter from './routes/admin/postRoutes';
+import roomRouter from './routes/admin/roomRoutes';
 import userRouter from './routes/admin/userRoutes';
 import authRouter from './routes/guest/authRoutes';
 import { initSocket } from './sockets';
@@ -48,6 +49,7 @@ app.use('/api/posts', postRouter);
 app.use('/api/comments', commentRouter);
 app.use('/api/follows', followRouter);
 app.use('/api/likes', likesRouter);
+app.use('/api/room', roomRouter);
 
 const PORT = process.env.PORT! || 5000;
 

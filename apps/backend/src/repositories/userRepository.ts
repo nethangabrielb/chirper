@@ -29,6 +29,7 @@ const UserRepository = {
             Post: true,
           },
         },
+        rooms: true,
         Post: {
           where: {
             deleted: false,

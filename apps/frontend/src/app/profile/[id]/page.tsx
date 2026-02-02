@@ -6,7 +6,7 @@ import useFollows from "@/hooks/useFollows";
 import useUser from "@/stores/user.store";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { Calendar } from "lucide-react";
+import { Calendar, Mail } from "lucide-react";
 
 import { Activity, useEffect, useState } from "react";
 
@@ -49,24 +49,34 @@ const ProfileSideButton = ({
       );
     } else if (optimisticFollow) {
       return (
-        <ActionButton
-          className="absolute right-0 mr-4 bg-primary border border-primary! text-white hover:border-red-500! hover:bg-red-500/10! hover:text-red-500 transition-all hover:border"
-          hoverText="Unfollow"
-          onClick={() => {
-            unfollowMutation.mutate();
-          }}
-        >
-          Following
-        </ActionButton>
+        <div className="flex justify-center items-center gap-4 absolute right-0 mr-4">
+          <div className="p-1.5 rounded-full border border-border hover:bg-white/10 transition-all cursor-pointer">
+            <Mail size={24}></Mail>
+          </div>
+          <ActionButton
+            className="bg-primary h-full! border border-primary! text-white hover:border-red-500! hover:bg-red-500/10! hover:text-red-500 transition-all hover:border"
+            hoverText="Unfollow"
+            onClick={() => {
+              unfollowMutation.mutate();
+            }}
+          >
+            Following
+          </ActionButton>
+        </div>
       );
     } else if (optimisticFollow === false) {
       return (
-        <ActionButton
-          className="hover:bg-primary! border border-primary! absolute right-0 mr-4 bg-primary text-white"
-          onClick={() => followMutation.mutate()}
-        >
-          Follow
-        </ActionButton>
+        <div className="flex justify-center items-center gap-4 absolute right-0 mr-4">
+          <div className="p-1.5 rounded-full border border-border hover:bg-white/10 transition-all cursor-pointer">
+            <Mail size={24}></Mail>
+          </div>
+          <ActionButton
+            className="hover:bg-primary! h-full! border border-primary! bg-primary text-white"
+            onClick={() => followMutation.mutate()}
+          >
+            Follow
+          </ActionButton>
+        </div>
       );
     }
   }

@@ -20,6 +20,14 @@ const userSchema = z.object({
   Post: z.array(postSchema),
   followers: z.array(z.object({ id: z.number(), follower: followSchema })),
   followings: z.array(z.object({ id: z.number(), following: followSchema })),
+  rooms: z.array(
+    z.object({
+      id: z.number(),
+      users: z.array(
+        z.object({ id: z.number(), name: z.string(), username: z.string() }),
+      ),
+    }),
+  ),
 });
 
 export { userSchema };

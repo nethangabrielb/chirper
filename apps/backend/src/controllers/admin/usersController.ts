@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { decode } from 'base64-arraybuffer';
 
 import followRepository from '../../repositories/followRepository';
+import roomService from '../../services/roomService';
 import UserService from '../../services/userService';
 import { client } from '../../supabase/client';
 import type { RegistrationBody } from '../../types/auth';
@@ -28,6 +29,7 @@ const userController = (() => {
         const user: User = _req.user as User;
         const followers = await followRepository.findFollowers(user.id);
         const followings = await followRepository.findFollowings(user.id);
+        const rooms = await roomService.getUserRooms(user.id);
         const modifiedUser = {
           id: user.id,
           name: user.name,
@@ -37,6 +39,7 @@ const userController = (() => {
           onboarded: user.onboarded,
           followers,
           followings,
+          rooms,
         };
         res.json({ status: 'success', data: modifiedUser });
       } else {

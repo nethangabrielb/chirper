@@ -31,3 +31,39 @@ export function isFollowing(
     }
   }
 }
+
+export function chatroomExisted(
+  currentUserId: number,
+  visitedUserId: number,
+  rooms: Array<{
+    id: number;
+    users: Array<{ id: number; name: string; username: string }>;
+  }>,
+) {
+  const hash = new Map<number, Array<number>>();
+  let chatroom: {
+    id: number;
+    users: Array<{ id: number; name: string; username: string }>;
+  } | null = null;
+  for (const room of rooms) {
+    hash.set(room.id, []);
+
+    room.users.forEach((user) => {
+      if (currentUserId === user.id || visitedUserId === user.id) {
+        hash.set(room.id, [...(hash.get(room.id) as Array<number>), user.id]);
+      }
+    });
+
+    const currentHash = hash.get(room.id);
+
+    if (
+      currentHash?.includes(currentUserId) &&
+      currentHash?.includes(visitedUserId)
+    ) {
+      chatroom = room;
+      break;
+    }
+  }
+
+  return chatroom;
+}

@@ -49,7 +49,7 @@ app.use('/api/posts', postRouter);
 app.use('/api/comments', commentRouter);
 app.use('/api/follows', followRouter);
 app.use('/api/likes', likesRouter);
-app.use('/api/room', roomRouter);
+app.use('/api/rooms', roomRouter);
 
 const PORT = process.env.PORT! || 5000;
 

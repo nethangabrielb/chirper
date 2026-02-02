@@ -21,7 +21,13 @@ const roomRepository = {
         },
       },
       include: {
-        users: true,
+        users: {
+          select: {
+            id: true,
+            name: true,
+            username: true,
+          },
+        },
       },
     }),
 };

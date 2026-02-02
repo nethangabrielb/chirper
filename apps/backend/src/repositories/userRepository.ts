@@ -29,7 +29,17 @@ const UserRepository = {
             Post: true,
           },
         },
-        rooms: true,
+        rooms: {
+          include: {
+            users: {
+              select: {
+                id: true,
+                name: true,
+                username: true,
+              },
+            },
+          },
+        },
         Post: {
           where: {
             deleted: false,

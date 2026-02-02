@@ -3,6 +3,7 @@ import { format } from "date-fns";
 import { twMerge } from "tailwind-merge";
 
 import { FollowType } from "@/types/follow";
+import { RoomType } from "@/types/room";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -35,10 +36,7 @@ export function isFollowing(
 export function chatroomExisted(
   currentUserId: number,
   visitedUserId: number,
-  rooms: Array<{
-    id: number;
-    users: Array<{ id: number; name: string; username: string }>;
-  }>,
+  rooms: Array<RoomType>,
 ) {
   const hash = new Map<number, Array<number>>();
   let chatroom: {

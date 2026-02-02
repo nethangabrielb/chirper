@@ -22,6 +22,7 @@ import { chatroomExisted } from "@/lib/utils";
 
 import { FollowType } from "@/types/follow";
 import { PostType } from "@/types/post";
+import { RoomType } from "@/types/room";
 import { User } from "@/types/user";
 
 const ProfileSideButton = ({
@@ -39,10 +40,7 @@ const ProfileSideButton = ({
   visitedUser?: User;
   currentUserId: number;
   visitedUserId: number;
-  currentUserRooms: Array<{
-    id: number;
-    users: Array<{ id: number; name: string; username: string }>;
-  }>;
+  currentUserRooms: Array<RoomType>;
 }) => {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -60,7 +58,6 @@ const ProfileSideButton = ({
       }
     },
     onSuccess: async (res) => {
-      console.log(res);
       if (res.status === "success") {
         await queryClient.prefetchQuery({ queryKey: ["user"] });
         router.push(`/messages/${res.data.id}`);

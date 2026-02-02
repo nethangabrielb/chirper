@@ -7,6 +7,7 @@ const roomSchema = z.object({
       id: z.number(),
       name: z.string(),
       username: z.string(),
+      avatar: z.string(),
     }),
   ),
 });

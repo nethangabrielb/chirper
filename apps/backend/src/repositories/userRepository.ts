@@ -36,6 +36,7 @@ const UserRepository = {
                 id: true,
                 name: true,
                 username: true,
+                avatar: true,
               },
             },
           },

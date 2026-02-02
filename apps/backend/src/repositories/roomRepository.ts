@@ -26,6 +26,7 @@ const roomRepository = {
             id: true,
             name: true,
             username: true,
+            avatar: true,
           },
         },
       },

@@ -8,5 +8,6 @@ const roomRouter = Router();
 roomRouter.use(authMiddleware);
 
 roomRouter.post('/', roomController.createRoom);
+roomRouter.get('/users/:userId', roomController.getUserRooms);
 
 export default roomRouter;

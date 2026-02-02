@@ -140,9 +140,21 @@ const Sidebar = ({ children }: Props) => {
   return (
     <div className={cn(visible && "flex justify-center", "h-full")}>
       <Activity mode={visible ? "visible" : "hidden"}>
-        <div className="gap-[8px] lg:w-[300px] relative">
-          <div className="flex flex-col gap-[8px] py-4 lg:w-[300px] h-full fixed">
-            <div className=" pb-3 px-8">
+        <div
+          className={cn(
+            `gap-[8px] lg:w-[300px] relative`,
+            path === "/messages" && "lg:w-[50px]",
+          )}
+        >
+          <div
+            className={cn(
+              "flex flex-col gap-[8px] py-4 lg:w-[300px] h-full fixed",
+              path === "/messages" && "w-fit! lg:w-[50px] pr-4 items-center ",
+            )}
+          >
+            <div
+              className={cn("pb-3 px-8 w-fit", path === "/messages" && "px-0")}
+            >
               <Icon width={36} height={36} alt="Twitter Icon"></Icon>
             </div>
             {links.map((link) => {
@@ -150,17 +162,38 @@ const Sidebar = ({ children }: Props) => {
                 <Link
                   href={link.url}
                   key={crypto.randomUUID()}
-                  className="text-lg flex items-center gap-6 w-fit hover:bg-muted transition-all p-3 rounded-4xl px-8 "
+                  className={cn(
+                    "text-lg flex items-center gap-6 w-fit hover:bg-muted transition-all p-3 rounded-4xl px-8",
+                    path === "/messages" && "p-3!",
+                  )}
                 >
                   <NavIcon title={link.title}></NavIcon>
-                  {link.title}
+                  {
+                    <Activity
+                      mode={path === "/messages" ? "hidden" : "visible"}
+                    >
+                      <span>{link.title}</span>
+                    </Activity>
+                  }
                 </Link>
               );
             })}
-            <ActionButton className="bg-primary text-white py-3! mx-8! hover:brightness-90 hover:bg-primary!">
-              Tweet
-            </ActionButton>
-            <LogoutDropdown data={data} logoutHandler={logOut}></LogoutDropdown>
+            <Activity mode={path === "/messages" ? "hidden" : "visible"}>
+              <ActionButton
+                className={cn(
+                  "bg-primary text-white py-3! mx-8! hover:brightness-90 hover:bg-primary!",
+                  path === "/messages" && "w-fit lg:w-0!",
+                )}
+              >
+                Tweet
+              </ActionButton>
+            </Activity>
+            <LogoutDropdown
+              data={data}
+              logoutHandler={logOut}
+              className={cn(path === "/messages" && "w-fit lg:w-0!")}
+              shrinkView={path === "/messages"}
+            ></LogoutDropdown>
           </div>
         </div>
       </Activity>

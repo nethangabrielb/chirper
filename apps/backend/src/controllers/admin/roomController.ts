@@ -26,7 +26,27 @@ const roomController = (() => {
     }
   };
 
-  return { createRoom };
+  const getUserRooms = async (
+    req: Request<{ userId: string }, object, object>,
+    res: Response
+  ) => {
+    try {
+      const rooms = await roomService.getUserRooms(Number(req.params.userId));
+
+      res.json({
+        status: 'success',
+        message: 'User chat rooms fetched successfully!',
+        data: rooms,
+      });
+    } catch (err: unknown) {
+      res.json({
+        status: 'error',
+        message: err instanceof Error ? err.message : GENERIC_ERROR_MESSAGE,
+      });
+    }
+  };
+
+  return { createRoom, getUserRooms };
 })();
 
 export default roomController;

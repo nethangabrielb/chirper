@@ -11,6 +11,10 @@ const roomRepository = {
         },
       },
     }),
+  findByUserId: async (userId: number) =>
+    await prisma.room.findMany({
+      include: { users: { where: { id: userId } } },
+    }),
 };
 
 export default roomRepository;

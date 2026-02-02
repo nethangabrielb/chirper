@@ -10,6 +10,13 @@ const roomService = {
     }
     return roomReturned;
   },
+  getUserRooms: async (userId: number) => {
+    const rooms = await roomRepository.findByUserId(userId);
+    if (!rooms) {
+      throw new Error('Error fetching the database');
+    }
+    return rooms;
+  },
 };
 
 export default roomService;

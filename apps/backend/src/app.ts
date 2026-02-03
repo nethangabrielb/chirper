@@ -12,6 +12,7 @@ import '../src/config/passport';
 import commentRouter from './routes/admin/commentRoutes';
 import followRouter from './routes/admin/followRoutes';
 import likesRouter from './routes/admin/likeRoutes';
+import messageRouter from './routes/admin/messageRoutes';
 import postRouter from './routes/admin/postRoutes';
 import roomRouter from './routes/admin/roomRoutes';
 import userRouter from './routes/admin/userRoutes';
@@ -50,6 +51,7 @@ app.use('/api/comments', commentRouter);
 app.use('/api/follows', followRouter);
 app.use('/api/likes', likesRouter);
 app.use('/api/rooms', roomRouter);
+app.use('/api/messages', messageRouter);
 
 const PORT = process.env.PORT! || 5000;
 

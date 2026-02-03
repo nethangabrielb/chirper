@@ -143,17 +143,21 @@ const Sidebar = ({ children }: Props) => {
         <div
           className={cn(
             `gap-[8px] lg:w-[300px] relative`,
-            path === "/messages" && "lg:w-[50px]",
+            path.includes("/messages") && "lg:w-[50px]",
           )}
         >
           <div
             className={cn(
               "flex flex-col gap-[8px] py-4 lg:w-[300px] h-full fixed",
-              path === "/messages" && "w-fit! lg:w-[50px] pr-4 items-center ",
+              path.includes("/messages") &&
+                "w-fit! lg:w-[50px] pr-4 items-center ",
             )}
           >
             <div
-              className={cn("pb-3 px-8 w-fit", path === "/messages" && "px-0")}
+              className={cn(
+                "pb-3 px-8 w-fit",
+                path.includes("/messages") && "px-0",
+              )}
             >
               <Icon width={36} height={36} alt="Twitter Icon"></Icon>
             </div>
@@ -164,13 +168,13 @@ const Sidebar = ({ children }: Props) => {
                   key={crypto.randomUUID()}
                   className={cn(
                     "text-lg flex items-center gap-6 w-fit hover:bg-muted transition-all p-3 rounded-4xl px-8",
-                    path === "/messages" && "p-3!",
+                    path.includes("/messages") && "p-3!",
                   )}
                 >
                   <NavIcon title={link.title}></NavIcon>
                   {
                     <Activity
-                      mode={path === "/messages" ? "hidden" : "visible"}
+                      mode={path.includes("/messages") ? "hidden" : "visible"}
                     >
                       <span>{link.title}</span>
                     </Activity>
@@ -178,11 +182,11 @@ const Sidebar = ({ children }: Props) => {
                 </Link>
               );
             })}
-            <Activity mode={path === "/messages" ? "hidden" : "visible"}>
+            <Activity mode={path.includes("/messages") ? "hidden" : "visible"}>
               <ActionButton
                 className={cn(
                   "bg-primary text-white py-3! mx-8! hover:brightness-90 hover:bg-primary!",
-                  path === "/messages" && "w-fit lg:w-0!",
+                  path.includes("/messages") && "w-fit lg:w-0!",
                 )}
               >
                 Tweet
@@ -191,8 +195,8 @@ const Sidebar = ({ children }: Props) => {
             <LogoutDropdown
               data={data}
               logoutHandler={logOut}
-              className={cn(path === "/messages" && "w-fit lg:w-0!")}
-              shrinkView={path === "/messages"}
+              className={cn(path.includes("/messages") && "w-fit lg:w-0!")}
+              shrinkView={path.includes("/messages")}
             ></LogoutDropdown>
           </div>
         </div>

@@ -21,9 +21,9 @@ const Messages = () => {
         />
       </Head>
       <div className="lg:w-[70vw] border-l border-r border-l-border border-r-border h-full relative ml-4">
-        <div className="w-[35%] h-full flex flex-col gap-8 border-r border-r-border p-4">
+        <div className="w-[35%] h-full flex flex-col gap-8 border-r border-r-border">
           <div>
-            <h1 className="text-text text-xl font-bold">Chat</h1>
+            <h1 className="text-text text-xl font-bold p-4">Chat</h1>
           </div>
 
           {/* Chat columns with chat rows, where I will render all the chats the user have */}

@@ -3,7 +3,7 @@ import { User } from "@/types/user";
 const roomApi = (() => {
   const getByUserId = async (userId: number) => {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API}/api/rooms/user/${userId}`,
+      `${process.env.NEXT_PUBLIC_API}/api/rooms/users/${userId}`,
       {
         credentials: "include",
       },

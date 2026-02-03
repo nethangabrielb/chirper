@@ -1,5 +1,7 @@
 "use client";
 
+import ChatRows from "@/app/messages/components/chat-rows";
+
 import { useEffect } from "react";
 
 import Head from "next/head";
@@ -18,9 +20,15 @@ const Messages = () => {
           content="Home page of my attempt to make a clone of Twitter"
         />
       </Head>
-      <div className="lg:w-[60vw] border-l border-r border-l-border border-r-border h-full relative ml-4">
-        {/* Chat columns with chat rows, where I will render all the chats the user have */}
+      <div className="lg:w-[70vw] border-l border-r border-l-border border-r-border h-full relative ml-4">
+        <div className="w-[35%] h-full flex flex-col gap-8 border-r border-r-border p-4">
+          <div>
+            <h1 className="text-text text-xl font-bold">Chat</h1>
+          </div>
 
+          {/* Chat columns with chat rows, where I will render all the chats the user have */}
+          <ChatRows></ChatRows>
+        </div>
         {/* Render the chatroom from the chat rows */}
       </div>
     </>

@@ -1,8 +1,12 @@
-import { User } from "../../apps/backend/src/types/user";
-
-export const SOCKET_EVENTS = {
-  MESSAGE: "message",
-} as const;
+export interface User {
+  id: number;
+  name: string;
+  username: string;
+  email: string;
+  password: string;
+  avatar?: string | null;
+  onboarded: boolean;
+}
 
 export interface ChatMessage {
   id: number;

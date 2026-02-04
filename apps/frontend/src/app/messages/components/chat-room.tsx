@@ -3,6 +3,7 @@
 import Message from "@/app/messages/components/message";
 import useRooms from "@/app/messages/hooks/useRooms";
 import useBoxHeight from "@/hooks/useBoxHeight";
+import messageEventsHandler from "@/socket/handlers/message";
 import useUser from "@/stores/user.store";
 import { useForm } from "react-hook-form";
 
@@ -29,21 +30,31 @@ const ChatRoom = ({
   const { chatRooms } = useRooms();
   const typeInputRef = useRef<HTMLDivElement>(null);
   const { height, setHeight } = useBoxHeight();
+  const { getValues, register, handleSubmit, watch } = useForm();
 
-  const currentRoom = chatRooms?.filter(
+  const currentRoom = chatRooms?.find(
     (room: RoomType) => room.id === Number(paramsId),
   );
   const roomOtherUser =
     currentRoom &&
-    currentRoom[0]?.users?.find((user: User) => user.id !== currentUser.id);
-
-  const { getValues, register, handleSubmit, watch } = useForm();
+    currentRoom?.users?.find((user: User) => user.id !== currentUser.id);
 
   useEffect(() => {
     if (typeInputRef?.current?.getBoundingClientRect()) {
       setHeight(typeInputRef?.current?.getBoundingClientRect().height);
     }
   }, []);
+
+  const messageHandler = () => {
+    const values = getValues();
+
+    messageEventsHandler.create({
+      senderId: currentUser?.id,
+      receiverId: roomOtherUser?.id,
+      content: values.message,
+      roomId: currentRoom.id,
+    });
+  };
 
   return (
     <div className="flex flex-col w-[65%] h-full p-4 gap-2 relative">
@@ -81,7 +92,7 @@ const ChatRoom = ({
       ))}
       <div style={{ height: `${height}px` }}></div>
       <div className="w-full absolute bottom-0 left-0 p-4" ref={typeInputRef}>
-        <form action="">
+        <form onSubmit={handleSubmit(messageHandler)}>
           <TextInput
             className="bg-darker/60 w-full rounded-4xl p-4"
             placeholder="Write your message"

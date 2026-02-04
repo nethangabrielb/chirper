@@ -22,10 +22,14 @@ const TextInput = ({ className, placeholder, register, watch }: Props) => {
       <div
         className={cn(
           "bg-white rounded-full p-2 w-fit absolute right-0 top-0 bottom-0 h-fit flex my-auto mr-2 justify-center items-center transition-all",
-          watch().message.length >= 1 ? "scale-100" : "scale-0",
+          watch().message && watch().message.length >= 1
+            ? "scale-100"
+            : "scale-0",
         )}
       >
-        <SendHorizontal color="black"></SendHorizontal>
+        <button>
+          <SendHorizontal color="black"></SendHorizontal>
+        </button>
       </div>
     </div>
   );

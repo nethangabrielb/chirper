@@ -1,13 +1,18 @@
+import { ChatMessage } from '@twitter-clone/shared';
 import { Server, Socket } from 'socket.io';
 
+import messageService from '../services/messageService';
+
 export const initSocket = (io: Server) => {
-  console.log('Socket logic initialized. Waiting for connections...');
-
   io.on('connection', (socket: Socket) => {
-    console.log(`Connected with socket ${socket.id} `);
-
-    socket.on('disconnect', reason => {
-      console.log(`Disconnected with socket ${socket.id}`, reason);
+    socket.on('newMessage', async (data: ChatMessage, callback) => {
+      const message = await messageService.createMessage(data);
+      if (message) {
+        callback({
+          success: 'ok',
+          message,
+        });
+      }
     });
   });
 };

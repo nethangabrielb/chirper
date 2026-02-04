@@ -44,7 +44,7 @@ const MessagesSlug = ({ params }: { params: Promise<{ id: string }> }) => {
         </div>
 
         {/* Render the chatroom from the chat rows */}
-        <ChatRoom messages={data?.data}></ChatRoom>
+        <ChatRoom messages={data?.data} paramsId={Number(id)}></ChatRoom>
       </div>
     </>
   );

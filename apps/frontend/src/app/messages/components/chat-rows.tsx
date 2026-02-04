@@ -12,8 +12,6 @@ const ChatRows = ({ params }: { params?: number }) => {
   const { chatRooms } = useRooms();
   const currentUser = useUser((state) => state.user) as User;
 
-  console.log(params);
-
   return (
     <div className="flex flex-col">
       {chatRooms?.map((room: RoomType) => {
@@ -32,7 +30,7 @@ const ChatRows = ({ params }: { params?: number }) => {
             <img
               src={otherUser?.avatar}
               alt={`@${otherUser?.username}'s avatar`}
-              className="rounded-full size-[56px] my-2"
+              className="rounded-full size-[56px] my-2 object-cover"
             />
             <div className="flex flex-col w-full h-full justify-center relative">
               <p>{otherUser?.name}</p>

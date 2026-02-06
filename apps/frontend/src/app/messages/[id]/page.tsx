@@ -1,8 +1,8 @@
 "use client";
 
-import ChatRoom from "@/app/messages/components/chat-room";
+import ChatRoom, { newMessage } from "@/app/messages/components/chat-room";
 import ChatRows from "@/app/messages/components/chat-rows";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { use, useEffect } from "react";
 
@@ -10,15 +10,31 @@ import Head from "next/head";
 
 import messageApi from "@/lib/api/message";
 
+import { MessageType } from "@/types/message";
+
 const MessagesSlug = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = use(params);
   const { data } = useQuery({
     queryKey: ["messages", id],
     queryFn: async () => {
       const messages = await messageApi.getMessagesByRoom(Number(id));
-      return messages;
+      return messages.data;
     },
   });
+  const queryClient = useQueryClient();
+
+  const updateMessagesOptimistic = (
+    newMessage: newMessage,
+    element: HTMLDivElement,
+  ) => {
+    queryClient.setQueryData(["messages", id], (prev: Array<MessageType>) => {
+      if (!prev) return [newMessage];
+      return [...prev, newMessage];
+    });
+    setTimeout(() => {
+      element.scrollIntoView({ behavior: "smooth" });
+    }, 100);
+  };
 
   useEffect(() => {
     document.title = "Twitter / Messages";
@@ -44,7 +60,11 @@ const MessagesSlug = ({ params }: { params: Promise<{ id: string }> }) => {
         </div>
 
         {/* Render the chatroom from the chat rows */}
-        <ChatRoom messages={data?.data} paramsId={Number(id)}></ChatRoom>
+        <ChatRoom
+          messages={data && data}
+          paramsId={Number(id)}
+          updateMessagesOptimistic={updateMessagesOptimistic}
+        ></ChatRoom>
       </div>
     </>
   );

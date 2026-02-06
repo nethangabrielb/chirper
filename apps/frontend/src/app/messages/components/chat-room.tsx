@@ -5,6 +5,7 @@ import useRooms from "@/app/messages/hooks/useRooms";
 import useBoxHeight from "@/hooks/useBoxHeight";
 import messageEventsHandler from "@/socket/handlers/message";
 import useUser from "@/stores/user.store";
+import { useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 
 import { useEffect, useRef } from "react";
@@ -18,19 +19,35 @@ import { MessageType } from "@/types/message";
 import { RoomType } from "@/types/room";
 import { User } from "@/types/user";
 
+export interface newMessage {
+  receiverId: number;
+  senderId: number;
+  content: string;
+  roomId: number;
+  loading?: boolean;
+  tempId?: string;
+}
+
 const ChatRoom = ({
   messages,
   paramsId,
+  updateMessagesOptimistic,
 }: {
   messages: Array<MessageType>;
   paramsId?: number;
+  updateMessagesOptimistic: (
+    message: newMessage,
+    element: HTMLDivElement,
+  ) => void;
 }) => {
   const router = useRouter();
   const currentUser = useUser((state) => state.user) as User;
   const { chatRooms } = useRooms();
   const typeInputRef = useRef<HTMLDivElement>(null);
+  const bottomMessages = useRef<HTMLDivElement>(null);
   const { height, setHeight } = useBoxHeight();
   const { getValues, register, handleSubmit, watch } = useForm();
+  const queryClient = useQueryClient();
 
   const currentRoom = chatRooms?.find(
     (room: RoomType) => room.id === Number(paramsId),
@@ -45,61 +62,101 @@ const ChatRoom = ({
     }
   }, []);
 
+  useEffect(() => {
+    requestAnimationFrame(() => {
+      bottomMessages.current?.scrollIntoView({ behavior: "auto" });
+    });
+  }, [paramsId]);
+
   const messageHandler = () => {
     const values = getValues();
 
-    messageEventsHandler.create({
-      senderId: currentUser?.id,
-      receiverId: roomOtherUser?.id,
-      content: values.message,
-      roomId: currentRoom.id,
-    });
+    const id = crypto.randomUUID();
+
+    updateMessagesOptimistic(
+      {
+        senderId: currentUser?.id,
+        receiverId: roomOtherUser?.id,
+        content: values.message,
+        roomId: currentRoom.id,
+        loading: true,
+        tempId: id,
+      },
+      bottomMessages.current as HTMLDivElement,
+    );
+
+    messageEventsHandler.create(
+      {
+        senderId: currentUser?.id,
+        receiverId: roomOtherUser?.id,
+        content: values.message,
+        roomId: currentRoom.id,
+      },
+      queryClient,
+      paramsId!,
+      id,
+    );
   };
 
   return (
-    <div className="flex flex-col w-[65%] h-full p-4 gap-2 relative">
-      <div className="flex gap-4 items-center backdrop-blur-lg absolute top-0 mt-4">
-        <img
-          src={roomOtherUser?.avatar}
-          alt={`@${roomOtherUser?.username}'s avatar`}
-          className="rounded-full size-[64px] my-2 object-cover"
-        />
-        <h1 className="font-bold text-xl">{roomOtherUser?.name}</h1>
-      </div>
-      <div className="flex flex-col items-center pt-28 pb-8">
-        <img
-          src={roomOtherUser?.avatar}
-          alt={`@${roomOtherUser?.username}'s avatar`}
-          className="rounded-full size-[64px] my-2 object-cover"
-        />
-        <div className="flex flex-col items-center">
+    <div className="flex flex-col w-[65%] h-full gap-2 relative pr-2 py-2">
+      <div
+        className="flex flex-col gap-2 overflow-y-scroll p-4 [&::-webkit-scrollbar]:w-2
+        [&::-webkit-scrollbar]:max-h-[90%]
+        [&::-webkit-scrollbar-track]:rounded-xl
+      [&::-webkit-scrollbar-track]:bg-background
+        [&::-webkit-scrollbar-thumb]:rounded-xl
+      [&::-webkit-scrollbar-thumb]:bg-accent"
+      >
+        <div className="flex gap-4 items-center backdrop-blur-lg absolute top-0 mt-4">
+          <img
+            src={roomOtherUser?.avatar}
+            alt={`@${roomOtherUser?.username}'s avatar`}
+            className="rounded-full size-[64px] my-2 object-cover"
+          />
           <h1 className="font-bold text-xl">{roomOtherUser?.name}</h1>
-          <p className="text-darker text-sm">@{roomOtherUser?.username}</p>
         </div>
-        <ActionButton
-          onClick={() => router.push(`/profile/${roomOtherUser?.id}`)}
-          className="mt-4 font-bold hover:bg-neutral-300!"
-        >
-          View Profile
-        </ActionButton>
-      </div>
-      {messages?.map((message) => (
-        <Message
-          message={message.content}
-          key={message.id}
-          className={`${currentUser.id === message.senderId ? "bg-primary self-end" : "bg-darker"}`}
-        ></Message>
-      ))}
-      <div style={{ height: `${height}px` }}></div>
-      <div className="w-full absolute bottom-0 left-0 p-4" ref={typeInputRef}>
-        <form onSubmit={handleSubmit(messageHandler)}>
-          <TextInput
-            className="bg-darker/60 w-full rounded-4xl p-4"
-            placeholder="Write your message"
-            register={register}
-            watch={watch}
-          ></TextInput>
-        </form>
+        <div className="flex flex-col items-center pt-28 pb-8">
+          <img
+            src={roomOtherUser?.avatar}
+            alt={`@${roomOtherUser?.username}'s avatar`}
+            className="rounded-full size-[64px] my-2 object-cover"
+          />
+          <div className="flex flex-col items-center">
+            <h1 className="font-bold text-xl">{roomOtherUser?.name}</h1>
+            <p className="text-darker text-sm">@{roomOtherUser?.username}</p>
+          </div>
+          <ActionButton
+            onClick={() => router.push(`/profile/${roomOtherUser?.id}`)}
+            className="mt-4 font-bold hover:bg-neutral-300!"
+          >
+            View Profile
+          </ActionButton>
+        </div>
+        {messages?.map((message) => (
+          <Message
+            message={message.content}
+            key={message.id ?? message.tempId}
+            className={`${currentUser.id === message.senderId ? "bg-primary self-end" : "bg-accent"}`}
+            loading={message.loading}
+          ></Message>
+        ))}
+        <div className="mb-auto h-[4px]! flex-none"></div>
+        <div
+          style={{ height: `${height / 2}px` }}
+          className="flex-none mt-auto"
+          ref={bottomMessages}
+        ></div>
+        <div className="w-full absolute bottom-0 left-0 p-4" ref={typeInputRef}>
+          <form onSubmit={handleSubmit(messageHandler)}>
+            <TextInput
+              className="bg-accent w-[98%] rounded-4xl p-4 pr-4 text-white shadow-[0_29px_10px_10px_rgba(0,0,0,1)]"
+              placeholder="Write your message"
+              register={register}
+              watch={watch}
+            ></TextInput>
+          </form>
+        </div>
       </div>
     </div>
   );

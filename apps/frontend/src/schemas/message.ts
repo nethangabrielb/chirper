@@ -7,4 +7,6 @@ export const messageSchema = z.object({
   roomId: z.number(),
   receiverId: z.number(),
   senderId: z.number(),
+  loading: z.boolean().optional(),
+  tempId: z.string().optional(),
 });

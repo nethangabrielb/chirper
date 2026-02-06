@@ -3,6 +3,7 @@
 import Message from "@/app/messages/components/message";
 import useRooms from "@/app/messages/hooks/useRooms";
 import useBoxHeight from "@/hooks/useBoxHeight";
+import { socket } from "@/socket/client";
 import messageEventsHandler from "@/socket/handlers/message";
 import useUser from "@/stores/user.store";
 import { useQueryClient } from "@tanstack/react-query";
@@ -46,7 +47,7 @@ const ChatRoom = ({
   const typeInputRef = useRef<HTMLDivElement>(null);
   const bottomMessages = useRef<HTMLDivElement>(null);
   const { height, setHeight } = useBoxHeight();
-  const { getValues, register, handleSubmit, watch } = useForm();
+  const { getValues, register, handleSubmit, watch, setValue } = useForm();
   const queryClient = useQueryClient();
 
   const currentRoom = chatRooms?.find(
@@ -68,8 +69,19 @@ const ChatRoom = ({
     });
   }, [paramsId]);
 
+  useEffect(() => {
+    socket.emit("joinRoom", String(paramsId));
+
+    socket.on("newMessage", (message) => {
+      console.log(bottomMessages.current);
+      updateMessagesOptimistic(message, bottomMessages.current!);
+    });
+  }, [paramsId, bottomMessages]);
+
   const messageHandler = () => {
     const values = getValues();
+
+    setValue("message", "");
 
     const id = crypto.randomUUID();
 

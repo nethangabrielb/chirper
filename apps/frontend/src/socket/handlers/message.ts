@@ -28,7 +28,6 @@ const messageEventsHandler = {
           queryClient.setQueryData(
             ["messages", String(id)],
             (prev: Array<MessageType>) => {
-              console.log(prev);
               const updated = prev.map((message: newMessage) => {
                 if (message.tempId === tempMessageId) {
                   return { ...message, loading: false };

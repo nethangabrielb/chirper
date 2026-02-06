@@ -26,14 +26,14 @@ const MessagesSlug = ({ params }: { params: Promise<{ id: string }> }) => {
 
   const updateMessagesOptimistic = (
     newMessage: newMessage,
-    element: HTMLDivElement,
+    element?: HTMLDivElement,
   ) => {
     queryClient.setQueryData(["messages", id], (prev: Array<MessageType>) => {
       if (!prev) return [newMessage];
       return [...prev, newMessage];
     });
     setTimeout(() => {
-      element.scrollIntoView({ behavior: "smooth" });
+      element && element.scrollIntoView({ behavior: "smooth" });
     }, 100);
   };
 

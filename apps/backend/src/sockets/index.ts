@@ -13,6 +13,11 @@ export const initSocket = (io: Server) => {
           message,
         });
       }
+      socket.to(String(message.roomId)).emit('newMessage', message);
+    });
+
+    socket.on('joinRoom', (roomId: string) => {
+      socket.join(roomId);
     });
   });
 };

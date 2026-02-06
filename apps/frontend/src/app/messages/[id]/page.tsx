@@ -20,6 +20,7 @@ const MessagesSlug = ({ params }: { params: Promise<{ id: string }> }) => {
       const messages = await messageApi.getMessagesByRoom(Number(id));
       return messages.data;
     },
+    refetchOnWindowFocus: false,
   });
   const queryClient = useQueryClient();
 

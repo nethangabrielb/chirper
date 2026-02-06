@@ -120,11 +120,19 @@ const ChatRoom = ({
         [&::-webkit-scrollbar-thumb]:rounded-xl
       [&::-webkit-scrollbar-thumb]:bg-accent"
       >
-        <div className="flex gap-4 items-center backdrop-blur-lg absolute top-0 mt-4">
+        <div
+          className="flex gap-4 items-center absolute left-0 pl-4 z-100 top-0 pt-4 pb-1 backdrop-blur-xs"
+          style={{
+            WebkitMaskImage:
+              "linear-gradient(to bottom, rgba(0,0,0,1) 90%, rgba(0,0,0,0) 100%)",
+            maskImage:
+              "linear-gradient(to bottom, rgba(0,0,0,1) 90%, rgba(0,0,0,0) 100%)",
+          }}
+        >
           <img
             src={roomOtherUser?.avatar}
             alt={`@${roomOtherUser?.username}'s avatar`}
-            className="rounded-full size-[64px] my-2 object-cover"
+            className="rounded-full size-[64px] my-2 object-cover bg-background"
           />
           <h1 className="font-bold text-xl">{roomOtherUser?.name}</h1>
         </div>

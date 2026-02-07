@@ -81,12 +81,12 @@ const ChatRoom = ({
   }, []);
 
   useEffect(() => {
-    socket.emit("joinRoom", String(paramsId));
+    socket.emit("joinRoom", String(paramsId), currentUser?.id);
 
     return () => {
-      socket.emit("leaveRoom", String(paramsId));
+      socket.emit("leaveRoom", String(paramsId), currentUser?.id);
     };
-  }, [paramsId]);
+  }, [paramsId, currentUser?.id]);
 
   const messageHandler = () => {
     const values = getValues();

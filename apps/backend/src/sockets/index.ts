@@ -3,6 +3,7 @@ import { Server, Socket } from 'socket.io';
 
 import { isSocketValid } from '../middlewares/authMiddleware';
 import messageService from '../services/messageService';
+import roomService from '../services/roomService';
 import { validateEventSender } from '../utils/validateEventSender';
 
 export const initSocket = (io: Server) => {
@@ -19,7 +20,6 @@ export const initSocket = (io: Server) => {
       'newMessage',
       async (data: ChatMessage, senderId: number, callback) => {
         if (validateEventSender(senderId, socket.data.userId)) {
-          console.log('Valid!');
           const message = await messageService.createMessage(data);
 
           if (message) {
@@ -35,12 +35,34 @@ export const initSocket = (io: Server) => {
       }
     );
 
-    socket.on('joinRoom', (roomId: string) => {
-      socket.join(roomId);
+    socket.on('joinRoom', async (roomId: string, senderId: number) => {
+      if (validateEventSender(senderId, socket.data.userId)) {
+        // Check if this user is among the users associated in the room
+        const rooms = await roomService.getUserRooms(senderId);
+        if (rooms) {
+          const roomToJoin = rooms.find(room => room.id === Number(roomId));
+          if (roomToJoin) {
+            socket.join(roomId);
+          } else {
+            console.log('User is not a part of the room.');
+          }
+        }
+      }
     });
 
-    socket.on('leaveRoom', (roomId: string) => {
-      socket.leave(roomId);
+    socket.on('leaveRoom', async (roomId: string, senderId: number) => {
+      if (validateEventSender(senderId, socket.data.userId)) {
+        // Check if this user is among the users associated in the room
+        const rooms = await roomService.getUserRooms(senderId);
+        if (rooms) {
+          const roomToJoin = rooms.find(room => room.id === Number(roomId));
+          if (roomToJoin) {
+            socket.leave(roomId);
+          } else {
+            console.log('User is not a part of the room.');
+          }
+        }
+      }
     });
   });
 };

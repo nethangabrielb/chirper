@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 
+import cookie from 'cookie';
 import jwt from 'jsonwebtoken';
+import { Socket } from 'socket.io';
 
 import type { User } from '../types/user';
 
@@ -25,5 +27,18 @@ export const authMiddleware = async (
     res
       .status(403)
       .json({ status: 'error', message: 'Invalid or expired token' });
+  }
+};
+
+export const isSocketValid = (socket: Socket): boolean => {
+  const cookies = cookie.parseCookie(socket.handshake.headers.cookie ?? '');
+  const token = cookies.token as string;
+
+  const isValid = jwt.verify(token, process.env.JWT_SECRET!);
+
+  if (isValid) {
+    return true;
+  } else {
+    return false;
   }
 };

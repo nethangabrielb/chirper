@@ -5,4 +5,5 @@ export const socket = io(process.env.NEXT_PUBLIC_API as string, {
   reconnection: true,
   reconnectionAttempts: 5,
   transports: ["websocket"],
+  withCredentials: true,
 });

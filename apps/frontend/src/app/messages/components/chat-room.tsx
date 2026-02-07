@@ -78,7 +78,7 @@ const ChatRoom = ({
     return () => {
       socket.off("newMessage", updateMessage);
     };
-  }, []);
+  }, [bottomMessages]);
 
   useEffect(() => {
     socket.emit("joinRoom", String(paramsId), currentUser?.id);

@@ -70,13 +70,23 @@ const ChatRoom = ({
   }, [paramsId]);
 
   useEffect(() => {
+    const updateMessage = (message: MessageType) => {
+      updateMessagesOptimistic(message, bottomMessages.current!);
+    };
+    socket.on("newMessage", updateMessage);
+
+    return () => {
+      socket.off("newMessage", updateMessage);
+    };
+  }, []);
+
+  useEffect(() => {
     socket.emit("joinRoom", String(paramsId));
 
-    socket.on("newMessage", (message) => {
-      console.log(bottomMessages.current);
-      updateMessagesOptimistic(message, bottomMessages.current!);
-    });
-  }, [paramsId, bottomMessages]);
+    return () => {
+      socket.emit("leaveRoom", String(paramsId));
+    };
+  }, [paramsId]);
 
   const messageHandler = () => {
     const values = getValues();
@@ -107,6 +117,7 @@ const ChatRoom = ({
       queryClient,
       paramsId!,
       id,
+      currentUser?.id,
     );
   };
 

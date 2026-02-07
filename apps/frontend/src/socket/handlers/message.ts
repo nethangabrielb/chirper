@@ -1,0 +1,49 @@
+import { newMessage } from "@/app/messages/components/chat-room";
+import { socket } from "@/socket/client";
+import { QueryClient } from "@tanstack/react-query";
+
+import { MessageType } from "@/types/message";
+
+const messageEventsHandler = {
+  create: (
+    newMessage: newMessage,
+    queryClient: QueryClient,
+    id: number,
+    tempMessageId: string,
+    senderId: number,
+  ) => {
+    socket.emit(
+      "newMessage",
+      newMessage,
+      senderId,
+      (response: {
+        success: boolean;
+        message: {
+          receiverId: number;
+          senderId: number;
+          content: string;
+          roomId: number;
+          id: number;
+        };
+      }) => {
+        if (response.success) {
+          queryClient.setQueryData(
+            ["messages", String(id)],
+            (prev: Array<MessageType>) => {
+              const updated = prev.map((message: newMessage) => {
+                if (message.tempId === tempMessageId) {
+                  return { ...message, loading: false };
+                } else {
+                  return message;
+                }
+              });
+              return [...updated];
+            },
+          );
+        }
+      },
+    );
+  },
+};
+
+export default messageEventsHandler;

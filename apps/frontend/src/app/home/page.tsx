@@ -40,13 +40,6 @@ const Home = () => {
     await queryClient.refetchQueries({ queryKey: ["posts"] });
   };
 
-  useEffect(() => {
-    const refetchUser = async () => {
-      await queryClient.refetchQueries({ queryKey: ["user"] });
-    };
-    refetchUser();
-  }, []);
-
   return (
     <>
       <Head>

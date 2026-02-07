@@ -45,9 +45,10 @@ export type ConfirmUser = z.infer<typeof UserSchema>;
 
 type Props = {
   user: User;
+  setUser: (user: User) => void;
 };
 
-const ConfirmForm = ({ user }: Props) => {
+const ConfirmForm = ({ user, setUser }: Props) => {
   const router = useRouter();
   const [mouseEnter, setMouseEnter] = useState<boolean>(false);
   const [filePreview, setFilePreview] = useState<File | null>(null);
@@ -92,6 +93,7 @@ const ConfirmForm = ({ user }: Props) => {
       if (data.status === "error") {
         toast.error(data.message);
       } else {
+        setUser(user);
         router.push("/home");
       }
     },

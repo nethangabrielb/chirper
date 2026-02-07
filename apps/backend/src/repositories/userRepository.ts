@@ -29,6 +29,18 @@ const UserRepository = {
             Post: true,
           },
         },
+        rooms: {
+          include: {
+            users: {
+              select: {
+                id: true,
+                name: true,
+                username: true,
+                avatar: true,
+              },
+            },
+          },
+        },
         Post: {
           where: {
             deleted: false,

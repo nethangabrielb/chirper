@@ -3,6 +3,7 @@ import { format } from "date-fns";
 import { twMerge } from "tailwind-merge";
 
 import { FollowType } from "@/types/follow";
+import { RoomType } from "@/types/room";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -30,4 +31,37 @@ export function isFollowing(
       return { following: false, follow: isUserFollowing };
     }
   }
+}
+
+export function chatroomExisted(
+  currentUserId: number,
+  visitedUserId: number,
+  rooms: Array<RoomType>,
+) {
+  const hash = new Map<number, Array<number>>();
+  let chatroom: {
+    id: number;
+    users: Array<{ id: number; name: string; username: string }>;
+  } | null = null;
+  for (const room of rooms) {
+    hash.set(room.id, []);
+
+    room.users.forEach((user) => {
+      if (currentUserId === user.id || visitedUserId === user.id) {
+        hash.set(room.id, [...(hash.get(room.id) as Array<number>), user.id]);
+      }
+    });
+
+    const currentHash = hash.get(room.id);
+
+    if (
+      currentHash?.includes(currentUserId) &&
+      currentHash?.includes(visitedUserId)
+    ) {
+      chatroom = room;
+      break;
+    }
+  }
+
+  return chatroom;
 }

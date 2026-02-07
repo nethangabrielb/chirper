@@ -1,15 +1,13 @@
 "use client";
 
 import useUser from "@/stores/user.store";
-import { useQuery } from "@tanstack/react-query";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { Activity, ReactNode, useEffect, useState } from "react";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import { ActionButton } from "@/components/button";
 import Icon from "@/components/icon";
@@ -59,27 +57,31 @@ let links: Array<{ title: string; url: string }> = [
 const Sidebar = ({ children }: Props) => {
   const router = useRouter();
   const setUser = useUser((state) => state.setUser);
+  const removeUser = useUser((state) => state.removeUser);
   const user = useUser((state) => state.user) as User;
   const [visible, setVisible] = useState<boolean>(false);
   const path = usePathname();
   const { data } = useQuery({
     queryKey: ["user"],
     queryFn: async () => {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API}/api/users?current=true`,
-        {
-          credentials: "include",
-        },
-      );
+      if (path !== "/") {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API}/api/users?current=true`,
+          {
+            credentials: "include",
+          },
+        );
 
-      if (!res.ok) {
-        throw new Error("Error fetching from the server.");
+        if (!res.ok) {
+          throw new Error("Error fetching from the server.");
+        }
+        const data = await res.json();
+        const user = data.data;
+        setUser(user);
+        return user;
       }
-      const data = await res.json();
-      const user = data.data;
-      setUser(user);
-      return user;
     },
+    refetchOnWindowFocus: false,
   });
   const mutation = useMutation({
     mutationFn: async () => {
@@ -88,6 +90,7 @@ const Sidebar = ({ children }: Props) => {
     },
     onSuccess: (data) => {
       if (data.status === "success") {
+        removeUser();
         router.push("/");
       } else {
         toast.error("Error logging out", { description: data.message });
@@ -137,9 +140,25 @@ const Sidebar = ({ children }: Props) => {
   return (
     <div className={cn(visible && "flex justify-center", "h-full")}>
       <Activity mode={visible ? "visible" : "hidden"}>
-        <div className="gap-[8px] lg:w-[300px] relative">
-          <div className="flex flex-col gap-[8px] py-4 lg:w-[300px] h-full fixed">
-            <div className=" pb-3 px-8">
+        <div
+          className={cn(
+            `gap-[8px] lg:w-[300px] relative`,
+            path.includes("/messages") && "lg:w-[50px]",
+          )}
+        >
+          <div
+            className={cn(
+              "flex flex-col gap-[8px] py-4 lg:w-[300px] h-full fixed",
+              path.includes("/messages") &&
+                "w-fit! lg:w-[50px] pr-4 items-center ",
+            )}
+          >
+            <div
+              className={cn(
+                "pb-3 px-8 w-fit",
+                path.includes("/messages") && "px-0",
+              )}
+            >
               <Icon width={36} height={36} alt="Twitter Icon"></Icon>
             </div>
             {links.map((link) => {
@@ -147,17 +166,38 @@ const Sidebar = ({ children }: Props) => {
                 <Link
                   href={link.url}
                   key={crypto.randomUUID()}
-                  className="text-lg flex items-center gap-6 w-fit hover:bg-muted transition-all p-3 rounded-4xl px-8 "
+                  className={cn(
+                    "text-lg flex items-center gap-6 w-fit hover:bg-muted transition-all p-3 rounded-4xl px-8",
+                    path.includes("/messages") && "p-3!",
+                  )}
                 >
                   <NavIcon title={link.title}></NavIcon>
-                  {link.title}
+                  {
+                    <Activity
+                      mode={path.includes("/messages") ? "hidden" : "visible"}
+                    >
+                      <span>{link.title}</span>
+                    </Activity>
+                  }
                 </Link>
               );
             })}
-            <ActionButton className="bg-primary text-white py-3! mx-8! hover:brightness-90 hover:bg-primary!">
-              Tweet
-            </ActionButton>
-            <LogoutDropdown data={data} logoutHandler={logOut}></LogoutDropdown>
+            <Activity mode={path.includes("/messages") ? "hidden" : "visible"}>
+              <ActionButton
+                className={cn(
+                  "bg-primary text-white py-3! mx-8! hover:brightness-90 hover:bg-primary!",
+                  path.includes("/messages") && "w-fit lg:w-0!",
+                )}
+              >
+                Tweet
+              </ActionButton>
+            </Activity>
+            <LogoutDropdown
+              data={data}
+              logoutHandler={logOut}
+              className={cn(path.includes("/messages") && "w-fit lg:w-0!")}
+              shrinkView={path.includes("/messages")}
+            ></LogoutDropdown>
           </div>
         </div>
       </Activity>

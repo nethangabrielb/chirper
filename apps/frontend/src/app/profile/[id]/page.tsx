@@ -4,9 +4,9 @@ import FeedPost from "@/app/home/components/feed-post";
 import { FeedControlBtn } from "@/app/home/page";
 import useFollows from "@/hooks/useFollows";
 import useUser from "@/stores/user.store";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { Calendar } from "lucide-react";
+import { Calendar, Mail } from "lucide-react";
 
 import { Activity, useEffect, useState } from "react";
 
@@ -17,28 +17,70 @@ import { useParams, useRouter } from "next/navigation";
 import { ActionButton } from "@/components/button";
 
 import postApi from "@/lib/api/post";
+import roomApi from "@/lib/api/room";
+import { chatroomExisted } from "@/lib/utils";
 
 import { FollowType } from "@/types/follow";
 import { PostType } from "@/types/post";
+import { RoomType } from "@/types/room";
 import { User } from "@/types/user";
 
 const ProfileSideButton = ({
   pathId,
   currentUserFollowings,
+  currentUser,
+  visitedUser,
   currentUserId,
   visitedUserId,
+  currentUserRooms,
 }: {
   pathId: number;
   currentUserFollowings: Array<{ id: number; following: FollowType }>;
+  currentUser: User;
+  visitedUser?: User;
   currentUserId: number;
   visitedUserId: number;
+  currentUserRooms: Array<RoomType>;
 }) => {
+  const router = useRouter();
+  const queryClient = useQueryClient();
   const { optimisticFollow, followMutation, unfollowMutation } = useFollows({
     pathId,
     currentUserId,
     currentUserFollowings,
     visitedUserId,
   });
+  const mutation = useMutation({
+    mutationFn: async () => {
+      if (currentUser && visitedUser) {
+        const res = await roomApi.createChatRoom(currentUser, visitedUser);
+        return res;
+      }
+    },
+    onSuccess: async (res) => {
+      if (res.status === "success") {
+        await queryClient.prefetchQuery({ queryKey: ["user"] });
+        router.push(`/messages/${res.data.id}`);
+      }
+    },
+  });
+
+  const messageUser = () => {
+    // Check currentUser rooms if there is a room with the user IDs of current and visited user
+    const chatroom = chatroomExisted(
+      currentUserId,
+      visitedUserId,
+      currentUserRooms,
+    );
+
+    // If there is, redirect to the id of the room
+    if (chatroom) {
+      router.push(`/messages/${chatroom.id}`);
+    } else {
+      // Otherwise, use useMutation and create the room and redirect to that room
+      mutation.mutate();
+    }
+  };
 
   if (currentUserId && visitedUserId) {
     if (currentUserId === visitedUserId) {
@@ -49,24 +91,38 @@ const ProfileSideButton = ({
       );
     } else if (optimisticFollow) {
       return (
-        <ActionButton
-          className="absolute right-0 mr-4 bg-primary border border-primary! text-white hover:border-red-500! hover:bg-red-500/10! hover:text-red-500 transition-all hover:border"
-          hoverText="Unfollow"
-          onClick={() => {
-            unfollowMutation.mutate();
-          }}
-        >
-          Following
-        </ActionButton>
+        <div className="flex justify-center items-center gap-4 absolute right-0 mr-4">
+          <button onClick={messageUser}>
+            <div className="p-1.5 rounded-full border border-border hover:bg-white/10 transition-all cursor-pointer">
+              <Mail size={24}></Mail>
+            </div>
+          </button>
+          <ActionButton
+            className="bg-primary h-full! border border-primary! text-white hover:border-red-500! hover:bg-red-500/10! hover:text-red-500 transition-all hover:border"
+            hoverText="Unfollow"
+            onClick={() => {
+              unfollowMutation.mutate();
+            }}
+          >
+            Following
+          </ActionButton>
+        </div>
       );
     } else if (optimisticFollow === false) {
       return (
-        <ActionButton
-          className="hover:bg-primary! border border-primary! absolute right-0 mr-4 bg-primary text-white"
-          onClick={() => followMutation.mutate()}
-        >
-          Follow
-        </ActionButton>
+        <div className="flex justify-center items-center gap-4 absolute right-0 mr-4">
+          <button onClick={messageUser}>
+            <div className="p-1.5 rounded-full border border-border hover:bg-white/10 transition-all cursor-pointer">
+              <Mail size={24}></Mail>
+            </div>
+          </button>
+          <ActionButton
+            className="hover:bg-primary! h-full! border border-primary! bg-primary text-white"
+            onClick={() => followMutation.mutate()}
+          >
+            Follow
+          </ActionButton>
+        </div>
       );
     }
   }
@@ -203,6 +259,9 @@ const Profile = () => {
               currentUserFollowings={currentUser?.followings}
               currentUserId={currentUser?.id}
               visitedUserId={user?.id!}
+              currentUserRooms={currentUser?.rooms}
+              currentUser={currentUser}
+              visitedUser={user}
             ></ProfileSideButton>
             <div className="mt-[64px]"></div>
             <div className="flex flex-col items-start">

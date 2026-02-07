@@ -2,6 +2,7 @@
 
 import ChatRoom, { newMessage } from "@/app/messages/components/chat-room";
 import ChatRows from "@/app/messages/components/chat-rows";
+import { socket } from "@/socket/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { use, useEffect } from "react";
@@ -36,6 +37,17 @@ const MessagesSlug = ({ params }: { params: Promise<{ id: string }> }) => {
       element && element.scrollIntoView({ behavior: "smooth" });
     }, 100);
   };
+
+  useEffect(() => {
+    const handleReconnect = async () =>
+      await queryClient.invalidateQueries({ queryKey: ["messages", id] });
+
+    socket.on("connect", handleReconnect);
+
+    return () => {
+      socket.off("connect", handleReconnect);
+    };
+  }, [id]);
 
   useEffect(() => {
     document.title = "Twitter / Messages";

@@ -10,10 +10,12 @@ const messageEventsHandler = {
     queryClient: QueryClient,
     id: number,
     tempMessageId: string,
+    senderId: number,
   ) => {
     socket.emit(
       "newMessage",
       newMessage,
+      senderId,
       (response: {
         success: boolean;
         message: {

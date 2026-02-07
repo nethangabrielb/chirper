@@ -34,9 +34,10 @@ export const isSocketValid = (socket: Socket): boolean => {
   const cookies = cookie.parseCookie(socket.handshake.headers.cookie ?? '');
   const token = cookies.token as string;
 
-  const isValid = jwt.verify(token, process.env.JWT_SECRET!);
+  const isValid = jwt.verify(token, process.env.JWT_SECRET!) as User;
 
   if (isValid) {
+    socket.data.userId = isValid.id;
     return true;
   } else {
     return false;

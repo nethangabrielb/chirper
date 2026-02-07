@@ -78,14 +78,16 @@ const ChatRoom = ({
     return () => {
       socket.off("newMessage", updateMessage);
     };
-  }, [bottomMessages]);
+  }, []);
 
   useEffect(() => {
-    socket.emit("joinRoom", String(paramsId), currentUser?.id);
+    if (currentUser?.id) {
+      socket.emit("joinRoom", String(paramsId), currentUser?.id);
 
-    return () => {
-      socket.emit("leaveRoom", String(paramsId), currentUser?.id);
-    };
+      return () => {
+        socket.emit("leaveRoom", String(paramsId), currentUser?.id);
+      };
+    }
   }, [paramsId, currentUser?.id]);
 
   const messageHandler = () => {

@@ -15,7 +15,7 @@ import { MessageType } from "@/types/message";
 
 const MessagesSlug = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = use(params);
-  const { data } = useQuery({
+  const { data, refetch } = useQuery({
     queryKey: ["messages", id],
     queryFn: async () => {
       const messages = await messageApi.getMessagesByRoom(Number(id));
@@ -39,8 +39,7 @@ const MessagesSlug = ({ params }: { params: Promise<{ id: string }> }) => {
   };
 
   useEffect(() => {
-    const handleReconnect = async () =>
-      await queryClient.invalidateQueries({ queryKey: ["messages", id] });
+    const handleReconnect = async () => refetch();
 
     socket.on("connect", handleReconnect);
 

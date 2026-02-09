@@ -7,15 +7,15 @@ import roomService from '../services/roomService';
 import { validateEventSender } from '../utils/validateEventSender';
 
 export const initSocket = (io: Server) => {
-  io.on('connection', (socket: Socket) => {
-    io.use((socket, next) => {
-      if (isSocketValid(socket)) {
-        next();
-      } else {
-        next(new Error('Invalid connection attempt.'));
-      }
-    });
+  io.use((socket, next) => {
+    if (isSocketValid(socket)) {
+      next();
+    } else {
+      next(new Error('Invalid connection attempt.'));
+    }
+  });
 
+  io.on('connection', (socket: Socket) => {
     socket.on(
       'newMessage',
       async (data: ChatMessage, senderId: number, callback) => {
@@ -24,7 +24,7 @@ export const initSocket = (io: Server) => {
 
           if (message) {
             callback({
-              success: 'ok',
+              success: true,
               message,
             });
           }

@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { Room } from '@twitter-clone/shared';
 
 import roomService from '../../services/roomService';
+import { User } from '../../types/user';
 import { GENERIC_ERROR_MESSAGE } from '../../utils/errorMessage';
 
 const roomController = (() => {
@@ -31,6 +32,22 @@ const roomController = (() => {
     res: Response
   ) => {
     try {
+      const authenticatedUser = req.user as User;
+
+      if (!authenticatedUser) {
+        return res.status(401).json({
+          status: 'error',
+          message: 'Unauthorized',
+        });
+      }
+
+      if (authenticatedUser.id !== Number(req.params.userId)) {
+        return res.status(403).json({
+          status: 'error',
+          message: 'Forbidden',
+        });
+      }
+
       const rooms = await roomService.getUserRooms(Number(req.params.userId));
 
       res.json({

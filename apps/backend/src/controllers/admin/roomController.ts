@@ -12,6 +12,24 @@ const roomController = (() => {
     res: Response
   ) => {
     try {
+      const authenticatedUser = req.user as User;
+      const authUserIdRaw = authenticatedUser && authenticatedUser.id;
+
+      if (!authenticatedUser) {
+        return res.status(401).json({
+          status: 'error',
+          message: 'Unauthorized',
+        });
+      }
+
+      const authUserId = Number(authUserIdRaw);
+      if (Number.isNaN(authUserId)) {
+        return res.status(400).json({
+          status: 'error',
+          message: 'Invalid authenticated user id.',
+        });
+      }
+
       const room = await roomService.createRoom(req.body);
 
       res.json({

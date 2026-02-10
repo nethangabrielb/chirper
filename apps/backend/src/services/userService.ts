@@ -51,6 +51,22 @@ const UserService = {
     return UserRepository.findAll();
   },
 
+  getUserChatList: async (
+    id: number,
+    followings: Array<{
+      id: number;
+      following: {
+        name: string;
+        username: string;
+        avatar: string | null;
+        id: number;
+      };
+    }>
+  ) => {
+    const followingIds = followings.map(following => following.following.id);
+    return UserRepository.findUsersChatList(id, followingIds);
+  },
+
   updateUser: async (id: number, data: Partial<RegistrationBody>) => {
     if (data.password) {
       data.password = await bcrypt.hash(data.password, 10);

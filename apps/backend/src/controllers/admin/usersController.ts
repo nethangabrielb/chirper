@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 
 import { decode } from 'base64-arraybuffer';
+import _ from 'lodash';
 
 import followRepository from '../../repositories/followRepository';
 import roomService from '../../services/roomService';
@@ -14,9 +15,9 @@ const userController = (() => {
   const getUser = async (req: Request<{ id: string }>, res: Response) => {
     try {
       const user = await UserService.getUserById(Number(req.params.id));
-      res.status(200).json({ status: 'success', data: user });
+      return res.status(200).json({ status: 'success', data: user });
     } catch (err: unknown) {
-      res.status(err instanceof Error ? 404 : 500).json({
+      return res.status(err instanceof Error ? 404 : 500).json({
         status: 'error',
         message: err instanceof Error ? err.message : GENERIC_ERROR_MESSAGE,
       });
@@ -25,8 +26,8 @@ const userController = (() => {
 
   const getAllUsers = async (_req: Request, res: Response) => {
     try {
+      const user: User = _req.user as User;
       if (_req.query.current) {
-        const user: User = _req.user as User;
         const followers = await followRepository.findFollowers(user.id);
         const followings = await followRepository.findFollowings(user.id);
         const rooms = await roomService.getUserRooms(user.id);
@@ -41,10 +42,38 @@ const userController = (() => {
           followings,
           rooms,
         };
-        res.json({ status: 'success', data: modifiedUser });
+        return res.json({ status: 'success', data: modifiedUser });
+      } else if (_req.query.chatUsersList) {
+        const followings = await followRepository.findFollowings(user.id);
+
+        if (!followings) {
+          return res.json({
+            status: 'error',
+            message: 'Failed to fetch user ',
+          });
+        }
+
+        const followingsUpdated = followings.map(
+          following => following.following
+        );
+
+        const users = await UserService.getUserChatList(user.id, followings);
+
+        if (!users) {
+          return res.json({
+            status: 'error',
+            message: 'Failed to fetch users',
+          });
+        }
+
+        const usersArray = _.concat(followingsUpdated, users);
+
+        console.log(usersArray);
+
+        return res.json({ status: 'success', data: usersArray });
       } else {
         const users = await UserService.getAllUsers();
-        res.json({ status: 'success', data: users });
+        return res.json({ status: 'success', data: users });
       }
     } catch (err: unknown) {
       res.json({
@@ -93,9 +122,9 @@ const userController = (() => {
         Number(req.params.id),
         req.body
       );
-      res.json({ status: 'success', data: updatedUser });
+      return res.json({ status: 'success', data: updatedUser });
     } catch (err: unknown) {
-      res.json({
+      return res.json({
         status: 'error',
         message: err instanceof Error ? err.message : GENERIC_ERROR_MESSAGE,
       });

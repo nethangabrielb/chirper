@@ -119,10 +119,39 @@ const UserRepository = {
   findByUsername: (username: string) =>
     prisma.user.findUnique({ where: { username } }),
   findByEmail: (email: string) => prisma.user.findUnique({ where: { email } }),
-  findAll: () => prisma.user.findMany(),
+  findAll: () =>
+    prisma.user.findMany({
+      select: { id: true, username: true, avatar: true, name: true },
+    }),
   updateById: (id: number, data: Partial<RegistrationBody>) =>
     prisma.user.update({ where: { id }, data }),
   deleteById: (id: number) => prisma.user.delete({ where: { id } }),
+  findUsersChatList: (userId: number, followingIds: number[]) =>
+    prisma.user.findMany({
+      where: {
+        AND: [
+          {
+            id: {
+              not: userId,
+            },
+          },
+          {
+            id: {
+              not: {
+                in: followingIds,
+              },
+            },
+          },
+        ],
+      },
+      select: {
+        id: true,
+        name: true,
+        username: true,
+        avatar: true,
+      },
+      take: 10,
+    }),
 };
 
 export default UserRepository;

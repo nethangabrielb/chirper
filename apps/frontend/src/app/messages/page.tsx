@@ -1,10 +1,13 @@
 "use client";
 
 import ChatRows from "@/app/messages/components/chat-rows";
+import { Mail } from "lucide-react";
 
 import { useEffect } from "react";
 
 import Head from "next/head";
+
+import { ActionButton } from "@/components/button";
 
 const Messages = () => {
   useEffect(() => {
@@ -31,6 +34,18 @@ const Messages = () => {
         </div>
 
         {/* Render the chatroom from the chat rows */}
+        <div className="w-[65%] flex justify-center items-center">
+          <div className="flex flex-col items-center gap-2">
+            <div className="p-6 bg-accent rounded-full w-fit">
+              <Mail size={32}></Mail>
+            </div>
+            <h1 className="font-bold text-xl">Start a conversation</h1>
+            <p className="text-darker font-light">
+              Choose from your existing conversations, or start a new one.
+            </p>
+            <ActionButton className="mt-4">New Chat</ActionButton>
+          </div>
+        </div>
       </div>
     </>
   );

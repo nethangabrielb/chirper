@@ -6,7 +6,7 @@ import useUser from "@/stores/user.store";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Mail } from "lucide-react";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import Head from "next/head";
 import { useRouter } from "next/navigation";
@@ -19,13 +19,19 @@ import { User, UserPartial } from "@/types/user";
 
 const Messages = () => {
   const queryClient = useQueryClient();
+  const [searchUser, setSearchUser] = useState<string>("");
   const currentUser = useUser((state) => state.user) as User;
   const router = useRouter();
-  const { data } = useQuery({
-    queryKey: ["chatUsersList"],
+  const { data, isPending } = useQuery({
+    queryKey: ["chatUsersList", searchUser],
     queryFn: async () => {
-      const res = await userApi.getUsersChatlist();
-      return res;
+      if (searchUser.length >= 1) {
+        const res = await userApi.getUserSearchResults(searchUser);
+        return res;
+      } else {
+        const res = await userApi.getUsersChatlist();
+        return res;
+      }
     },
   });
   const mutation = useMutation({
@@ -96,6 +102,9 @@ const Messages = () => {
             <UsersDialog
               users={data ?? []}
               messageUser={messageUser}
+              setSearchUser={setSearchUser}
+              isPending={isPending}
+              searchUser={searchUser}
             ></UsersDialog>
           </div>
         </div>

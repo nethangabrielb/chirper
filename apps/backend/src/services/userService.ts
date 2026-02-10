@@ -67,6 +67,12 @@ const UserService = {
     return UserRepository.findUsersChatList(id, followingIds);
   },
 
+  getUserSearchResults: async (name: string) => {
+    const users = await UserRepository.findByName(name);
+    if (!users) throw new Error('Failed to fetch users');
+    return users;
+  },
+
   updateUser: async (id: number, data: Partial<RegistrationBody>) => {
     if (data.password) {
       data.password = await bcrypt.hash(data.password, 10);

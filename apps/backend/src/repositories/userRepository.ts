@@ -118,6 +118,12 @@ const UserRepository = {
     }),
   findByUsername: (username: string) =>
     prisma.user.findUnique({ where: { username } }),
+  findByName: (name: string) =>
+    prisma.user.findMany({
+      where: {
+        OR: [{ username: { contains: name } }, { name: { contains: name } }],
+      },
+    }),
   findByEmail: (email: string) => prisma.user.findUnique({ where: { email } }),
   findAll: () =>
     prisma.user.findMany({

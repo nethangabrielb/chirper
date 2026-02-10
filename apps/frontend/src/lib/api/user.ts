@@ -14,7 +14,22 @@ const userApi = (() => {
     return data.data;
   };
 
-  return { getUsersChatlist };
+  const getUserSearchResults = async (user: string) => {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API}/api/users?user=${user}`,
+      {
+        credentials: "include",
+      },
+    );
+
+    if (!res.ok) {
+      throw new Error("Error fetching from the server.");
+    }
+    const data = await res.json();
+    return data.data;
+  };
+
+  return { getUsersChatlist, getUserSearchResults };
 })();
 
 export default userApi;

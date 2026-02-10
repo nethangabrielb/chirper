@@ -24,7 +24,12 @@ const userSchema = z.object({
     z.object({
       id: z.number(),
       users: z.array(
-        z.object({ id: z.number(), name: z.string(), username: z.string() }),
+        z.object({
+          id: z.number(),
+          name: z.string(),
+          username: z.string(),
+          avatar: z.string(),
+        }),
       ),
     }),
   ),

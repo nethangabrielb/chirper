@@ -20,7 +20,7 @@ import { MessageType } from "@/types/message";
 import { RoomType } from "@/types/room";
 import { User } from "@/types/user";
 
-export interface newMessage {
+export interface NewMessage {
   receiverId: number;
   senderId: number;
   content: string;
@@ -37,7 +37,7 @@ const ChatRoom = ({
   messages: Array<MessageType>;
   paramsId?: number;
   updateMessagesOptimistic: (
-    message: newMessage,
+    message: NewMessage,
     element: HTMLDivElement,
   ) => void;
 }) => {

@@ -1,6 +1,6 @@
 "use client";
 
-import ChatRoom, { newMessage } from "@/app/messages/components/chat-room";
+import ChatRoom, { NewMessage } from "@/app/messages/components/chat-room";
 import ChatRows from "@/app/messages/components/chat-rows";
 import { socket } from "@/socket/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -26,7 +26,7 @@ const MessagesSlug = ({ params }: { params: Promise<{ id: string }> }) => {
   const queryClient = useQueryClient();
 
   const updateMessagesOptimistic = (
-    newMessage: newMessage,
+    newMessage: NewMessage,
     element?: HTMLDivElement,
   ) => {
     queryClient.setQueryData(["messages", id], (prev: Array<MessageType>) => {

@@ -1,4 +1,4 @@
-import { newMessage } from "@/app/messages/components/chat-room";
+import { NewMessage } from "@/app/messages/components/chat-room";
 import { socket } from "@/socket/client";
 import { QueryClient } from "@tanstack/react-query";
 
@@ -6,7 +6,7 @@ import { MessageType } from "@/types/message";
 
 const messageEventsHandler = {
   create: (
-    newMessage: newMessage,
+    newMessage: NewMessage,
     queryClient: QueryClient,
     id: number,
     tempMessageId: string,
@@ -30,7 +30,7 @@ const messageEventsHandler = {
           queryClient.setQueryData(
             ["messages", String(id)],
             (prev: Array<MessageType>) => {
-              const updated = prev.map((message: newMessage) => {
+              const updated = prev.map((message: NewMessage) => {
                 if (message.tempId === tempMessageId) {
                   return { ...message, loading: false };
                 } else {

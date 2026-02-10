@@ -15,7 +15,7 @@ import roomApi from "@/lib/api/room";
 import userApi from "@/lib/api/user";
 import { chatroomExisted } from "@/lib/utils";
 
-import { User } from "@/types/user";
+import { User, UserPartial } from "@/types/user";
 
 const Messages = () => {
   const queryClient = useQueryClient();
@@ -29,12 +29,7 @@ const Messages = () => {
     },
   });
   const mutation = useMutation({
-    mutationFn: async (visitedUser: {
-      id: number;
-      name: string;
-      username: string;
-      avatar: string;
-    }) => {
+    mutationFn: async (visitedUser: UserPartial) => {
       if (currentUser && visitedUser) {
         const res = await roomApi.createChatRoom(currentUser, visitedUser);
         return res;
@@ -52,15 +47,7 @@ const Messages = () => {
     document.title = "Twitter / Messages";
   }, []);
 
-  const messageUser = (
-    visitedUserId: number,
-    visitedUser: {
-      id: number;
-      name: string;
-      username: string;
-      avatar: string;
-    },
-  ) => {
+  const messageUser = (visitedUserId: number, visitedUser: UserPartial) => {
     // Check currentUser rooms if there is a room with the user IDs of current and visited user
     const chatroom = chatroomExisted(
       currentUser?.id,

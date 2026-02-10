@@ -1,3 +1,5 @@
+import { Search } from "lucide-react";
+
 import { ActionButton } from "@/components/button";
 import {
   Dialog,
@@ -7,20 +9,14 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
+import { UserPartial } from "@/types/user";
+
 export const UsersDialog = ({
   users,
   messageUser,
 }: {
   users: Array<{ id: number; name: string; username: string; avatar: string }>;
-  messageUser: (
-    visitedUserId: number,
-    visitedUser: {
-      id: number;
-      name: string;
-      username: string;
-      avatar: string;
-    },
-  ) => void;
+  messageUser: (visitedUserId: number, visitedUser: UserPartial) => void;
 }) => {
   return (
     <Dialog>
@@ -30,6 +26,14 @@ export const UsersDialog = ({
       <DialogContent className="lg:h-[500px]">
         <DialogHeader>
           <DialogTitle>New message</DialogTitle>
+          <div className="group pl-2 flex items-center my-6 bg-accent/40 focus-within:bg-background focus-within:outline focus-within:outline-primary border border-border rounded-lg">
+            <Search className="text-neutral-400 peer" size={18}></Search>
+            <input
+              type="text"
+              className="p-3 rounded-lg w-full placeholder:font-light placeholder:text-[14px] text-[14px] outline-0 "
+              placeholder="Search name or username"
+            />
+          </div>
         </DialogHeader>
         <div
           className="flex flex-col gap-4 overflow-y-scroll [&::-webkit-scrollbar]:w-2

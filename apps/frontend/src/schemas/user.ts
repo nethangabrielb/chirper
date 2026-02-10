@@ -35,4 +35,11 @@ const userSchema = z.object({
   ),
 });
 
-export { userSchema };
+const userPartialSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  username: z.string(),
+  avatar: z.string(),
+});
+
+export { userSchema, userPartialSchema };

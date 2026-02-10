@@ -1,17 +1,9 @@
-import getCookie from "@/lib/cookies";
-
-import { User } from "@/types/user";
-
 const userApi = (() => {
-  const getUser = async () => {
-    const token = await getCookie("token");
-
+  const getUsersChatlist = async () => {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API}/api/users?current=true`,
+      `${process.env.NEXT_PUBLIC_API}/api/users?chatUsersList=true`,
       {
-        headers: {
-          Cookie: `token=${token}`,
-        },
+        credentials: "include",
       },
     );
 
@@ -19,10 +11,10 @@ const userApi = (() => {
       throw new Error("Error fetching from the server.");
     }
     const data = await res.json();
-    return data.data as User;
+    return data.data;
   };
 
-  return { getUser };
+  return { getUsersChatlist };
 })();
 
 export default userApi;

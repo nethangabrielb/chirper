@@ -1,18 +1,81 @@
 "use client";
 
 import ChatRows from "@/app/messages/components/chat-rows";
+import { UsersDialog } from "@/app/messages/components/chat-users-list";
+import useUser from "@/stores/user.store";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Mail } from "lucide-react";
 
 import { useEffect } from "react";
 
 import Head from "next/head";
+import { useRouter } from "next/navigation";
 
-import { ActionButton } from "@/components/button";
+import roomApi from "@/lib/api/room";
+import userApi from "@/lib/api/user";
+import { chatroomExisted } from "@/lib/utils";
+
+import { User } from "@/types/user";
 
 const Messages = () => {
+  const queryClient = useQueryClient();
+  const currentUser = useUser((state) => state.user) as User;
+  const router = useRouter();
+  const { data } = useQuery({
+    queryKey: ["chatUsersList"],
+    queryFn: async () => {
+      const res = await userApi.getUsersChatlist();
+      return res;
+    },
+  });
+  const mutation = useMutation({
+    mutationFn: async (visitedUser: {
+      id: number;
+      name: string;
+      username: string;
+      avatar: string;
+    }) => {
+      if (currentUser && visitedUser) {
+        const res = await roomApi.createChatRoom(currentUser, visitedUser);
+        return res;
+      }
+    },
+    onSuccess: async (res) => {
+      if (res.status === "success") {
+        await queryClient.prefetchQuery({ queryKey: ["user"] });
+        router.push(`/messages/${res.data.id}`);
+      }
+    },
+  });
+
   useEffect(() => {
     document.title = "Twitter / Messages";
   }, []);
+
+  const messageUser = (
+    visitedUserId: number,
+    visitedUser: {
+      id: number;
+      name: string;
+      username: string;
+      avatar: string;
+    },
+  ) => {
+    // Check currentUser rooms if there is a room with the user IDs of current and visited user
+    const chatroom = chatroomExisted(
+      currentUser?.id,
+      visitedUserId,
+      currentUser?.rooms,
+    );
+
+    // If there is, redirect to the id of the room
+    if (chatroom) {
+      router.push(`/messages/${chatroom.id}`);
+    } else {
+      // Otherwise, use useMutation and create the room and redirect to that room
+      mutation.mutate(visitedUser);
+    }
+  };
 
   return (
     <>
@@ -43,7 +106,10 @@ const Messages = () => {
             <p className="text-darker font-light">
               Choose from your existing conversations, or start a new one.
             </p>
-            <ActionButton className="mt-4">New Chat</ActionButton>
+            <UsersDialog
+              users={data ?? []}
+              messageUser={messageUser}
+            ></UsersDialog>
           </div>
         </div>
       </div>

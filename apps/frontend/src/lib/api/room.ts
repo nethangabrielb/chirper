@@ -16,7 +16,12 @@ const roomApi = (() => {
     return data.data;
   };
 
-  const createChatRoom = async (currentUser: User, visitedUser: User) => {
+  const createChatRoom = async (
+    currentUser: User,
+    visitedUser:
+      | User
+      | { id: number; name: string; username: string; avatar: string },
+  ) => {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API}/api/rooms`, {
       credentials: "include",
       method: "POST",

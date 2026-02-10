@@ -1,6 +1,7 @@
 import { Room } from '@twitter-clone/shared';
 
 import { prisma } from '../prisma/client';
+import { User } from '../types/user';
 
 const roomRepository = {
   create: async (data: Room) =>
@@ -29,6 +30,17 @@ const roomRepository = {
             avatar: true,
           },
         },
+      },
+    }),
+  findByUsers: async (users: User[]) =>
+    await prisma.room.findFirst({
+      where: {
+        AND: [
+          { users: { every: { id: { in: users.map(user => user.id) } } } },
+          ...users.map(user => ({
+            users: { some: { id: user.id } },
+          })),
+        ],
       },
     }),
 };

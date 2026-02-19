@@ -1,7 +1,4 @@
-import {
-  commentLikeRepository,
-  postLikeRepository,
-} from '../repositories/likeRepository';
+import { postLikeRepository } from '../repositories/likeRepository';
 import { User } from '../types/user';
 
 const postLikeService = {
@@ -15,18 +12,4 @@ const postLikeService = {
   },
 };
 
-const commentLikeService = {
-  createLike: async (commentId: number, user: User) => {
-    const like = await commentLikeRepository.create({
-      commentId,
-      userId: user.id,
-    });
-    if (!like) throw new Error('There was an issue liking post.');
-    return like;
-  },
-  deleteLike: async (commentId: number, user: User) => {
-    return commentLikeRepository.deleteByIds({ commentId, userId: user.id });
-  },
-};
-
-export { postLikeService, commentLikeService };
+export { postLikeService };

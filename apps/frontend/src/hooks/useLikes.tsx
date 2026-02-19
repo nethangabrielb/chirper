@@ -20,8 +20,8 @@ export const useLikes = (
   // source of truth to determine if clicking the like button should either
   // like or unlike a tweet by determining if current user has alr liked a post
   const [userHasLiked, setUserHasLiked] = useState(
-    post?.Like?.find((userId) => userId.userId === user?.id)?.userId ===
-      user?.id,
+    post?.Like?.find((userId: { userId: number }) => userId.userId === user?.id)
+      ?.userId === user?.id,
   );
   const [optimisticLikes, addOptimisticLikes] = useOptimistic(
     likes,
@@ -48,10 +48,10 @@ export const useLikes = (
     onSuccess: (res) => {
       refetchPosts();
       if (res.message === "Post liked successfully") {
-        setLikes((prev) => prev + 1);
+        setLikes((prev: number) => prev + 1);
         setUserHasLiked(true);
       } else if (res.message === "Unlike success") {
-        setLikes((prev) => prev - 1);
+        setLikes((prev: number) => prev - 1);
         setUserHasLiked(false);
       }
     },

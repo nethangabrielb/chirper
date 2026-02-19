@@ -79,6 +79,7 @@ const postRepository = {
             createdAt: 'desc',
           },
         },
+        bookmarks: true,
       },
     }),
   findAll: () =>
@@ -165,6 +166,7 @@ const postRepository = {
             },
           },
         },
+        bookmarks: true,
       },
     }),
   findRepliesByUserId: (id: number) =>
@@ -326,6 +328,7 @@ const postRepository = {
             },
           },
         },
+        bookmarks: true,
       },
     }),
   findLikedPostsByUserId: (id: number) =>
@@ -487,6 +490,7 @@ const postRepository = {
             },
           },
         },
+        bookmarks: true,
       },
     }),
   deleteById: (id: number) =>

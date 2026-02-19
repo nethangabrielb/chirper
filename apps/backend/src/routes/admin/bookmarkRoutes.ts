@@ -8,5 +8,6 @@ const bookmarkRouter = Router();
 bookmarkRouter.use(authMiddleware);
 
 bookmarkRouter.post('/', bookmarkController.createBookmark);
+bookmarkRouter.delete('/:bookmarkId', bookmarkController.deleteBookmark);
 
 export default bookmarkRouter;

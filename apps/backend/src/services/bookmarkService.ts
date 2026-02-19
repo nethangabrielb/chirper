@@ -8,6 +8,9 @@ const bookmarkService = {
     }
     return bookmark;
   },
+  delete: async (bookmarkId: number) => {
+    return bookmarkRepository.delete(bookmarkId);
+  },
 };
 
 export default bookmarkService;

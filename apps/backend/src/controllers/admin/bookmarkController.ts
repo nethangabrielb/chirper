@@ -39,7 +39,37 @@ const bookmarkController = (() => {
     }
   };
 
-  return { createBookmark };
+  const deleteBookmark = async (
+    req: Request<{ bookmarkId: string }, object, object>,
+    res: Response
+  ) => {
+    try {
+      const { bookmarkId } = req.params;
+
+      if (!bookmarkId) {
+        throw new Error('No body payload provided');
+      }
+
+      const deletedBookmark = await bookmarkService.delete(Number(bookmarkId));
+
+      if (!deletedBookmark) {
+        throw new Error('There was an issue undoing a bookmark');
+      }
+
+      res.json({
+        status: 'success',
+        message: 'Bookmark removed successfully',
+        data: deletedBookmark,
+      });
+    } catch (err: unknown) {
+      res.json({
+        status: 'error',
+        message: err instanceof Error ? err.message : GENERIC_ERROR_MESSAGE,
+      });
+    }
+  };
+
+  return { createBookmark, deleteBookmark };
 })();
 
 export default bookmarkController;

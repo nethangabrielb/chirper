@@ -9,6 +9,7 @@ import passport from 'passport';
 import { Server } from 'socket.io';
 
 import '../src/config/passport';
+import bookmarkRouter from './routes/admin/bookmarkRoutes';
 import commentRouter from './routes/admin/commentRoutes';
 import followRouter from './routes/admin/followRoutes';
 import likesRouter from './routes/admin/likeRoutes';
@@ -59,6 +60,7 @@ app.use('/api/follows', followRouter);
 app.use('/api/likes', likesRouter);
 app.use('/api/rooms', roomRouter);
 app.use('/api/messages', messageRouter);
+app.use('/api/bookmarks', bookmarkRouter);
 
 const PORT = process.env.PORT! || 5000;
 

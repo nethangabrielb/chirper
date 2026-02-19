@@ -493,6 +493,159 @@ const postRepository = {
         bookmarks: true,
       },
     }),
+  findByBookmarked: (userId: number) =>
+    prisma.post.findMany({
+      where: { bookmarks: { some: { userId } } },
+      include: {
+        _count: {
+          select: {
+            Like: true,
+            replies: {
+              where: {
+                deleted: false,
+              },
+            },
+          },
+        },
+        user: {
+          select: {
+            avatar: true,
+            username: true,
+            name: true,
+            id: true,
+            createdAt: true,
+            _count: {
+              select: {
+                Followers: true,
+                Followings: true,
+                Post: true,
+              },
+            },
+          },
+        },
+        Like: {
+          select: {
+            userId: true,
+          },
+        },
+        replies: {
+          include: {
+            _count: {
+              select: {
+                Like: true,
+                replies: {
+                  where: {
+                    deleted: false,
+                  },
+                },
+              },
+            },
+            user: {
+              select: {
+                avatar: true,
+                username: true,
+                name: true,
+                id: true,
+                createdAt: true,
+                _count: {
+                  select: {
+                    Followers: true,
+                    Followings: true,
+                    Post: true,
+                  },
+                },
+              },
+            },
+            Like: {
+              select: {
+                userId: true,
+              },
+            },
+          },
+          orderBy: {
+            Like: {
+              _count: 'desc',
+            },
+          },
+        },
+        reply: {
+          include: {
+            _count: {
+              select: {
+                Like: true,
+                replies: {
+                  where: {
+                    deleted: false,
+                  },
+                },
+              },
+            },
+            user: {
+              select: {
+                avatar: true,
+                username: true,
+                name: true,
+                id: true,
+                createdAt: true,
+                _count: {
+                  select: {
+                    Followers: true,
+                    Followings: true,
+                    Post: true,
+                  },
+                },
+              },
+            },
+            Like: {
+              select: {
+                userId: true,
+              },
+            },
+            replies: {
+              include: {
+                _count: {
+                  select: {
+                    Like: true,
+                    replies: {
+                      where: {
+                        deleted: false,
+                      },
+                    },
+                  },
+                },
+                user: {
+                  select: {
+                    avatar: true,
+                    username: true,
+                    name: true,
+                    id: true,
+                    createdAt: true,
+                    _count: {
+                      select: {
+                        Followers: true,
+                        Followings: true,
+                        Post: true,
+                      },
+                    },
+                  },
+                },
+                Like: {
+                  select: {
+                    userId: true,
+                  },
+                },
+              },
+              orderBy: {
+                Like: {
+                  _count: 'desc',
+                },
+              },
+            },
+          },
+        },
+        bookmarks: true,
+      },
+    }),
   deleteById: (id: number) =>
     prisma.post.update({ where: { id }, data: { deleted: true } }),
 };

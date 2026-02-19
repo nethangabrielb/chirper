@@ -45,13 +45,24 @@ const postsController = (() => {
 
   const getPosts = async (req: Request, res: Response) => {
     try {
-      const posts = await postService.getPosts(req.user as User);
+      if (req.query.bookmarks) {
+        const user = req.user as User;
+        const posts = await postService.getBookmarkedPosts(user.id);
 
-      res.json({
-        status: 'success',
-        message: 'Posts fetched success',
-        data: posts,
-      });
+        res.json({
+          status: 'success',
+          message: 'Bookmarked posts fetched success',
+          data: posts,
+        });
+      } else {
+        const posts = await postService.getPosts(req.user as User);
+
+        res.json({
+          status: 'success',
+          message: 'Posts fetched success',
+          data: posts,
+        });
+      }
     } catch (err: unknown) {
       res.json({
         status: 'error',

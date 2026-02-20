@@ -71,17 +71,25 @@ const Bookmarks = () => {
           </div>
         </div>
         {posts &&
-          posts.map((post: PostType) => {
-            return (
-              <FeedPost
-                post={post}
-                key={post.id}
-                refetchPosts={refetchPosts}
-                refetch={refetch}
-                bookmarkedPosts={true}
-              ></FeedPost>
-            );
-          })}
+          posts.map(
+            (post: {
+              id: number;
+              createdAt: string;
+              post: PostType;
+              postId: number;
+              userId: number;
+            }) => {
+              return (
+                <FeedPost
+                  post={post.post}
+                  key={post.post.id}
+                  refetchPosts={refetchPosts}
+                  refetch={refetch}
+                  bookmarkedPosts={true}
+                ></FeedPost>
+              );
+            },
+          )}
       </div>
     </>
   );

@@ -344,6 +344,7 @@ const postRepository = {
             userId: id,
           },
         },
+        deleted: false,
       },
       orderBy: {
         createdAt: 'desc',
@@ -502,41 +503,13 @@ const postRepository = {
       },
     }),
   findByBookmarked: (userId: number) =>
-    prisma.post.findMany({
-      where: { bookmarks: { some: { userId } } },
+    prisma.bookmark.findMany({
+      where: { userId },
+      orderBy: {
+        createdAt: 'desc',
+      },
       include: {
-        _count: {
-          select: {
-            Like: true,
-            replies: {
-              where: {
-                deleted: false,
-              },
-            },
-          },
-        },
-        user: {
-          select: {
-            avatar: true,
-            username: true,
-            name: true,
-            id: true,
-            createdAt: true,
-            _count: {
-              select: {
-                Followers: true,
-                Followings: true,
-                Post: true,
-              },
-            },
-          },
-        },
-        Like: {
-          select: {
-            userId: true,
-          },
-        },
-        replies: {
+        post: {
           include: {
             _count: {
               select: {
@@ -569,48 +542,6 @@ const postRepository = {
                 userId: true,
               },
             },
-            bookmarks: true,
-          },
-          orderBy: {
-            Like: {
-              _count: 'desc',
-            },
-          },
-        },
-        reply: {
-          include: {
-            _count: {
-              select: {
-                Like: true,
-                replies: {
-                  where: {
-                    deleted: false,
-                  },
-                },
-              },
-            },
-            user: {
-              select: {
-                avatar: true,
-                username: true,
-                name: true,
-                id: true,
-                createdAt: true,
-                _count: {
-                  select: {
-                    Followers: true,
-                    Followings: true,
-                    Post: true,
-                  },
-                },
-              },
-            },
-            Like: {
-              select: {
-                userId: true,
-              },
-            },
-            bookmarks: true,
             replies: {
               include: {
                 _count: {
@@ -652,9 +583,86 @@ const postRepository = {
                 },
               },
             },
+            reply: {
+              include: {
+                _count: {
+                  select: {
+                    Like: true,
+                    replies: {
+                      where: {
+                        deleted: false,
+                      },
+                    },
+                  },
+                },
+                user: {
+                  select: {
+                    avatar: true,
+                    username: true,
+                    name: true,
+                    id: true,
+                    createdAt: true,
+                    _count: {
+                      select: {
+                        Followers: true,
+                        Followings: true,
+                        Post: true,
+                      },
+                    },
+                  },
+                },
+                Like: {
+                  select: {
+                    userId: true,
+                  },
+                },
+                bookmarks: true,
+                replies: {
+                  include: {
+                    _count: {
+                      select: {
+                        Like: true,
+                        replies: {
+                          where: {
+                            deleted: false,
+                          },
+                        },
+                      },
+                    },
+                    user: {
+                      select: {
+                        avatar: true,
+                        username: true,
+                        name: true,
+                        id: true,
+                        createdAt: true,
+                        _count: {
+                          select: {
+                            Followers: true,
+                            Followings: true,
+                            Post: true,
+                          },
+                        },
+                      },
+                    },
+                    Like: {
+                      select: {
+                        userId: true,
+                      },
+                    },
+                    bookmarks: true,
+                  },
+                  orderBy: {
+                    Like: {
+                      _count: 'desc',
+                    },
+                  },
+                },
+              },
+            },
+            bookmarks: true,
           },
         },
-        bookmarks: true,
       },
     }),
   deleteById: (id: number) =>

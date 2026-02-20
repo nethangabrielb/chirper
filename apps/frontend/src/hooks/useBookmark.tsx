@@ -73,9 +73,23 @@ export const useBookmark = ({
 
       if (res.status === "success") {
         if (res.message === "Bookmarked successfully") {
+          toast.success("Added to your bookmarks", {
+            style: {
+              background: "#1d9bf0",
+              color: "white",
+              width: "fit-content",
+            },
+          });
           setUserHasBookmarked(true);
         } else if (res.message === "Bookmark removed successfully") {
           setUserHasBookmarked(false);
+          toast.success("Removed from your bookmarks", {
+            style: {
+              background: "#1d9bf0",
+              color: "white",
+              width: "fit-content",
+            },
+          });
         }
       } else if (res.status === "error") {
         if (optimisticBookmark) {

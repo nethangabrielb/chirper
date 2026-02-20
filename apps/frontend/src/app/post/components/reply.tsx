@@ -53,7 +53,8 @@ const Reply = ({ reply, refetchPosts }: Props) => {
   // source of truth to determine if clicking the like button should either
   // like or unlike a tweet by determining if current user has alr liked a post
   const [userHasLiked, setUserHasLiked] = useState(
-    post?.Like[0]?.userId === user?.id,
+    post?.Like?.find((userId: { userId: number }) => userId.userId === user?.id)
+      ?.userId === user?.id,
   );
   const [optimisticLikes, addOptimisticLikes] = useOptimistic(
     likes ?? 0,
@@ -102,7 +103,11 @@ const Reply = ({ reply, refetchPosts }: Props) => {
   });
 
   useEffect(() => {
-    setUserHasLiked(post?.Like[0]?.userId === user?.id);
+    setUserHasLiked(
+      post?.Like?.find(
+        (userId: { userId: number }) => userId.userId === user?.id,
+      )?.userId === user?.id,
+    );
   }, [user]);
 
   useEffect(() => {

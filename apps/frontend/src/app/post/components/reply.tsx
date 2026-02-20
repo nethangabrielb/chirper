@@ -173,7 +173,7 @@ const Reply = ({ reply, refetchPosts }: Props) => {
                 )}
                 <div className="bg-neutral-600 w-[2px] h-[100px]"></div>
               </div>
-              <div className="flex flex-col">
+              <div className="flex flex-col self-start">
                 <div className="flex items-center gap-1">
                   <p className="font-bold text-text space tracking-[0.2px] text-[18px]">
                     {post?.user.name}

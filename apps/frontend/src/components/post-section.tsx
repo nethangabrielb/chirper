@@ -30,12 +30,19 @@ type Props = {
   ) => Promise<QueryObserverResult<any, Error>>;
   refetchPosts: () => void;
   displayReplies?: boolean;
+  bookmarkedPost?: boolean;
 };
 
-const Post = ({ post, refetch, refetchPosts, displayReplies }: Props) => {
+const Post = ({
+  post,
+  refetch,
+  refetchPosts,
+  displayReplies,
+  bookmarkedPost,
+}: Props) => {
   const queryClient = useQueryClient();
   const user = useUser((state) => state.user) as User;
-  const likesHook = useLikes(post, user, refetchPosts);
+  const likesHook = useLikes(post, user, refetchPosts, refetch);
 
   const refetchUserPage = async () => {
     await queryClient.refetchQueries({ queryKey: ["userProfilePage"] });
@@ -135,6 +142,17 @@ const Post = ({ post, refetch, refetchPosts, displayReplies }: Props) => {
                 </p>
               </div>
             </div>
+            {bookmarkedPost && post.reply && (
+              <p className="text-darker font-light text-sm -translate-y-2">
+                Replying to{" "}
+                <Link
+                  className="text-blue-500 cursor-pointer hover:underline underline-offset-1"
+                  href={`/profile/${post.reply.user.id}`}
+                >
+                  @{post.reply.user.username}
+                </Link>
+              </p>
+            )}
             <p className="text-text text-[15px] whitespace-normal break-words">
               {post.content}
             </p>

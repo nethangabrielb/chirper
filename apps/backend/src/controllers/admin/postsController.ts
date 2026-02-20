@@ -45,7 +45,7 @@ const postsController = (() => {
 
   const getPosts = async (req: Request, res: Response) => {
     try {
-      if (req.query.bookmarks) {
+      if (req.query.bookmarks && req.query.bookmarks === 'true') {
         const user = req.user as User;
         const posts = await postService.getBookmarkedPosts(user.id);
 

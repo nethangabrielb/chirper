@@ -79,7 +79,9 @@ const CreateReply = ({ refetch, postId, className }: Props) => {
         });
       } else if (data.status === "deleted") {
         toast.error(data.message);
-        await queryClient.refetchQueries({ queryKey: ["post", "posts"] });
+        await queryClient.refetchQueries({ queryKey: ["post"] });
+        await queryClient.refetchQueries({ queryKey: ["posts"] });
+        await queryClient.refetchQueries({ queryKey: ["userProfilePage"] });
         router.back();
       } else {
         toast.error(data.message);

@@ -14,6 +14,7 @@ type Props = {
   ) => Promise<QueryObserverResult<any, Error>>;
   refetchPosts: () => void;
   displayReplies?: boolean;
+  bookmarkedPosts?: boolean;
 };
 
 const FeedPost = ({
@@ -21,31 +22,43 @@ const FeedPost = ({
   refetch,
   refetchPosts,
   displayReplies = true,
+  bookmarkedPosts,
 }: Props) => {
   return (
     <div className="flex flex-col border-b border-b-border border-x border-x-border">
-      {post?.reply && (
+      {bookmarkedPosts ? (
         <Post
-          post={post?.reply}
-          refetch={refetch}
-          refetchPosts={refetchPosts}
-          displayReplies={displayReplies}
-        ></Post>
-      )}
-      {/* add post here */}
-      <Post
-        post={post}
-        refetch={refetch}
-        refetchPosts={refetchPosts}
-        displayReplies={post?.replies?.length > 0 && displayReplies}
-      ></Post>
-      {post?.replies?.length >= 1 && displayReplies && (
-        <Post
-          post={post?.replies[0]}
+          bookmarkedPost={true}
+          post={post}
           refetch={refetch}
           refetchPosts={refetchPosts}
           displayReplies={false}
         ></Post>
+      ) : (
+        <>
+          {post?.reply && (
+            <Post
+              post={post?.reply}
+              refetch={refetch}
+              refetchPosts={refetchPosts}
+              displayReplies={displayReplies}
+            ></Post>
+          )}
+          <Post
+            post={post}
+            refetch={refetch}
+            refetchPosts={refetchPosts}
+            displayReplies={post?.replies?.length > 0 && displayReplies}
+          ></Post>
+          {post?.replies?.length >= 1 && displayReplies && (
+            <Post
+              post={post?.replies[0]}
+              refetch={refetch}
+              refetchPosts={refetchPosts}
+              displayReplies={false}
+            ></Post>
+          )}
+        </>
       )}
     </div>
   );

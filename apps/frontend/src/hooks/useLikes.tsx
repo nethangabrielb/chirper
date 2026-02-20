@@ -1,4 +1,8 @@
-import { useMutation } from "@tanstack/react-query";
+import {
+  QueryObserverResult,
+  RefetchOptions,
+  useMutation,
+} from "@tanstack/react-query";
 
 import { startTransition, useOptimistic, useState } from "react";
 
@@ -12,6 +16,9 @@ export const useLikes = (
   post: PostType | ReplyType,
   user: User,
   refetchPosts: () => void,
+  refetchProfilePosts?: (
+    options?: RefetchOptions,
+  ) => Promise<QueryObserverResult<any, Error>>,
 ) => {
   // put likes in a state to use as source of truth
   // for useOptimistic hooks
@@ -47,6 +54,9 @@ export const useLikes = (
     },
     onSuccess: (res) => {
       refetchPosts();
+      if (refetchProfilePosts) {
+        refetchProfilePosts();
+      }
       if (res.message === "Post liked successfully") {
         setLikes((prev: number) => prev + 1);
         setUserHasLiked(true);

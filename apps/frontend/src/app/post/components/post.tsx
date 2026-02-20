@@ -1,9 +1,10 @@
 "use client";
 
 import { CurrentUserPostDropdown } from "@/app/home/components/post-controls";
+import { useBookmark } from "@/hooks/useBookmark";
 import useUser from "@/stores/user.store";
-import { useMutation } from "@tanstack/react-query";
-import { Heart, MessageCircle } from "lucide-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Bookmark, Heart, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 
 import {
@@ -43,7 +44,7 @@ const PostSingle = ({
 }: Props) => {
   const router = useRouter();
   const user = useUser((state) => state.user) as User;
-
+  const queryClient = useQueryClient();
   // put likes in a state to use as source of truth
   // for useOptimistic hooks
   const [likes, setLikes] = useState(post?._count.Like);
@@ -57,6 +58,17 @@ const PostSingle = ({
     likes,
     (currentLike: number, updatedLike: number) => currentLike + updatedLike,
   );
+
+  const refetchUserPosts = async () => {
+    await queryClient.refetchQueries({ queryKey: ["userProfilePage"] });
+  };
+
+  const { optimisticBookmark, bookmarkMutation } = useBookmark({
+    post,
+    user,
+    refetchPosts,
+    refetchUser: refetchUserPosts,
+  });
 
   // DELETE POST API INTERFACE
   const postMutation = useMutation({
@@ -182,6 +194,27 @@ const PostSingle = ({
             <p className="text-darker text-[14px] font-light group-hover:text-red-500 transition-all">
               {optimisticLikes}
             </p>
+          </button>
+
+          {/* Bookmark button */}
+          <button
+            className="flex items-center group cursor-pointer"
+            onClick={(e) => {
+              e.preventDefault();
+              bookmarkMutation.mutate();
+            }}
+          >
+            <div className="p-2 rounded-full group-hover:bg-blue-500/20 transition-all bg-transparent group">
+              <Bookmark
+                size={20}
+                className={cn(
+                  "text-darker font-light stroke-[1.2px] group-hover:stroke-blue-500! group-active:scale-150 duration-500",
+                  optimisticBookmark
+                    ? "fill-blue-500 stroke-blue-500!"
+                    : "stroke-darker",
+                )}
+              ></Bookmark>
+            </div>
           </button>
         </div>
       </div>

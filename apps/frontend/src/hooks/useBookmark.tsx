@@ -16,12 +16,19 @@ type Props = {
   post: PostType;
   user: User;
   refetchPosts: () => void;
-  refetch: (
+  refetch?: (
     options?: RefetchOptions,
   ) => Promise<QueryObserverResult<any, Error>>;
+  refetchUser?: () => Promise<void>;
 };
 
-export const useBookmark = ({ post, user, refetchPosts, refetch }: Props) => {
+export const useBookmark = ({
+  post,
+  user,
+  refetchPosts,
+  refetch,
+  refetchUser,
+}: Props) => {
   const [userHasBookmarked, setUserHasBookmarked] = useState(
     post?.bookmarks?.find((bookmark) => bookmark.userId === user.id)?.userId ===
       user.id,
@@ -56,7 +63,14 @@ export const useBookmark = ({ post, user, refetchPosts, refetch }: Props) => {
     },
     onSuccess: (res) => {
       refetchPosts();
-      refetch();
+      if (refetch) {
+        refetch();
+      }
+
+      if (refetchUser) {
+        refetchUser();
+      }
+
       if (res.status === "success") {
         if (res.message === "Bookmarked successfully") {
           setUserHasBookmarked(true);

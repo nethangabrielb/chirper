@@ -139,7 +139,7 @@ const Profile = () => {
   const queryClient = useQueryClient();
   const id = params.id;
   const { data: user, refetch: refetchUser } = useQuery({
-    queryKey: ["user", id],
+    queryKey: ["userProfilePage", id],
     queryFn: async () => {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API}/api/users/${id}`,

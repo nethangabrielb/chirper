@@ -36,11 +36,17 @@ const Post = ({ post, refetch, refetchPosts, displayReplies }: Props) => {
   const queryClient = useQueryClient();
   const user = useUser((state) => state.user) as User;
   const likesHook = useLikes(post, user, refetchPosts);
+
+  const refetchUserPage = async () => {
+    await queryClient.refetchQueries({ queryKey: ["userProfilePage"] });
+  };
+
   const { optimisticBookmark, bookmarkMutation } = useBookmark({
     post,
     user,
     refetchPosts,
     refetch,
+    refetchUser: refetchUserPage,
   });
 
   // DELETE POST API INTERFACE

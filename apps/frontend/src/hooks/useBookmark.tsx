@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useOptimistic, useState } from "react";
 
 import { BookmarkType } from "@/types/bookmark";
 import { PostType } from "@/types/post";
@@ -15,5 +15,11 @@ export const useBookmark = ({ post, user }: Props) => {
       user.id,
   );
 
-  return { userHasBookmarked };
+  const [optimisticBookmark, addOptimisticBookmark] = useOptimistic(
+    userHasBookmarked,
+    (currentBookmarkState, optimisticFollowState) =>
+      optimisticFollowState as boolean,
+  );
+
+  return { userHasBookmarked, optimisticBookmark };
 };

@@ -36,7 +36,7 @@ const Post = ({ post, refetch, refetchPosts, displayReplies }: Props) => {
   const queryClient = useQueryClient();
   const user = useUser((state) => state.user) as User;
   const likesHook = useLikes(post, user, refetchPosts);
-  const { userHasBookmarked } = useBookmark({ post, user });
+  const { optimisticBookmark } = useBookmark({ post, user });
 
   // DELETE POST API INTERFACE
   const postMutation = useMutation({
@@ -172,7 +172,7 @@ const Post = ({ post, refetch, refetchPosts, displayReplies }: Props) => {
                     size={20}
                     className={cn(
                       "text-darker font-light stroke-[1.2px] group-hover:stroke-blue-500! group-active:scale-150 duration-500",
-                      userHasBookmarked
+                      optimisticBookmark
                         ? "fill-blue-500 stroke-blue-500!"
                         : "stroke-darker",
                     )}

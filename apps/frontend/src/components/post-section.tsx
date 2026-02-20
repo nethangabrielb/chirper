@@ -60,7 +60,7 @@ const Post = ({ post, refetch, refetchPosts, displayReplies }: Props) => {
         refetch();
         await queryClient.refetchQueries({ queryKey: ["user"] });
         toast.success(res.message, {
-          position: "top-center",
+          position: "top-right",
           style: {
             background: "#1d9bf0",
             color: "white",

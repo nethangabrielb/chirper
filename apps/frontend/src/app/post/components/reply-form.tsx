@@ -70,7 +70,7 @@ const CreateReply = ({ refetch, postId, className }: Props) => {
       if (data.status === "success") {
         resetField("content");
         toast.success(data.message, {
-          position: "top-center",
+          position: "top-right",
           style: {
             background: "#1d9bf0",
             color: "white",

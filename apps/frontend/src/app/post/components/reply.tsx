@@ -117,7 +117,7 @@ const Reply = ({ reply, refetchPosts }: Props) => {
     onSuccess: (res) => {
       if (res.status === "success") {
         toast.success(res.message, {
-          position: "top-center",
+          position: "top-right",
           style: {
             background: "#1d9bf0",
             color: "white",

@@ -36,7 +36,12 @@ const Post = ({ post, refetch, refetchPosts, displayReplies }: Props) => {
   const queryClient = useQueryClient();
   const user = useUser((state) => state.user) as User;
   const likesHook = useLikes(post, user, refetchPosts);
-  const { optimisticBookmark } = useBookmark({ post, user });
+  const { optimisticBookmark, bookmarkMutation } = useBookmark({
+    post,
+    user,
+    refetchPosts,
+    refetch,
+  });
 
   // DELETE POST API INTERFACE
   const postMutation = useMutation({
@@ -166,7 +171,13 @@ const Post = ({ post, refetch, refetchPosts, displayReplies }: Props) => {
               </button>
 
               {/* Bookmark button */}
-              <button className="flex items-center group cursor-pointer ">
+              <button
+                className="flex items-center group cursor-pointer"
+                onClick={(e) => {
+                  e.preventDefault();
+                  bookmarkMutation.mutate();
+                }}
+              >
                 <div className="p-2 rounded-full group-hover:bg-blue-500/20 transition-all bg-transparent group">
                   <Bookmark
                     size={20}

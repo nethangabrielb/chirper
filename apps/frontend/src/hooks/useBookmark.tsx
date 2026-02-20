@@ -1,15 +1,27 @@
-import { useOptimistic, useState } from "react";
+import {
+  QueryObserverResult,
+  RefetchOptions,
+  useMutation,
+} from "@tanstack/react-query";
+import { toast } from "sonner";
 
-import { BookmarkType } from "@/types/bookmark";
+import { startTransition, useOptimistic, useState } from "react";
+
+import bookmarkApi from "@/lib/api/bookmark";
+
 import { PostType } from "@/types/post";
 import { User } from "@/types/user";
 
 type Props = {
   post: PostType;
   user: User;
+  refetchPosts: () => void;
+  refetch: (
+    options?: RefetchOptions,
+  ) => Promise<QueryObserverResult<any, Error>>;
 };
 
-export const useBookmark = ({ post, user }: Props) => {
+export const useBookmark = ({ post, user, refetchPosts, refetch }: Props) => {
   const [userHasBookmarked, setUserHasBookmarked] = useState(
     post?.bookmarks?.find((bookmark) => bookmark.userId === user.id)?.userId ===
       user.id,
@@ -17,9 +29,51 @@ export const useBookmark = ({ post, user }: Props) => {
 
   const [optimisticBookmark, addOptimisticBookmark] = useOptimistic(
     userHasBookmarked,
-    (currentBookmarkState, optimisticFollowState) =>
-      optimisticFollowState as boolean,
+    (currentBookmarkState, optimisticBookmarkState) =>
+      optimisticBookmarkState as boolean,
   );
 
-  return { userHasBookmarked, optimisticBookmark };
+  const bookmarkMutation = useMutation({
+    mutationFn: async () => {
+      if (userHasBookmarked) {
+        startTransition(() => {
+          addOptimisticBookmark(false);
+        });
+        const bookmark = post?.bookmarks?.find(
+          (bookmark) => bookmark.userId === user.id,
+        );
+        if (bookmark) {
+          const res = await bookmarkApi.removeBookmarkOnPost(bookmark?.id);
+          return res;
+        }
+      } else if (!userHasBookmarked) {
+        startTransition(() => {
+          addOptimisticBookmark(true);
+        });
+        const res = await bookmarkApi.bookmarkPost(user.id, post.id);
+        return res;
+      }
+    },
+    onSuccess: (res) => {
+      refetchPosts();
+      refetch();
+      if (res.status === "success") {
+        if (res.message === "Bookmarked successfully") {
+          setUserHasBookmarked(true);
+        } else if (res.message === "Bookmark removed successfully") {
+          setUserHasBookmarked(false);
+        }
+      } else if (res.status === "error") {
+        if (optimisticBookmark) {
+          setUserHasBookmarked(false);
+          toast.error(res.message);
+        } else {
+          setUserHasBookmarked(true);
+          toast.error(res.message);
+        }
+      }
+    },
+  });
+
+  return { userHasBookmarked, optimisticBookmark, bookmarkMutation };
 };

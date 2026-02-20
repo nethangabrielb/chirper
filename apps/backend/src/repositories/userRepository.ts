@@ -102,6 +102,7 @@ const UserRepository = {
                     userId: true,
                   },
                 },
+                bookmarks: true,
               },
               orderBy: {
                 Like: {
@@ -109,6 +110,7 @@ const UserRepository = {
                 },
               },
             },
+            bookmarks: true,
           },
           orderBy: {
             createdAt: 'desc',

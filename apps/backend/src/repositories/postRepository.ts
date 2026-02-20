@@ -74,6 +74,7 @@ const postRepository = {
                 userId: true,
               },
             },
+            bookmarks: true,
           },
           orderBy: {
             createdAt: 'desc',
@@ -159,6 +160,7 @@ const postRepository = {
                 userId: true,
               },
             },
+            bookmarks: true,
           },
           orderBy: {
             Like: {
@@ -246,6 +248,7 @@ const postRepository = {
                 userId: true,
               },
             },
+            bookmarks: true,
           },
           orderBy: {
             Like: {
@@ -286,6 +289,7 @@ const postRepository = {
                 userId: true,
               },
             },
+            bookmarks: true,
             replies: {
               include: {
                 _count: {
@@ -298,6 +302,7 @@ const postRepository = {
                     },
                   },
                 },
+                bookmarks: true,
                 user: {
                   select: {
                     avatar: true,
@@ -408,6 +413,7 @@ const postRepository = {
                 userId: true,
               },
             },
+            bookmarks: true,
           },
           orderBy: {
             Like: {
@@ -448,6 +454,7 @@ const postRepository = {
                 userId: true,
               },
             },
+            bookmarks: true,
             replies: {
               include: {
                 _count: {
@@ -481,6 +488,7 @@ const postRepository = {
                     userId: true,
                   },
                 },
+                bookmarks: true,
               },
               orderBy: {
                 Like: {
@@ -561,6 +569,7 @@ const postRepository = {
                 userId: true,
               },
             },
+            bookmarks: true,
           },
           orderBy: {
             Like: {
@@ -601,6 +610,7 @@ const postRepository = {
                 userId: true,
               },
             },
+            bookmarks: true,
             replies: {
               include: {
                 _count: {
@@ -634,6 +644,7 @@ const postRepository = {
                     userId: true,
                   },
                 },
+                bookmarks: true,
               },
               orderBy: {
                 Like: {

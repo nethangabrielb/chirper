@@ -50,7 +50,7 @@ const Messages = () => {
   });
 
   useEffect(() => {
-    document.title = "Twitter / Messages";
+    document.title = "Messages / Twitter Clone";
   }, []);
 
   const messageUser = (visitedUserId: number, visitedUser: UserPartial) => {

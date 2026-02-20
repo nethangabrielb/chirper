@@ -31,7 +31,7 @@ const Home = () => {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    document.title = "Home / Twitter";
+    document.title = "Home / Twitter Clone";
   }, []);
 
   const refetchPosts = async () => {

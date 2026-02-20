@@ -36,7 +36,7 @@ const Post = () => {
   };
 
   useEffect(() => {
-    document.title = `${post?.user?.username} on Twitter: ${post?.content}`;
+    document.title = `${post?.user?.username} on Twitter Clone: ${post?.content}`;
   }, [post]);
 
   useEffect(() => {

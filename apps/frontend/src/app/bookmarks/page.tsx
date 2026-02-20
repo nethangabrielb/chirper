@@ -20,7 +20,6 @@ const Bookmarks = () => {
     queryKey: ["bookmarkedPosts"],
     queryFn: async () => {
       const res = await postApi.getUserBookmarkedPosts();
-      console.log(res.data);
       return res.data;
     },
   });
@@ -34,6 +33,7 @@ const Bookmarks = () => {
     await queryClient.refetchQueries({ queryKey: ["user"] });
     await queryClient.refetchQueries({ queryKey: ["posts"] });
     await queryClient.refetchQueries({ queryKey: ["userProfilePage"] });
+    await queryClient.refetchQueries({ queryKey: ["bookmarkedPosts"] });
   };
 
   return (

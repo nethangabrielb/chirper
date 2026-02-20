@@ -33,6 +33,8 @@ const Post = () => {
   const refetchPosts = async () => {
     await queryClient.refetchQueries({ queryKey: ["posts"] });
     await queryClient.refetchQueries({ queryKey: ["post"] });
+    await queryClient.refetchQueries({ queryKey: ["bookmarkedPosts"] });
+    await queryClient.refetchQueries({ queryKey: ["userProfilePage"] });
   };
 
   useEffect(() => {

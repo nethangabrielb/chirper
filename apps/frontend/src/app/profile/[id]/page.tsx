@@ -177,6 +177,7 @@ const Profile = () => {
   const refetchPosts = async () => {
     await queryClient.refetchQueries({ queryKey: ["post"] });
     await queryClient.refetchQueries({ queryKey: ["posts"] });
+    await queryClient.refetchQueries({ queryKey: ["bookmarkedPosts"] });
   };
 
   const displayReplies = (post: PostType) => {

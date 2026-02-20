@@ -39,6 +39,7 @@ const Home = () => {
     await queryClient.refetchQueries({ queryKey: ["user"] });
     await queryClient.refetchQueries({ queryKey: ["posts"] });
     await queryClient.refetchQueries({ queryKey: ["userProfilePage"] });
+    await queryClient.refetchQueries({ queryKey: ["bookmarkedPosts"] });
   };
 
   return (

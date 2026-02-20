@@ -82,6 +82,7 @@ const CreateReply = ({ refetch, postId, className }: Props) => {
         await queryClient.refetchQueries({ queryKey: ["post"] });
         await queryClient.refetchQueries({ queryKey: ["posts"] });
         await queryClient.refetchQueries({ queryKey: ["userProfilePage"] });
+        await queryClient.refetchQueries({ queryKey: ["bookmarkedPosts"] });
         router.back();
       } else {
         toast.error(data.message);

@@ -62,15 +62,6 @@ export const useBookmark = ({
       }
     },
     onSuccess: (res) => {
-      refetchPosts();
-      if (refetch) {
-        refetch();
-      }
-
-      if (refetchUser) {
-        refetchUser();
-      }
-
       if (res.status === "success") {
         if (res.message === "Bookmarked successfully") {
           toast.success("Added to your bookmarks", {
@@ -99,6 +90,14 @@ export const useBookmark = ({
           setUserHasBookmarked(true);
           toast.error(res.message);
         }
+      }
+      refetchPosts();
+      if (refetch) {
+        refetch();
+      }
+
+      if (refetchUser) {
+        refetchUser();
       }
     },
   });

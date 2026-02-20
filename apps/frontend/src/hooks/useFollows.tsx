@@ -101,7 +101,7 @@ const useFollows = ({
   }, [visitedUserId, pathId]);
 
   const resetUserQueryCache = async () => {
-    await queryClient.refetchQueries({ queryKey: ["user"] });
+    await queryClient.invalidateQueries({ queryKey: ["user"] });
   };
 
   return {

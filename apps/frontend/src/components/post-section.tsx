@@ -45,7 +45,9 @@ const Post = ({
   const likesHook = useLikes(post, user, refetchPosts, refetch);
 
   const refetchUserPage = async () => {
-    await queryClient.refetchQueries({ queryKey: ["userProfilePage"] });
+    await queryClient.invalidateQueries({
+      queryKey: ["userProfilePage"],
+    });
   };
 
   const { optimisticBookmark, bookmarkMutation } = useBookmark({
@@ -65,7 +67,7 @@ const Post = ({
     onSuccess: async (res) => {
       if (res.status === "success") {
         refetch();
-        await queryClient.refetchQueries({ queryKey: ["user"] });
+        await queryClient.invalidateQueries({ queryKey: ["user"] });
         toast.success(res.message, {
           position: "top-right",
           style: {
@@ -190,7 +192,7 @@ const Post = ({
                   ></Heart>
                 </div>
                 <p className="text-darker text-[14px] font-light group-hover:text-red-500 transition-all">
-                  {likesHook.optimisticLikes}
+                  {likesHook.likes}
                 </p>
               </button>
 

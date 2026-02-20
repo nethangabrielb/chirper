@@ -61,7 +61,7 @@ const PostSingle = ({
   );
 
   const refetchUserPosts = async () => {
-    await queryClient.refetchQueries({ queryKey: ["userProfilePage"] });
+    await queryClient.invalidateQueries({ queryKey: ["userProfilePage"] });
   };
 
   const { optimisticBookmark, bookmarkMutation } = useBookmark({

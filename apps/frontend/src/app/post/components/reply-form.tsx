@@ -79,10 +79,10 @@ const CreateReply = ({ refetch, postId, className }: Props) => {
         });
       } else if (data.status === "deleted") {
         toast.error(data.message);
-        await queryClient.refetchQueries({ queryKey: ["post"] });
-        await queryClient.refetchQueries({ queryKey: ["posts"] });
-        await queryClient.refetchQueries({ queryKey: ["userProfilePage"] });
-        await queryClient.refetchQueries({ queryKey: ["bookmarkedPosts"] });
+        await queryClient.invalidateQueries({ queryKey: ["post"] });
+        await queryClient.invalidateQueries({ queryKey: ["posts"] });
+        await queryClient.invalidateQueries({ queryKey: ["userProfilePage"] });
+        await queryClient.invalidateQueries({ queryKey: ["bookmarkedPosts"] });
         router.back();
       } else {
         toast.error(data.message);

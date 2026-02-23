@@ -27,6 +27,7 @@ export interface Bookmark {
   id: number;
   userId: number;
   postId: number;
+  createdAt: Date;
 }
 
 export interface BookmarkBody {

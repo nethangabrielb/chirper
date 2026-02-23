@@ -129,6 +129,21 @@ const postApi = (() => {
     return data;
   };
 
+  const getUserBookmarkedPosts = async () => {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API}/api/posts?bookmarks=true`,
+      {
+        credentials: "include",
+      },
+    );
+    if (!res.ok) {
+      throw new Error("There was an error processing this request.");
+    }
+    const data = await res.json();
+
+    return data;
+  };
+
   return {
     getPosts,
     getPost,
@@ -138,6 +153,7 @@ const postApi = (() => {
     unlikePost,
     getUserReplies,
     getUserLiked,
+    getUserBookmarkedPosts,
   };
 })();
 

@@ -1,9 +1,10 @@
 "use client";
 
 import { CurrentUserPostDropdown } from "@/app/home/components/post-controls";
+import { useBookmark } from "@/hooks/useBookmark";
 import useUser from "@/stores/user.store";
-import { useMutation } from "@tanstack/react-query";
-import { Heart, MessageCircle } from "lucide-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Bookmark, Heart, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 
 import {
@@ -28,22 +29,15 @@ import { User } from "@/types/user";
 
 type Props = {
   post: PostType | ReplyType;
-  refetchPosts: () => void;
   className?: string;
   settingsCn?: string;
   buttonCn?: string;
 };
 
-const PostSingle = ({
-  post,
-  refetchPosts,
-  className,
-  settingsCn,
-  buttonCn,
-}: Props) => {
+const PostSingle = ({ post, className, settingsCn, buttonCn }: Props) => {
+  const queryClient = useQueryClient();
   const router = useRouter();
   const user = useUser((state) => state.user) as User;
-
   // put likes in a state to use as source of truth
   // for useOptimistic hooks
   const [likes, setLikes] = useState(post?._count.Like);
@@ -51,12 +45,18 @@ const PostSingle = ({
   // source of truth to determine if clicking the like button should either
   // like or unlike a tweet by determining if current user has alr liked a post
   const [userHasLiked, setUserHasLiked] = useState(
-    post?.Like[0]?.userId === user?.id,
+    post?.Like?.find((userId: { userId: number }) => userId.userId === user?.id)
+      ?.userId === user?.id,
   );
   const [optimisticLikes, addOptimisticLikes] = useOptimistic(
     likes,
     (currentLike: number, updatedLike: number) => currentLike + updatedLike,
   );
+
+  const { optimisticBookmark, bookmarkMutation } = useBookmark({
+    post,
+    user,
+  });
 
   // DELETE POST API INTERFACE
   const postMutation = useMutation({
@@ -67,7 +67,7 @@ const PostSingle = ({
     onSuccess: (res) => {
       if (res.status === "success") {
         toast.success(res.message, {
-          position: "top-center",
+          position: "top-right",
           style: {
             background: "#1d9bf0",
             color: "white",
@@ -99,7 +99,6 @@ const PostSingle = ({
       }
     },
     onSuccess: (res) => {
-      refetchPosts();
       if (res.message === "Post liked successfully") {
         setLikes((prev: number) => prev + 1);
         setUserHasLiked(true);
@@ -108,10 +107,21 @@ const PostSingle = ({
         setUserHasLiked(false);
       }
     },
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["post"] });
+      await queryClient.invalidateQueries({ queryKey: ["user"] });
+      await queryClient.invalidateQueries({ queryKey: ["posts"] });
+      await queryClient.invalidateQueries({ queryKey: ["userProfilePage"] });
+      await queryClient.invalidateQueries({ queryKey: ["bookmarkedPosts"] });
+    },
   });
 
   useEffect(() => {
-    setUserHasLiked(post?.Like[0]?.userId === user?.id);
+    setUserHasLiked(
+      post?.Like?.find(
+        (userId: { userId: number }) => userId.userId === user?.id,
+      )?.userId === user?.id,
+    );
   }, [user]);
 
   const handleDelete = () => {
@@ -182,6 +192,27 @@ const PostSingle = ({
             <p className="text-darker text-[14px] font-light group-hover:text-red-500 transition-all">
               {optimisticLikes}
             </p>
+          </button>
+
+          {/* Bookmark button */}
+          <button
+            className="flex items-center group cursor-pointer"
+            onClick={(e) => {
+              e.preventDefault();
+              bookmarkMutation.mutate();
+            }}
+          >
+            <div className="p-2 rounded-full group-hover:bg-blue-500/20 transition-all bg-transparent group">
+              <Bookmark
+                size={20}
+                className={cn(
+                  "text-darker font-light stroke-[1.2px] group-hover:stroke-blue-500! group-active:scale-150 duration-500",
+                  optimisticBookmark
+                    ? "fill-blue-500 stroke-blue-500!"
+                    : "stroke-darker",
+                )}
+              ></Bookmark>
+            </div>
           </button>
         </div>
       </div>

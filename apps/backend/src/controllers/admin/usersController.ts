@@ -70,20 +70,18 @@ const userController = (() => {
 
         return res.json({ status: 'success', data: usersArray });
       } else if (_req.query.user) {
-        setTimeout(async () => {
-          const users = await UserService.getUserSearchResults(
-            _req.query.user as string
-          );
+        const users = await UserService.getUserSearchResults(
+          _req.query.user as string
+        );
 
-          if (!users) {
-            return res.json({
-              status: 'error',
-              message: 'Failed to fetch users',
-            });
-          }
+        if (!users) {
+          return res.json({
+            status: 'error',
+            message: 'Failed to fetch users',
+          });
+        }
 
-          return res.json({ status: 'success', data: users });
-        }, 3000);
+        return res.json({ status: 'success', data: users });
       } else {
         const users = await UserService.getAllUsers();
         return res.json({ status: 'success', data: users });

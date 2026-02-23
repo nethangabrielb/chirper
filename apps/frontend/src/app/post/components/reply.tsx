@@ -2,9 +2,10 @@
 
 import { CurrentUserPostDropdown } from "@/app/home/components/post-controls";
 import PostSingle from "@/app/post/components/post";
+import { useBookmark } from "@/hooks/useBookmark";
 import useUser from "@/stores/user.store";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { Heart, MessageCircle } from "lucide-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Bookmark, Heart, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 
 import {
@@ -21,8 +22,7 @@ import { useRouter } from "next/navigation";
 import { ProfileHoverCard } from "@/components/profile-card-hover";
 
 import postApi from "@/lib/api/post";
-import { cn } from "@/lib/utils";
-import { formatDateFeedPost } from "@/lib/utils";
+import { cn, formatDateFeedPost } from "@/lib/utils";
 
 import { PostType } from "@/types/post";
 import type { ReplyType } from "@/types/reply";
@@ -30,12 +30,12 @@ import { User } from "@/types/user";
 
 type Props = {
   reply: ReplyType;
-  refetchPosts: () => void;
 };
 
-const Reply = ({ reply, refetchPosts }: Props) => {
+const Reply = ({ reply }: Props) => {
   const router = useRouter();
   const user = useUser((state) => state.user) as User;
+  const queryClient = useQueryClient();
   // Fetch the post the reply is replying to
   const { data: post } = useQuery<PostType | ReplyType>({
     queryKey: ["post", reply.replyId],
@@ -52,12 +52,22 @@ const Reply = ({ reply, refetchPosts }: Props) => {
   // source of truth to determine if clicking the like button should either
   // like or unlike a tweet by determining if current user has alr liked a post
   const [userHasLiked, setUserHasLiked] = useState(
-    post?.Like[0]?.userId === user?.id,
+    post?.Like?.find((userId: { userId: number }) => userId.userId === user?.id)
+      ?.userId === user?.id,
   );
   const [optimisticLikes, addOptimisticLikes] = useOptimistic(
     likes ?? 0,
     (currentLike: number, updatedLike: number) => currentLike + updatedLike,
   );
+
+  const refetchUserPosts = async () => {
+    await queryClient.invalidateQueries({ queryKey: ["userProfilePage"] });
+  };
+
+  const { optimisticBookmark, bookmarkMutation } = useBookmark({
+    post,
+    user,
+  });
 
   // LIKE/UNLIKE POST API INTERFACE
   const likeMutation = useMutation({
@@ -77,7 +87,7 @@ const Reply = ({ reply, refetchPosts }: Props) => {
       }
     },
     onSuccess: (res) => {
-      refetchPosts();
+      refetchUserPosts();
       if (res.message === "Post liked successfully") {
         setLikes((prev: number) => prev + 1);
         setUserHasLiked(true);
@@ -86,10 +96,21 @@ const Reply = ({ reply, refetchPosts }: Props) => {
         setUserHasLiked(false);
       }
     },
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["post"] });
+      await queryClient.invalidateQueries({ queryKey: ["user"] });
+      await queryClient.invalidateQueries({ queryKey: ["posts"] });
+      await queryClient.invalidateQueries({ queryKey: ["userProfilePage"] });
+      await queryClient.invalidateQueries({ queryKey: ["bookmarkedPosts"] });
+    },
   });
 
   useEffect(() => {
-    setUserHasLiked(post?.Like[0]?.userId === user?.id);
+    setUserHasLiked(
+      post?.Like?.find(
+        (userId: { userId: number }) => userId.userId === user?.id,
+      )?.userId === user?.id,
+    );
   }, [user]);
 
   useEffect(() => {
@@ -105,7 +126,7 @@ const Reply = ({ reply, refetchPosts }: Props) => {
     onSuccess: (res) => {
       if (res.status === "success") {
         toast.success(res.message, {
-          position: "top-center",
+          position: "top-right",
           style: {
             background: "#1d9bf0",
             color: "white",
@@ -137,7 +158,6 @@ const Reply = ({ reply, refetchPosts }: Props) => {
           </div>
           <PostSingle
             post={reply}
-            refetchPosts={refetchPosts}
             className="p-4 pt-0!"
             settingsCn="m-0!"
             buttonCn="p-1!"
@@ -161,7 +181,7 @@ const Reply = ({ reply, refetchPosts }: Props) => {
                 )}
                 <div className="bg-neutral-600 w-[2px] h-[100px]"></div>
               </div>
-              <div className="flex flex-col">
+              <div className="flex flex-col self-start">
                 <div className="flex items-center gap-1">
                   <p className="font-bold text-text space tracking-[0.2px] text-[18px]">
                     {post?.user.name}
@@ -217,13 +237,33 @@ const Reply = ({ reply, refetchPosts }: Props) => {
                       {optimisticLikes}
                     </p>
                   </button>
+
+                  {/* Bookmark button */}
+                  <button
+                    className="flex items-center group cursor-pointer"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      bookmarkMutation.mutate();
+                    }}
+                  >
+                    <div className="p-2 rounded-full group-hover:bg-blue-500/20 transition-all bg-transparent group">
+                      <Bookmark
+                        size={20}
+                        className={cn(
+                          "text-darker font-light stroke-[1.2px] group-hover:stroke-blue-500! group-active:scale-150 duration-500",
+                          optimisticBookmark
+                            ? "fill-blue-500 stroke-blue-500!"
+                            : "stroke-darker",
+                        )}
+                      ></Bookmark>
+                    </div>
+                  </button>
                 </div>
               </div>
             </div>
           </Link>
           <PostSingle
             post={reply}
-            refetchPosts={refetchPosts}
             className="p-4 pt-0!"
             settingsCn="m-0!"
             buttonCn="p-1!"

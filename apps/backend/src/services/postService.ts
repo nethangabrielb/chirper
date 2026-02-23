@@ -65,6 +65,13 @@ const postService = {
     }
     return posts;
   },
+  getBookmarkedPosts: async (userId: number) => {
+    const posts = await postRepository.findByBookmarked(userId);
+    if (!posts) {
+      throw new Error('There was a problem fetching bookmarked posts');
+    }
+    return posts;
+  },
 };
 
 export default postService;

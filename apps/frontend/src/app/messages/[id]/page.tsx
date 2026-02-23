@@ -49,7 +49,7 @@ const MessagesSlug = ({ params }: { params: Promise<{ id: string }> }) => {
   }, [id]);
 
   useEffect(() => {
-    document.title = "Twitter / Messages";
+    document.title = "Messages / Twitter Clone";
   }, []);
 
   return (

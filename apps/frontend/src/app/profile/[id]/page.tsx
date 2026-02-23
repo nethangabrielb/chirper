@@ -136,10 +136,9 @@ const Profile = () => {
   );
   const router = useRouter();
   const params = useParams();
-  const queryClient = useQueryClient();
   const id = params.id;
-  const { data: user, refetch: refetchUser } = useQuery({
-    queryKey: ["user", id],
+  const { data: user } = useQuery({
+    queryKey: ["userProfilePage", id],
     queryFn: async () => {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API}/api/users/${id}`,
@@ -157,7 +156,7 @@ const Profile = () => {
     },
   });
 
-  const { data: posts, refetch: refetchPost } = useQuery({
+  const { data: posts } = useQuery({
     queryKey: ["posts", feedType],
     queryFn: async () => {
       if (feedType === "replies") {
@@ -173,11 +172,6 @@ const Profile = () => {
   useEffect(() => {
     document.title = `${user?.name} (@${user?.username}) / Twitter Clone`;
   }, [user]);
-
-  const refetchPosts = async () => {
-    await queryClient.refetchQueries({ queryKey: ["post"] });
-    await queryClient.refetchQueries({ queryKey: ["posts"] });
-  };
 
   const displayReplies = (post: PostType) => {
     if (feedType === "replies") {
@@ -316,9 +310,7 @@ const Profile = () => {
               return (
                 <FeedPost
                   post={post}
-                  refetchPosts={refetchPosts}
                   key={post.id}
-                  refetch={refetchUser}
                   displayReplies={false}
                 ></FeedPost>
               );
@@ -336,9 +328,7 @@ const Profile = () => {
                 return (
                   <FeedPost
                     post={post}
-                    refetchPosts={refetchPosts}
                     key={post.id}
-                    refetch={refetchPost}
                     displayReplies={displayReplies(post)}
                   ></FeedPost>
                 );

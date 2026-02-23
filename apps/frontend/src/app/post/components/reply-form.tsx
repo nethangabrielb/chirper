@@ -70,7 +70,7 @@ const CreateReply = ({ refetch, postId, className }: Props) => {
       if (data.status === "success") {
         resetField("content");
         toast.success(data.message, {
-          position: "top-center",
+          position: "top-right",
           style: {
             background: "#1d9bf0",
             color: "white",
@@ -79,7 +79,10 @@ const CreateReply = ({ refetch, postId, className }: Props) => {
         });
       } else if (data.status === "deleted") {
         toast.error(data.message);
-        await queryClient.refetchQueries({ queryKey: ["post", "posts"] });
+        await queryClient.invalidateQueries({ queryKey: ["post"] });
+        await queryClient.invalidateQueries({ queryKey: ["posts"] });
+        await queryClient.invalidateQueries({ queryKey: ["userProfilePage"] });
+        await queryClient.invalidateQueries({ queryKey: ["bookmarkedPosts"] });
         router.back();
       } else {
         toast.error(data.message);

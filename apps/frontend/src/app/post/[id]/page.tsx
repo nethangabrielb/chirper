@@ -4,13 +4,12 @@ import FeedPost from "@/app/home/components/feed-post";
 import PostSingle from "@/app/post/components/post";
 import Reply from "@/app/post/components/reply";
 import CreateReply from "@/app/post/components/reply-form";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 import { useEffect, useState } from "react";
 
 import Head from "next/head";
-import { useParams } from "next/navigation";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 import postApi from "@/lib/api/post";
 
@@ -20,7 +19,6 @@ import { ReplyType } from "@/types/reply";
 const Post = () => {
   const [isReply, setIsReply] = useState<boolean | null>(null);
   const params = useParams();
-  const queryClient = useQueryClient();
   const router = useRouter();
 
   const { data: post, refetch } = useQuery<PostType | ReplyType>({
@@ -31,13 +29,8 @@ const Post = () => {
     },
   });
 
-  const refetchPosts = async () => {
-    await queryClient.refetchQueries({ queryKey: ["posts"] });
-    await queryClient.refetchQueries({ queryKey: ["post"] });
-  };
-
   useEffect(() => {
-    document.title = `${post?.user?.username} on Twitter: ${post?.content}`;
+    document.title = `${post?.user?.username} on Twitter Clone: ${post?.content}`;
   }, [post]);
 
   useEffect(() => {
@@ -87,26 +80,18 @@ const Post = () => {
         <>
           {post && isReply ? (
             <>
-              <Reply reply={post} refetchPosts={refetchPosts}></Reply>
+              <Reply reply={post}></Reply>
               <CreateReply postId={post.id} refetch={refetch}></CreateReply>
               {post?.replies.map((reply: ReplyType) => {
                 return (
-                  <FeedPost
-                    post={reply as ReplyType}
-                    refetch={refetch}
-                    refetchPosts={refetchPosts}
-                    key={reply.id}
-                  ></FeedPost>
+                  <FeedPost post={reply as ReplyType} key={reply.id}></FeedPost>
                 );
               })}
             </>
           ) : (
             post && (
               <>
-                <PostSingle
-                  post={post}
-                  refetchPosts={refetchPosts}
-                ></PostSingle>
+                <PostSingle post={post}></PostSingle>
 
                 <CreateReply
                   refetch={refetch}
@@ -116,8 +101,6 @@ const Post = () => {
                   return (
                     <FeedPost
                       post={reply as ReplyType}
-                      refetch={refetch}
-                      refetchPosts={refetchPosts}
                       key={reply.id}
                     ></FeedPost>
                   );

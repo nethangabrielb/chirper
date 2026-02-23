@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { bookmarkSchema } from "@/schemas/bookmark";
 import { replySchema } from "@/schemas/reply";
 
 export const userSchema = z.object({
@@ -33,4 +34,5 @@ export const postSchema = z.object({
   Like: z.array(likeSchema),
   replies: z.array(replySchema),
   reply: replySchema.optional(),
+  bookmarks: z.array(bookmarkSchema),
 });

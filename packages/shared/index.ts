@@ -22,3 +22,14 @@ export interface Room {
   messages?: Array<ChatMessage>;
   users: Array<User>;
 }
+
+export interface Bookmark {
+  id: number;
+  userId: number;
+  postId: number;
+}
+
+export interface BookmarkBody {
+  userId: number;
+  postId: number;
+}

@@ -1,12 +1,9 @@
 import { CurrentUserPostDropdown } from "@/app/home/components/post-controls";
+import { useBookmark } from "@/hooks/useBookmark";
 import { useLikes } from "@/hooks/useLikes";
 import useUser from "@/stores/user.store";
-import type {
-  QueryObserverResult,
-  RefetchOptions,
-} from "@tanstack/react-query";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Heart, MessageCircle } from "lucide-react";
+import { Bookmark, Heart, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 
 import React, { Activity } from "react";
@@ -24,17 +21,20 @@ import { User } from "@/types/user";
 
 type Props = {
   post: PostType | ReplyType;
-  refetch: (
-    options?: RefetchOptions,
-  ) => Promise<QueryObserverResult<any, Error>>;
-  refetchPosts: () => void;
+
   displayReplies?: boolean;
+  bookmarkedPost?: boolean;
 };
 
-const Post = ({ post, refetch, refetchPosts, displayReplies }: Props) => {
+const Post = ({ post, displayReplies, bookmarkedPost }: Props) => {
   const queryClient = useQueryClient();
   const user = useUser((state) => state.user) as User;
-  const likesHook = useLikes(post, user, refetchPosts);
+  const likesHook = useLikes(post, user);
+
+  const { optimisticBookmark, bookmarkMutation } = useBookmark({
+    post,
+    user,
+  });
 
   // DELETE POST API INTERFACE
   const postMutation = useMutation({
@@ -44,10 +44,8 @@ const Post = ({ post, refetch, refetchPosts, displayReplies }: Props) => {
     },
     onSuccess: async (res) => {
       if (res.status === "success") {
-        refetch();
-        await queryClient.refetchQueries({ queryKey: ["user"] });
         toast.success(res.message, {
-          position: "top-center",
+          position: "top-right",
           style: {
             background: "#1d9bf0",
             color: "white",
@@ -57,6 +55,13 @@ const Post = ({ post, refetch, refetchPosts, displayReplies }: Props) => {
       } else {
         toast.error(res.message);
       }
+    },
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["user"] });
+      await queryClient.invalidateQueries({ queryKey: ["post"] });
+      await queryClient.invalidateQueries({ queryKey: ["posts"] });
+      await queryClient.invalidateQueries({ queryKey: ["userProfilePage"] });
+      await queryClient.invalidateQueries({ queryKey: ["bookmarkedPosts"] });
     },
   });
 
@@ -122,10 +127,21 @@ const Post = ({ post, refetch, refetchPosts, displayReplies }: Props) => {
                 </p>
               </div>
             </div>
+            {bookmarkedPost && post.reply && (
+              <p className="text-darker font-light text-sm -translate-y-2">
+                Replying to{" "}
+                <Link
+                  className="text-blue-500 cursor-pointer hover:underline underline-offset-1"
+                  href={`/profile/${post.reply.user.id}`}
+                >
+                  @{post.reply.user.username}
+                </Link>
+              </p>
+            )}
             <p className="text-text text-[15px] whitespace-normal break-words">
               {post.content}
             </p>
-            <div className="flex justify-between w-[60%] ">
+            <div className="flex justify-between w-[100%] ">
               {/* render comments */}
               <div className="flex items-center group cursor-pointer">
                 <div className="p-2 rounded-full group-hover:bg-primary/20 transition-all">
@@ -159,8 +175,29 @@ const Post = ({ post, refetch, refetchPosts, displayReplies }: Props) => {
                   ></Heart>
                 </div>
                 <p className="text-darker text-[14px] font-light group-hover:text-red-500 transition-all">
-                  {likesHook.optimisticLikes}
+                  {likesHook.likes}
                 </p>
+              </button>
+
+              {/* Bookmark button */}
+              <button
+                className="flex items-center group cursor-pointer"
+                onClick={(e) => {
+                  e.preventDefault();
+                  bookmarkMutation.mutate();
+                }}
+              >
+                <div className="p-2 rounded-full group-hover:bg-blue-500/20 transition-all bg-transparent group">
+                  <Bookmark
+                    size={20}
+                    className={cn(
+                      "text-darker font-light stroke-[1.2px] group-hover:stroke-blue-500! group-active:scale-150 duration-500",
+                      optimisticBookmark
+                        ? "fill-blue-500 stroke-blue-500!"
+                        : "stroke-darker",
+                    )}
+                  ></Bookmark>
+                </div>
               </button>
             </div>
           </div>

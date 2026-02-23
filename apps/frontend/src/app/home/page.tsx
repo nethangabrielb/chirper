@@ -2,7 +2,7 @@
 
 import CreatePost from "@/app/home/components/create-post";
 import FeedPost from "@/app/home/components/feed-post";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 import { useEffect } from "react";
 
@@ -28,17 +28,10 @@ const Home = () => {
       return posts;
     },
   });
-  const queryClient = useQueryClient();
 
   useEffect(() => {
-    document.title = "Home / Twitter";
+    document.title = "Home / Twitter Clone";
   }, []);
-
-  const refetchPosts = async () => {
-    await queryClient.refetchQueries({ queryKey: ["post"] });
-    await queryClient.refetchQueries({ queryKey: ["user"] });
-    await queryClient.refetchQueries({ queryKey: ["posts"] });
-  };
 
   return (
     <>
@@ -75,8 +68,6 @@ const Home = () => {
                 <FeedPost
                   post={post}
                   key={post.id}
-                  refetch={refetch}
-                  refetchPosts={refetchPosts}
                   displayReplies={true}
                 ></FeedPost>
               );

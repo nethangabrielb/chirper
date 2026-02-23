@@ -1,0 +1,75 @@
+import { Request, Response } from 'express';
+
+import type { BookmarkBody } from '@twitter-clone/shared';
+
+import bookmarkService from '../../services/bookmarkService';
+import { GENERIC_ERROR_MESSAGE } from '../../utils/errorMessage';
+
+const bookmarkController = (() => {
+  const createBookmark = async (
+    req: Request<object, object, BookmarkBody>,
+    res: Response
+  ) => {
+    try {
+      const { userId, postId } = req.body;
+
+      if (!userId || !postId) {
+        throw new Error('No body payload provided');
+      }
+
+      const bookmark = await bookmarkService.create(
+        Number(userId),
+        Number(postId)
+      );
+
+      if (!bookmark) {
+        throw new Error('Error creating bookmark');
+      }
+
+      res.json({
+        status: 'success',
+        message: 'Bookmarked successfully',
+        data: bookmark,
+      });
+    } catch (err: unknown) {
+      res.json({
+        status: 'error',
+        message: err instanceof Error ? err.message : GENERIC_ERROR_MESSAGE,
+      });
+    }
+  };
+
+  const deleteBookmark = async (
+    req: Request<{ bookmarkId: string }, object, object>,
+    res: Response
+  ) => {
+    try {
+      const { bookmarkId } = req.params;
+
+      if (!bookmarkId) {
+        throw new Error('No body payload provided');
+      }
+
+      const deletedBookmark = await bookmarkService.delete(Number(bookmarkId));
+
+      if (!deletedBookmark) {
+        throw new Error('There was an issue undoing a bookmark');
+      }
+
+      res.json({
+        status: 'success',
+        message: 'Bookmark removed successfully',
+        data: deletedBookmark,
+      });
+    } catch (err: unknown) {
+      res.json({
+        status: 'error',
+        message: err instanceof Error ? err.message : GENERIC_ERROR_MESSAGE,
+      });
+    }
+  };
+
+  return { createBookmark, deleteBookmark };
+})();
+
+export default bookmarkController;

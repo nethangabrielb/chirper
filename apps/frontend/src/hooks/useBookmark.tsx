@@ -2,6 +2,7 @@ import {
   QueryObserverResult,
   RefetchOptions,
   useMutation,
+  useQueryClient,
 } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -15,20 +16,11 @@ import { User } from "@/types/user";
 type Props = {
   post: PostType;
   user: User;
-  refetchPosts: () => void;
-  refetch?: (
-    options?: RefetchOptions,
-  ) => Promise<QueryObserverResult<any, Error>>;
-  refetchUser?: () => Promise<void>;
 };
 
-export const useBookmark = ({
-  post,
-  user,
-  refetchPosts,
-  refetch,
-  refetchUser,
-}: Props) => {
+export const useBookmark = ({ post, user }: Props) => {
+  const queryClient = useQueryClient();
+
   const [userHasBookmarked, setUserHasBookmarked] = useState(
     post?.bookmarks?.find((bookmark) => bookmark.userId === user.id)?.userId ===
       user.id,
@@ -91,14 +83,13 @@ export const useBookmark = ({
           toast.error(res.message);
         }
       }
-      refetchPosts();
-      if (refetch) {
-        refetch();
-      }
-
-      if (refetchUser) {
-        refetchUser();
-      }
+    },
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["post"] });
+      await queryClient.invalidateQueries({ queryKey: ["user"] });
+      await queryClient.invalidateQueries({ queryKey: ["posts"] });
+      await queryClient.invalidateQueries({ queryKey: ["userProfilePage"] });
+      await queryClient.invalidateQueries({ queryKey: ["bookmarkedPosts"] });
     },
   });
 

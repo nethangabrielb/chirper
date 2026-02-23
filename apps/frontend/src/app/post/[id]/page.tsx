@@ -19,7 +19,6 @@ import { ReplyType } from "@/types/reply";
 const Post = () => {
   const [isReply, setIsReply] = useState<boolean | null>(null);
   const params = useParams();
-  const queryClient = useQueryClient();
   const router = useRouter();
 
   const { data: post, refetch } = useQuery<PostType | ReplyType>({
@@ -29,13 +28,6 @@ const Post = () => {
       return posts;
     },
   });
-
-  const refetchPosts = async () => {
-    await queryClient.invalidateQueries({ queryKey: ["posts"] });
-    await queryClient.invalidateQueries({ queryKey: ["post"] });
-    await queryClient.invalidateQueries({ queryKey: ["bookmarkedPosts"] });
-    await queryClient.invalidateQueries({ queryKey: ["userProfilePage"] });
-  };
 
   useEffect(() => {
     document.title = `${post?.user?.username} on Twitter Clone: ${post?.content}`;
@@ -88,26 +80,18 @@ const Post = () => {
         <>
           {post && isReply ? (
             <>
-              <Reply reply={post} refetchPosts={refetchPosts}></Reply>
+              <Reply reply={post}></Reply>
               <CreateReply postId={post.id} refetch={refetch}></CreateReply>
               {post?.replies.map((reply: ReplyType) => {
                 return (
-                  <FeedPost
-                    post={reply as ReplyType}
-                    refetch={refetch}
-                    refetchPosts={refetchPosts}
-                    key={reply.id}
-                  ></FeedPost>
+                  <FeedPost post={reply as ReplyType} key={reply.id}></FeedPost>
                 );
               })}
             </>
           ) : (
             post && (
               <>
-                <PostSingle
-                  post={post}
-                  refetchPosts={refetchPosts}
-                ></PostSingle>
+                <PostSingle post={post}></PostSingle>
 
                 <CreateReply
                   refetch={refetch}
@@ -117,8 +101,6 @@ const Post = () => {
                   return (
                     <FeedPost
                       post={reply as ReplyType}
-                      refetch={refetch}
-                      refetchPosts={refetchPosts}
                       key={reply.id}
                     ></FeedPost>
                   );

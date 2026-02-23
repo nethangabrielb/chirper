@@ -138,7 +138,7 @@ const Profile = () => {
   const params = useParams();
   const queryClient = useQueryClient();
   const id = params.id;
-  const { data: user, refetch: refetchUser } = useQuery({
+  const { data: user } = useQuery({
     queryKey: ["userProfilePage", id],
     queryFn: async () => {
       const res = await fetch(
@@ -173,12 +173,6 @@ const Profile = () => {
   useEffect(() => {
     document.title = `${user?.name} (@${user?.username}) / Twitter Clone`;
   }, [user]);
-
-  const refetchPosts = async () => {
-    await queryClient.invalidateQueries({ queryKey: ["post"] });
-    await queryClient.invalidateQueries({ queryKey: ["posts"] });
-    await queryClient.invalidateQueries({ queryKey: ["bookmarkedPosts"] });
-  };
 
   const displayReplies = (post: PostType) => {
     if (feedType === "replies") {
@@ -317,9 +311,7 @@ const Profile = () => {
               return (
                 <FeedPost
                   post={post}
-                  refetchPosts={refetchPosts}
                   key={post.id}
-                  refetch={refetchUser}
                   displayReplies={false}
                 ></FeedPost>
               );
@@ -337,9 +329,7 @@ const Profile = () => {
                 return (
                   <FeedPost
                     post={post}
-                    refetchPosts={refetchPosts}
                     key={post.id}
-                    refetch={refetchPost}
                     displayReplies={displayReplies(post)}
                   ></FeedPost>
                 );

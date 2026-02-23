@@ -2,10 +2,6 @@ import { CurrentUserPostDropdown } from "@/app/home/components/post-controls";
 import { useBookmark } from "@/hooks/useBookmark";
 import { useLikes } from "@/hooks/useLikes";
 import useUser from "@/stores/user.store";
-import type {
-  QueryObserverResult,
-  RefetchOptions,
-} from "@tanstack/react-query";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Bookmark, Heart, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
@@ -25,37 +21,19 @@ import { User } from "@/types/user";
 
 type Props = {
   post: PostType | ReplyType;
-  refetch: (
-    options?: RefetchOptions,
-  ) => Promise<QueryObserverResult<any, Error>>;
-  refetchPosts: () => void;
+
   displayReplies?: boolean;
   bookmarkedPost?: boolean;
 };
 
-const Post = ({
-  post,
-  refetch,
-  refetchPosts,
-  displayReplies,
-  bookmarkedPost,
-}: Props) => {
+const Post = ({ post, displayReplies, bookmarkedPost }: Props) => {
   const queryClient = useQueryClient();
   const user = useUser((state) => state.user) as User;
-  const likesHook = useLikes(post, user, refetchPosts, refetch);
-
-  const refetchUserPage = async () => {
-    await queryClient.invalidateQueries({
-      queryKey: ["userProfilePage"],
-    });
-  };
+  const likesHook = useLikes(post, user);
 
   const { optimisticBookmark, bookmarkMutation } = useBookmark({
     post,
     user,
-    refetchPosts,
-    refetch,
-    refetchUser: refetchUserPage,
   });
 
   // DELETE POST API INTERFACE
@@ -66,7 +44,6 @@ const Post = ({
     },
     onSuccess: async (res) => {
       if (res.status === "success") {
-        refetch();
         await queryClient.invalidateQueries({ queryKey: ["user"] });
         toast.success(res.message, {
           position: "top-right",
@@ -79,6 +56,13 @@ const Post = ({
       } else {
         toast.error(res.message);
       }
+    },
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["user"] });
+      await queryClient.invalidateQueries({ queryKey: ["post"] });
+      await queryClient.invalidateQueries({ queryKey: ["posts"] });
+      await queryClient.invalidateQueries({ queryKey: ["userProfilePage"] });
+      await queryClient.invalidateQueries({ queryKey: ["bookmarkedPosts"] });
     },
   });
 

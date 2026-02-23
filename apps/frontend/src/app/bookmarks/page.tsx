@@ -14,9 +14,8 @@ import { PostType } from "@/types/post";
 
 const Bookmarks = () => {
   const router = useRouter();
-  const queryClient = useQueryClient();
 
-  const { data: posts, refetch } = useQuery({
+  const { data: posts } = useQuery({
     queryKey: ["bookmarkedPosts"],
     queryFn: async () => {
       const res = await postApi.getUserBookmarkedPosts();
@@ -27,14 +26,6 @@ const Bookmarks = () => {
   useEffect(() => {
     document.title = "Bookmarks / Twitter Clone";
   }, []);
-
-  const refetchPosts = async () => {
-    await queryClient.invalidateQueries({ queryKey: ["post"] });
-    await queryClient.invalidateQueries({ queryKey: ["user"] });
-    await queryClient.invalidateQueries({ queryKey: ["posts"] });
-    await queryClient.invalidateQueries({ queryKey: ["userProfilePage"] });
-    await queryClient.invalidateQueries({ queryKey: ["bookmarkedPosts"] });
-  };
 
   return (
     <>
@@ -83,8 +74,6 @@ const Bookmarks = () => {
                 <FeedPost
                   post={post.post}
                   key={post.post.id}
-                  refetchPosts={refetchPosts}
-                  refetch={refetch}
                   bookmarkedPosts={true}
                 ></FeedPost>
               );

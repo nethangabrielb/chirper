@@ -30,10 +30,9 @@ import { User } from "@/types/user";
 
 type Props = {
   reply: ReplyType;
-  refetchPosts: () => void;
 };
 
-const Reply = ({ reply, refetchPosts }: Props) => {
+const Reply = ({ reply }: Props) => {
   const router = useRouter();
   const user = useUser((state) => state.user) as User;
   const queryClient = useQueryClient();
@@ -68,8 +67,6 @@ const Reply = ({ reply, refetchPosts }: Props) => {
   const { optimisticBookmark, bookmarkMutation } = useBookmark({
     post,
     user,
-    refetchPosts,
-    refetchUser: refetchUserPosts,
   });
 
   // LIKE/UNLIKE POST API INTERFACE
@@ -90,7 +87,6 @@ const Reply = ({ reply, refetchPosts }: Props) => {
       }
     },
     onSuccess: (res) => {
-      refetchPosts();
       refetchUserPosts();
       if (res.message === "Post liked successfully") {
         setLikes((prev: number) => prev + 1);
@@ -99,6 +95,13 @@ const Reply = ({ reply, refetchPosts }: Props) => {
         setLikes((prev: number) => prev - 1);
         setUserHasLiked(false);
       }
+    },
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["post"] });
+      await queryClient.invalidateQueries({ queryKey: ["user"] });
+      await queryClient.invalidateQueries({ queryKey: ["posts"] });
+      await queryClient.invalidateQueries({ queryKey: ["userProfilePage"] });
+      await queryClient.invalidateQueries({ queryKey: ["bookmarkedPosts"] });
     },
   });
 
@@ -155,7 +158,6 @@ const Reply = ({ reply, refetchPosts }: Props) => {
           </div>
           <PostSingle
             post={reply}
-            refetchPosts={refetchPosts}
             className="p-4 pt-0!"
             settingsCn="m-0!"
             buttonCn="p-1!"
@@ -262,7 +264,6 @@ const Reply = ({ reply, refetchPosts }: Props) => {
           </Link>
           <PostSingle
             post={reply}
-            refetchPosts={refetchPosts}
             className="p-4 pt-0!"
             settingsCn="m-0!"
             buttonCn="p-1!"

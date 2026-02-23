@@ -44,7 +44,6 @@ const Post = ({ post, displayReplies, bookmarkedPost }: Props) => {
     },
     onSuccess: async (res) => {
       if (res.status === "success") {
-        await queryClient.invalidateQueries({ queryKey: ["user"] });
         toast.success(res.message, {
           position: "top-right",
           style: {

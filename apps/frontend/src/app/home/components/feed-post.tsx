@@ -1,7 +1,5 @@
 "use client";
 
-import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
-
 import Post from "@/components/post-section";
 
 import { PostType } from "@/types/post";

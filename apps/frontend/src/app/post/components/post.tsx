@@ -3,7 +3,7 @@
 import { CurrentUserPostDropdown } from "@/app/home/components/post-controls";
 import { useBookmark } from "@/hooks/useBookmark";
 import useUser from "@/stores/user.store";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Bookmark, Heart, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 

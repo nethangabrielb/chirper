@@ -4,7 +4,7 @@ import FeedPost from "@/app/home/components/feed-post";
 import PostSingle from "@/app/post/components/post";
 import Reply from "@/app/post/components/reply";
 import CreateReply from "@/app/post/components/reply-form";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 import { useEffect, useState } from "react";
 

@@ -136,7 +136,6 @@ const Profile = () => {
   );
   const router = useRouter();
   const params = useParams();
-  const queryClient = useQueryClient();
   const id = params.id;
   const { data: user } = useQuery({
     queryKey: ["userProfilePage", id],
@@ -157,7 +156,7 @@ const Profile = () => {
     },
   });
 
-  const { data: posts, refetch: refetchPost } = useQuery({
+  const { data: posts } = useQuery({
     queryKey: ["posts", feedType],
     queryFn: async () => {
       if (feedType === "replies") {

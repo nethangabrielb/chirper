@@ -1,7 +1,7 @@
 "use client";
 
 import FeedPost from "@/app/home/components/feed-post";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 import { useEffect } from "react";
 

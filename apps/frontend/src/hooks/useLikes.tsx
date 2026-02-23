@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { startTransition, useOptimistic, useState } from "react";
+import { startTransition, useEffect, useOptimistic, useState } from "react";
 
 import postApi from "@/lib/api/post";
 
@@ -21,10 +21,20 @@ export const useLikes = (post: PostType | ReplyType, user: User) => {
     post?.Like?.find((userId: { userId: number }) => userId.userId === user?.id)
       ?.userId === user?.id,
   );
+
   const [optimisticLikes, addOptimisticLikes] = useOptimistic(
     likes,
     (currentLike: number, updatedLike: number) => currentLike + updatedLike,
   );
+
+  useEffect(() => {
+    setLikes(post?._count.Like);
+    setUserHasLiked(
+      post?.Like?.find(
+        (userId: { userId: number }) => userId.userId === user?.id,
+      )?.userId === user?.id,
+    );
+  }, [post]);
 
   // LIKE/UNLIKE POST API INTERFACE
   const likeMutation = useMutation({

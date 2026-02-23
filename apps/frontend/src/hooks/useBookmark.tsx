@@ -1,12 +1,7 @@
-import {
-  QueryObserverResult,
-  RefetchOptions,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-import { startTransition, useOptimistic, useState } from "react";
+import { startTransition, useEffect, useOptimistic, useState } from "react";
 
 import bookmarkApi from "@/lib/api/bookmark";
 
@@ -31,6 +26,13 @@ export const useBookmark = ({ post, user }: Props) => {
     (currentBookmarkState, optimisticBookmarkState) =>
       optimisticBookmarkState as boolean,
   );
+
+  useEffect(() => {
+    setUserHasBookmarked(
+      post?.bookmarks?.find((bookmark) => bookmark.userId === user.id)
+        ?.userId === user.id,
+    );
+  }, [post]);
 
   const bookmarkMutation = useMutation({
     mutationFn: async () => {

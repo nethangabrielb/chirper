@@ -504,10 +504,11 @@ const postRepository = {
     }),
   findByBookmarked: (userId: number) =>
     prisma.bookmark.findMany({
-      where: { userId },
+      where: { userId, post: { deleted: false } },
       orderBy: {
         createdAt: 'desc',
       },
+
       include: {
         post: {
           include: {

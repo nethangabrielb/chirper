@@ -48,6 +48,12 @@ const PostSingle = ({ post, className, settingsCn, buttonCn }: Props) => {
     post?.Like?.find((userId: { userId: number }) => userId.userId === user?.id)
       ?.userId === user?.id,
   );
+
+  const [optimisticHasLiked, addOptimisticHasLiked] = useOptimistic(
+    userHasLiked,
+    (currentValue: boolean, updatedValue: boolean) => updatedValue,
+  );
+
   const [optimisticLikes, addOptimisticLikes] = useOptimistic(
     likes,
     (currentLike: number, updatedLike: number) => currentLike + updatedLike,
@@ -87,12 +93,14 @@ const PostSingle = ({ post, className, settingsCn, buttonCn }: Props) => {
       if (userHasLiked) {
         startTransition(() => {
           addOptimisticLikes(-1);
+          addOptimisticHasLiked(false);
         });
         const res = await postApi.unlikePost(post.id);
         return res;
       } else {
         startTransition(() => {
           addOptimisticLikes(1);
+          addOptimisticHasLiked(true);
         });
         const res = await postApi.likePost(post.id);
         return res;
@@ -122,7 +130,11 @@ const PostSingle = ({ post, className, settingsCn, buttonCn }: Props) => {
         (userId: { userId: number }) => userId.userId === user?.id,
       )?.userId === user?.id,
     );
-  }, [user]);
+  }, [post, user]);
+
+  useEffect(() => {
+    setLikes(post?._count.Like ?? 0);
+  }, [post]);
 
   const handleDelete = () => {
     postMutation.mutate();
@@ -183,7 +195,7 @@ const PostSingle = ({ post, className, settingsCn, buttonCn }: Props) => {
                 size={20}
                 className={cn(
                   "text-darker font-light stroke-[1.2px] group-hover:stroke-red-500! group-active:scale-150 duration-500",
-                  userHasLiked
+                  optimisticHasLiked
                     ? "fill-red-500 stroke-red-500!"
                     : "stroke-darker",
                 )}

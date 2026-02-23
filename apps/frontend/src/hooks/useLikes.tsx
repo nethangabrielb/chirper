@@ -22,18 +22,26 @@ export const useLikes = (post: PostType | ReplyType, user: User) => {
       ?.userId === user?.id,
   );
 
+  const [optimisticHasLiked, addOptimisticHasLiked] = useOptimistic(
+    userHasLiked,
+    (currentValue: boolean, updatedValue: boolean) => updatedValue,
+  );
+
   const [optimisticLikes, addOptimisticLikes] = useOptimistic(
     likes,
     (currentLike: number, updatedLike: number) => currentLike + updatedLike,
   );
 
   useEffect(() => {
-    setLikes(post?._count.Like);
     setUserHasLiked(
       post?.Like?.find(
         (userId: { userId: number }) => userId.userId === user?.id,
       )?.userId === user?.id,
     );
+  }, [post, user]);
+
+  useEffect(() => {
+    setLikes(post?._count.Like);
   }, [post]);
 
   // LIKE/UNLIKE POST API INTERFACE
@@ -42,12 +50,14 @@ export const useLikes = (post: PostType | ReplyType, user: User) => {
       if (userHasLiked) {
         startTransition(() => {
           addOptimisticLikes(-1);
+          addOptimisticHasLiked(false);
         });
         const res = await postApi.unlikePost(post.id);
         return res;
       } else {
         startTransition(() => {
           addOptimisticLikes(1);
+          addOptimisticHasLiked(true);
         });
         const res = await postApi.likePost(post.id);
         return res;
@@ -77,6 +87,7 @@ export const useLikes = (post: PostType | ReplyType, user: User) => {
     userHasLiked,
     setUserHasLiked,
     optimisticLikes,
+    optimisticHasLiked,
     addOptimisticLikes,
     likeMutation,
   };

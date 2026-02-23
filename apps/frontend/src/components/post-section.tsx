@@ -168,14 +168,14 @@ const Post = ({ post, displayReplies, bookmarkedPost }: Props) => {
                     size={20}
                     className={cn(
                       "text-darker font-light stroke-[1.2px] group-hover:stroke-red-500! group-active:scale-150 duration-500",
-                      likesHook.userHasLiked
+                      likesHook.optimisticHasLiked
                         ? "fill-red-500 stroke-red-500!"
                         : "stroke-darker",
                     )}
                   ></Heart>
                 </div>
                 <p className="text-darker text-[14px] font-light group-hover:text-red-500 transition-all">
-                  {likesHook.likes}
+                  {likesHook.optimisticLikes}
                 </p>
               </button>
 

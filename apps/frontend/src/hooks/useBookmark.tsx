@@ -32,7 +32,7 @@ export const useBookmark = ({ post, user }: Props) => {
       post?.bookmarks?.find((bookmark) => bookmark.userId === user.id)
         ?.userId === user.id,
     );
-  }, [post]);
+  }, [post, user]);
 
   const bookmarkMutation = useMutation({
     mutationFn: async () => {

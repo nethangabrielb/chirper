@@ -55,6 +55,12 @@ const Reply = ({ reply }: Props) => {
     post?.Like?.find((userId: { userId: number }) => userId.userId === user?.id)
       ?.userId === user?.id,
   );
+
+  const [optimisticHasLiked, addOptimisticHasLiked] = useOptimistic(
+    userHasLiked,
+    (currentValue: boolean, updatedValue: boolean) => updatedValue,
+  );
+
   const [optimisticLikes, addOptimisticLikes] = useOptimistic(
     likes ?? 0,
     (currentLike: number, updatedLike: number) => currentLike + updatedLike,
@@ -75,12 +81,14 @@ const Reply = ({ reply }: Props) => {
       if (userHasLiked) {
         startTransition(() => {
           addOptimisticLikes(-1);
+          addOptimisticHasLiked(false);
         });
         const res = await postApi.unlikePost(post?.id ?? 0);
         return res;
       } else {
         startTransition(() => {
           addOptimisticLikes(1);
+          addOptimisticHasLiked(true);
         });
         const res = await postApi.likePost(post?.id ?? 0);
         return res;
@@ -111,7 +119,7 @@ const Reply = ({ reply }: Props) => {
         (userId: { userId: number }) => userId.userId === user?.id,
       )?.userId === user?.id,
     );
-  }, [user]);
+  }, [user, post]);
 
   useEffect(() => {
     setLikes(post?._count.Like ?? 0);
@@ -227,7 +235,7 @@ const Reply = ({ reply }: Props) => {
                         size={20}
                         className={cn(
                           "text-darker font-light stroke-[1.2px] group-hover:stroke-red-500! group-active:scale-150 duration-500",
-                          userHasLiked
+                          optimisticHasLiked
                             ? "fill-red-500 stroke-red-500!"
                             : "stroke-darker",
                         )}

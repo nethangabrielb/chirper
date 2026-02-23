@@ -9,6 +9,8 @@ const bookmarkRepository = {
         id: bookmarkId,
       },
     }),
+  findById: (bookmarkId: number) =>
+    prisma.bookmark.findUnique({ where: { id: bookmarkId } }),
 };
 
 export default bookmarkRepository;

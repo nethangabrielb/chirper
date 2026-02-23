@@ -51,9 +51,18 @@ const bookmarkController = (() => {
   ) => {
     try {
       const { bookmarkId } = req.params;
-
+      const user = req.user as User;
       if (!bookmarkId) {
         throw new Error('No body payload provided');
+      }
+
+      const bookmark = await bookmarkService.findById(Number(bookmarkId));
+
+      if (bookmark.userId !== user.id) {
+        return res.json({
+          status: 'error',
+          message: 'You are unauthorized to perform this action',
+        });
       }
 
       const deletedBookmark = await bookmarkService.delete(Number(bookmarkId));

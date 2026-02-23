@@ -11,6 +11,13 @@ const bookmarkService = {
   delete: async (bookmarkId: number) => {
     return bookmarkRepository.delete(bookmarkId);
   },
+  findById: async (bookmarkId: number) => {
+    const bookmark = await bookmarkRepository.findById(bookmarkId);
+    if (!bookmark) {
+      throw new Error('Bookmark not found');
+    }
+    return bookmark;
+  },
 };
 
 export default bookmarkService;

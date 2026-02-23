@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import type { BookmarkBody } from '@twitter-clone/shared';
 
 import bookmarkService from '../../services/bookmarkService';
+import { User } from '../../types/user';
 import { GENERIC_ERROR_MESSAGE } from '../../utils/errorMessage';
 
 const bookmarkController = (() => {
@@ -11,10 +12,15 @@ const bookmarkController = (() => {
     res: Response
   ) => {
     try {
+      const user = req.user as User;
       const { userId, postId } = req.body;
 
       if (!userId || !postId) {
         throw new Error('No body payload provided');
+      }
+
+      if (userId !== user.id) {
+        throw new Error('Unauthorized action');
       }
 
       const bookmark = await bookmarkService.create(

@@ -12,7 +12,6 @@ type Props = {
   currentUserId: number;
   visitedUserId: number;
   currentUserFollowings: Array<{ id: number; following: FollowType }>;
-  followerId?: number;
 };
 
 const Follows = ({
@@ -22,13 +21,12 @@ const Follows = ({
   currentUserId,
   currentUserFollowings,
   visitedUserId,
-  followerId,
 }: Props) => {
   const { optimisticFollow, followMutation, unfollowMutation } = useFollows({
     pathId: Number(pathId),
     currentUserId,
     currentUserFollowings,
-    visitedUserId: followerId as number,
+    visitedUserId,
   });
 
   return (

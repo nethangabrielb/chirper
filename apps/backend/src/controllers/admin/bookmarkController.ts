@@ -53,7 +53,7 @@ const bookmarkController = (() => {
       const { bookmarkId } = req.params;
       const user = req.user as User;
       if (!bookmarkId) {
-        throw new Error('No body payload provided');
+        throw new Error('Invalid Bookmark ID');
       }
 
       const bookmark = await bookmarkService.findById(Number(bookmarkId));

@@ -162,9 +162,13 @@ const UserRepository = {
     }),
   findFollowingList: (id: number) =>
     prisma.user.findMany({
-      where: { id: { not: id } },
+      where: {
+        id: { not: id },
+        Followings: { every: { followerId: { not: id } } },
+      },
       orderBy: { Followings: { _count: 'desc' } },
       select: {
+        Followings: true,
         id: true,
         name: true,
         username: true,
@@ -178,9 +182,14 @@ const UserRepository = {
     }),
   findFollowingListLimit: (id: number, limit: number) =>
     prisma.user.findMany({
-      where: { id: { not: id } },
+      where: {
+        id: { not: id },
+        Followings: { every: { followerId: { not: id } } },
+      },
       orderBy: { Followings: { _count: 'desc' } },
+
       select: {
+        Followers: true,
         id: true,
         name: true,
         username: true,

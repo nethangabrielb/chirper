@@ -99,6 +99,8 @@ const Sidebar = ({ children }: Props) => {
         return res;
       }
     },
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
   });
 
   const mutation = useMutation({

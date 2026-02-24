@@ -24,13 +24,13 @@ const ConnectPeople = () => {
       const res = await userApi.getUserFollowList();
       return res;
     },
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
   });
 
   useEffect(() => {
     document.title = "Follow / Twitter Clone";
   }, []);
-
-  console.log(data);
 
   return (
     <>

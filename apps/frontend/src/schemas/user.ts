@@ -40,6 +40,11 @@ const userPartialSchema = z.object({
   name: z.string(),
   username: z.string(),
   avatar: z.string(),
+  _count: z
+    .object({
+      Following: z.number(),
+    })
+    .optional(),
 });
 
 export { userSchema, userPartialSchema };

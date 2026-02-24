@@ -10,14 +10,16 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
 import { ActionButton } from "@/components/button";
+import FollowListRow from "@/components/follow-list";
 import Icon from "@/components/icon";
 import NavIcon from "@/components/navIcon";
 import { LogoutDropdown } from "@/components/ui/logout-dropdown";
 
 import { authApi } from "@/lib/api/auth";
+import userApi from "@/lib/api/user";
 import { cn } from "@/lib/utils";
 
-import { User } from "@/types/user";
+import { User, UserPartial } from "@/types/user";
 
 type Props = {
   children: ReactNode;
@@ -60,6 +62,7 @@ const Sidebar = ({ children }: Props) => {
   const removeUser = useUser((state) => state.removeUser);
   const user = useUser((state) => state.user) as User;
   const [visible, setVisible] = useState<boolean>(false);
+  const [asideVisible, setAsideVisible] = useState<boolean>(false);
   const path = usePathname();
   const { data } = useQuery({
     queryKey: ["user"],
@@ -83,6 +86,17 @@ const Sidebar = ({ children }: Props) => {
     },
     refetchOnWindowFocus: false,
   });
+
+  const { data: followListAside } = useQuery({
+    queryKey: ["followList"],
+    queryFn: async () => {
+      if (path !== "/") {
+        const res = await userApi.getUserFollowListLimit(3);
+        return res;
+      }
+    },
+  });
+
   const mutation = useMutation({
     mutationFn: async () => {
       const data = await authApi.logout();
@@ -117,8 +131,17 @@ const Sidebar = ({ children }: Props) => {
     }
   };
 
+  const renderAsideVisible = (path: string) => {
+    if (path === "/messages") {
+      setAsideVisible(false);
+    } else {
+      setAsideVisible(true);
+    }
+  };
+
   useEffect(() => {
     renderSidebar(path);
+    renderAsideVisible(path);
   }, [path]);
 
   useEffect(() => {
@@ -202,6 +225,31 @@ const Sidebar = ({ children }: Props) => {
         </div>
       </Activity>
       {children}
+      <Activity mode={asideVisible ? "visible" : "hidden"}>
+        <aside className="p-4 font-bold px-8 lg:w-[450px]">
+          <div className="flex flex-col border border-border p-3 rounded-xl gap-4">
+            <h1>Who to follow</h1>
+            <section className="flex flex-col gap-4">
+              {followListAside?.map((user: UserPartial) => {
+                return (
+                  <FollowListRow
+                    isUser={user.id === data.id}
+                    user={user}
+                    key={user.id}
+                    currentUser={data}
+                  ></FollowListRow>
+                );
+              })}
+            </section>
+            <Link
+              href="/connect-people"
+              className="text-sm text-primary font-light"
+            >
+              Show more
+            </Link>
+          </div>
+        </aside>
+      </Activity>
     </div>
   );
 };

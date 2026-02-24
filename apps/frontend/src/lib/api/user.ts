@@ -29,7 +29,43 @@ const userApi = (() => {
     return data.data;
   };
 
-  return { getUsersChatlist, getUserSearchResults };
+  const getUserFollowList = async () => {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API}/api/users?list=followList`,
+      {
+        credentials: "include",
+      },
+    );
+
+    if (!res.ok) {
+      throw new Error("Error fetching from the server.");
+    }
+    const data = await res.json();
+    return data.data;
+  };
+
+  const getUserFollowListLimit = async (limit: number) => {
+    console.log(limit);
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API}/api/users?list=followList&limit=${limit}`,
+      {
+        credentials: "include",
+      },
+    );
+
+    if (!res.ok) {
+      throw new Error("Error fetching from the server.");
+    }
+    const data = await res.json();
+    return data.data;
+  };
+
+  return {
+    getUsersChatlist,
+    getUserSearchResults,
+    getUserFollowList,
+    getUserFollowListLimit,
+  };
 })();
 
 export default userApi;

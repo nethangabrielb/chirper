@@ -96,6 +96,14 @@ const UserService = {
     const user = await UserRepository.findByEmail(email);
     return user;
   },
+
+  getFollowLists: async (userId: number) => {
+    const users = await UserRepository.findFollowingList(userId);
+    if (!users) {
+      throw new Error('Failed to fetch follow list');
+    }
+    return users;
+  },
 };
 
 export default UserService;

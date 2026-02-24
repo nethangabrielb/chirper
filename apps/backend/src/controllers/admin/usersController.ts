@@ -82,6 +82,18 @@ const userController = (() => {
         }
 
         return res.json({ status: 'success', data: users });
+      } else if (_req.query.list === 'followList') {
+        const currentUser = _req.user as User;
+        const users = await UserService.getFollowLists(currentUser.id);
+
+        if (!users) {
+          throw new Error('Failed to fetch users');
+        }
+
+        return res.json({
+          status: 'success',
+          data: users,
+        });
       } else {
         const users = await UserService.getAllUsers();
         return res.json({ status: 'success', data: users });

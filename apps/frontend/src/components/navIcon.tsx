@@ -1,4 +1,4 @@
-import { MessageCircle, Settings } from "lucide-react";
+import { MessageCircle, Settings, UserRoundPlus } from "lucide-react";
 
 type Props = {
   title: string;
@@ -36,6 +36,8 @@ const NavIcon = ({ title }: Props) => {
           />
         </svg>
       );
+    case "Follow":
+      return <UserRoundPlus size={24}></UserRoundPlus>;
     case "Messages":
       return (
         <svg

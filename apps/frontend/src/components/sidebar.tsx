@@ -35,6 +35,10 @@ let links: Array<{ title: string; url: string }> = [
     url: "/notifications",
   },
   {
+    title: "Follow",
+    url: "/connect-people",
+  },
+  {
     title: "Messages",
     url: "/messages",
   },

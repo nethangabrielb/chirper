@@ -230,16 +230,17 @@ const Sidebar = ({ children }: Props) => {
           <div className="flex flex-col border border-border p-3 rounded-xl gap-4">
             <h1>Who to follow</h1>
             <section className="flex flex-col gap-4">
-              {followListAside?.map((user: UserPartial) => {
-                return (
-                  <FollowListRow
-                    isUser={user.id === data.id}
-                    user={user}
-                    key={user.id}
-                    currentUser={data}
-                  ></FollowListRow>
-                );
-              })}
+              {data &&
+                followListAside?.map((user: UserPartial) => {
+                  return (
+                    <FollowListRow
+                      isUser={user.id === data?.id}
+                      user={user}
+                      key={user.id}
+                      currentUser={data}
+                    ></FollowListRow>
+                  );
+                })}
             </section>
             <Link
               href="/connect-people"

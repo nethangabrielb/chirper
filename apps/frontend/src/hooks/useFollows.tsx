@@ -52,12 +52,15 @@ const useFollows = ({
     },
     onSuccess: (data: { status: string; message: string; data: Follow }) => {
       if (data.status === "success") {
-        resetUserQueryCache();
         setIsUserFollowing(true);
         setFollow(data.data);
       } else {
         setIsUserFollowing(false);
       }
+    },
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["followList"] });
+      await queryClient.invalidateQueries({ queryKey: ["user"] });
     },
   });
 
@@ -71,12 +74,15 @@ const useFollows = ({
     },
     onSuccess: (data: { status: string; message: string }) => {
       if (data.status === "success") {
-        resetUserQueryCache();
         setIsUserFollowing(false);
         setFollow(null);
       } else {
         setIsUserFollowing(true);
       }
+    },
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["followList"] });
+      await queryClient.invalidateQueries({ queryKey: ["user"] });
     },
   });
 
@@ -98,11 +104,7 @@ const useFollows = ({
       }
     };
     setIsCurrentUserFollowing();
-  }, [visitedUserId, pathId]);
-
-  const resetUserQueryCache = async () => {
-    await queryClient.invalidateQueries({ queryKey: ["user"] });
-  };
+  }, [visitedUserId, pathId, currentUserFollowings]);
 
   return {
     optimisticFollow,

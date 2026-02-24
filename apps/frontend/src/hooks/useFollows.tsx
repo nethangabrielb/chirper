@@ -60,6 +60,7 @@ const useFollows = ({
     },
     onSettled: async () => {
       await queryClient.invalidateQueries({ queryKey: ["followList"] });
+      await queryClient.invalidateQueries({ queryKey: ["followListPage"] });
       await queryClient.invalidateQueries({ queryKey: ["user"] });
     },
   });
@@ -82,6 +83,7 @@ const useFollows = ({
     },
     onSettled: async () => {
       await queryClient.invalidateQueries({ queryKey: ["followList"] });
+      await queryClient.invalidateQueries({ queryKey: ["followListPage"] });
       await queryClient.invalidateQueries({ queryKey: ["user"] });
     },
   });
@@ -104,7 +106,9 @@ const useFollows = ({
       }
     };
     setIsCurrentUserFollowing();
-  }, [visitedUserId, pathId, currentUserFollowings]);
+  }, [visitedUserId, pathId, currentUserFollowings, currentUserId]);
+
+  console.log(isUserFollowing);
 
   return {
     optimisticFollow,

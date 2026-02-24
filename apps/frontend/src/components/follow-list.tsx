@@ -5,16 +5,20 @@ import Link from "next/link";
 import { ActionButton } from "@/components/button";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 
+import { cn } from "@/lib/utils";
+
 import { User, UserPartial } from "@/types/user";
 
 const FollowListRow = ({
   isUser,
   user,
   currentUser,
+  className,
 }: {
   isUser: boolean;
   user: UserPartial;
   currentUser: User;
+  className?: string;
 }) => {
   const { optimisticFollow, followMutation, unfollowMutation } = useFollows({
     currentUserId: currentUser.id,
@@ -24,7 +28,9 @@ const FollowListRow = ({
 
   return (
     <Link href={`/profile/${user.id}`}>
-      <section className="flex items-center justify-between group">
+      <section
+        className={cn("flex items-center justify-between group", className)}
+      >
         <div className="flex items-center gap-4">
           <Avatar>
             <AvatarImage

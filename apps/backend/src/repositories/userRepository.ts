@@ -176,6 +176,23 @@ const UserRepository = {
         },
       },
     }),
+  findFollowingListLimit: (id: number, limit: number) =>
+    prisma.user.findMany({
+      where: { id: { not: id } },
+      orderBy: { Followings: { _count: 'desc' } },
+      select: {
+        id: true,
+        name: true,
+        username: true,
+        avatar: true,
+        _count: {
+          select: {
+            Followings: true,
+          },
+        },
+      },
+      take: limit,
+    }),
 };
 
 export default UserRepository;

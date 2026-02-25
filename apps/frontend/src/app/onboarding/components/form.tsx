@@ -1,17 +1,17 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Pencil } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { useRouter } from "next/navigation";
 
-import { FormButton } from "@/components/button";
+import { ActionButton } from "@/components/button";
 import Icon from "@/components/icon";
 import { InputSharp } from "@/components/input";
 
@@ -20,24 +20,25 @@ import { cn } from "@/lib/utils";
 import { User } from "@/types/user";
 
 const UserSchema = z.object({
-  name: z.string().refine((val) => val.trim().length >= 1, {
-    message: "Name can't be empty",
-  }),
-  username: z.string().refine((val) => val.trim().length >= 1, {
-    message: "Username can't be empty",
-  }),
+  name: z
+    .string()
+    .max(50, "Name can't exceed 50 characters.")
+    .refine((val) => val.trim().length >= 1, {
+      message: "Name can't be empty",
+    }),
+  username: z
+    .string()
+    .max(15, "Username can't exceed 15 characters.")
+    .refine((val) => val.trim().length >= 1, {
+      message: "Username can't be empty",
+    }),
   avatar: z
     .file()
     .refine((file) => {
       if (file) {
-        return (
-          file.size <= 5 * 1024 * 1024,
-          {
-            error: "Image exceeds the 5MB limit.",
-          }
-        );
+        return file.size <= 5 * 1024 * 1024;
       }
-    })
+    }, "Image exceeds 5MB limit")
     .nullable(),
 });
 
@@ -45,11 +46,11 @@ export type ConfirmUser = z.infer<typeof UserSchema>;
 
 type Props = {
   user: User;
-  setUser: (user: User) => void;
 };
 
-const ConfirmForm = ({ user, setUser }: Props) => {
+const ConfirmForm = ({ user }: Props) => {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [mouseEnter, setMouseEnter] = useState<boolean>(false);
   const [filePreview, setFilePreview] = useState<File | null>(null);
   const fileInput = useRef<null | HTMLInputElement>(null);
@@ -57,23 +58,22 @@ const ConfirmForm = ({ user, setUser }: Props) => {
     register,
     setValue,
     handleSubmit,
-    getValues,
     formState: { errors },
   } = useForm<ConfirmUser>({
     resolver: zodResolver(UserSchema),
     defaultValues: {
       avatar: null,
+      name: user.name,
+      username: user?.username,
     },
   });
   const mutation = useMutation({
-    mutationFn: () => {
-      const values = getValues();
-
+    mutationFn: (data: ConfirmUser) => {
       const userData = new FormData();
 
-      for (const key in values) {
-        if (values.hasOwnProperty(key)) {
-          const value = values[key as keyof typeof values];
+      for (const key in data) {
+        if (data.hasOwnProperty(key)) {
+          const value = data[key as keyof typeof data];
           if (value !== null) {
             userData.append(key, value as any);
           }
@@ -93,11 +93,21 @@ const ConfirmForm = ({ user, setUser }: Props) => {
       if (data.status === "error") {
         toast.error(data.message);
       } else {
-        setUser(user);
+        refetchUser();
         router.push("/home");
       }
     },
   });
+
+  useEffect(() => {
+    if (user.name && user.username) {
+      setValue("name", user.name, { shouldValidate: true, shouldDirty: true });
+      setValue("username", user.username, {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+    }
+  }, [user]);
 
   const uploadHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -115,8 +125,12 @@ const ConfirmForm = ({ user, setUser }: Props) => {
     }
   };
 
-  const submitForm = () => {
-    mutation.mutate();
+  const submitForm = (data: ConfirmUser) => {
+    mutation.mutate(data);
+  };
+
+  const refetchUser = async () => {
+    await queryClient.refetchQueries({ queryKey: ["user"] });
   };
 
   return (
@@ -136,6 +150,7 @@ const ConfirmForm = ({ user, setUser }: Props) => {
             onMouseOver={() => setMouseEnter(true)}
             onMouseLeave={() => setMouseEnter(false)}
             onClick={uploadHandler}
+            type="button"
           >
             <img
               src={filePreview ? URL.createObjectURL(filePreview) : user.avatar}
@@ -181,13 +196,14 @@ const ConfirmForm = ({ user, setUser }: Props) => {
             {user.username}
           </InputSharp>
           <div className="mt-2"></div>
-          <FormButton
-            outline={false}
-            className="p-3"
+
+          <ActionButton
+            type="submit"
+            className="p-3 text-[17px] font-bold rotate-x-20"
             disabled={mutation.isPending}
           >
             {mutation.isPending ? "Processing..." : "Confirm details"}
-          </FormButton>
+          </ActionButton>
         </div>
       </div>
     </form>

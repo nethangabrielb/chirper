@@ -34,7 +34,7 @@ passport.use(
           const user = await UserRepository.createNewUser({
             name: profile.displayName,
             email: profile.emails?.[0]?.value,
-            username: generateUsername(),
+            username: generateUsername(undefined, undefined, 15, ''),
             password: '',
             avatar:
               profile.photos?.[0]?.value ??

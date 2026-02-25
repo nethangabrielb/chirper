@@ -27,16 +27,17 @@ const userController = (() => {
   const getAllUsers = async (_req: Request, res: Response) => {
     try {
       const user: User = _req.user as User;
+      const updatedUser = await UserService.getUserById(user.id);
       if (_req.query.current) {
         const followers = await followRepository.findFollowers(user.id);
         const followings = await followRepository.findFollowings(user.id);
         const rooms = await roomService.getUserRooms(user.id);
         const modifiedUser = {
           id: user.id,
-          name: user.name,
-          username: user.username,
-          email: user.email,
-          avatar: user.avatar,
+          name: updatedUser.name,
+          username: updatedUser.username,
+          email: updatedUser.email,
+          avatar: updatedUser.avatar,
           onboarded: user.onboarded,
           followers,
           followings,

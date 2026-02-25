@@ -4,12 +4,21 @@ import bcrypt from 'bcryptjs';
 import { prisma } from '../prisma/client';
 
 async function main() {
+  const usernameSet = new Set();
+  const emailSet = new Set();
+
   const users = [];
 
-  for (let i = 0; i < 50; i++) {
+  while (users.length < 50) {
     const name = faker.person.fullName();
-    const username = faker.internet.username().toLowerCase() + i;
+    const username = faker.internet.username().toLowerCase();
     const email = faker.internet.email().toLowerCase();
+
+    if (usernameSet.has(username) || emailSet.has(email)) continue;
+
+    usernameSet.add(username);
+    emailSet.add(email);
+
     const password = await bcrypt.hash('password123', 10);
 
     users.push({
@@ -24,14 +33,7 @@ async function main() {
 
   await prisma.user.createMany({
     data: users,
-    skipDuplicates: true,
   });
 }
 
-main()
-  .then(() => prisma.$disconnect())
-  .catch(async e => {
-    console.error(e);
-    await prisma.$disconnect();
-    process.exit(1);
-  });
+main().finally(() => prisma.$disconnect());

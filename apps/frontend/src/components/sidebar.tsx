@@ -138,7 +138,7 @@ const Sidebar = ({ children }: Props) => {
   };
 
   const renderAsideVisible = (path: string) => {
-    if (path === "/messages") {
+    if (path === "/messages" || path.includes("messages")) {
       setAsideVisible(false);
     } else {
       setAsideVisible(true);

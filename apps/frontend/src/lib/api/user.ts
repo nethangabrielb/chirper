@@ -29,9 +29,9 @@ const userApi = (() => {
     return data.data;
   };
 
-  const getUserFollowList = async () => {
+  const getUserFollowList = async (pageParam: number) => {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API}/api/users?list=followList`,
+      `${process.env.NEXT_PUBLIC_API}/api/users?list=followList&page=${pageParam}`,
       {
         credentials: "include",
       },
@@ -45,7 +45,6 @@ const userApi = (() => {
   };
 
   const getUserFollowListLimit = async (limit: number) => {
-    console.log(limit);
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API}/api/users?list=followList&limit=${limit}`,
       {

@@ -232,30 +232,32 @@ const Sidebar = ({ children }: Props) => {
       </Activity>
       {children}
       <Activity mode={asideVisible ? "visible" : "hidden"}>
-        <aside className="p-4 font-bold px-8 lg:w-[450px]">
-          <div className="flex flex-col border border-border p-3 rounded-xl gap-4">
-            <h1>Who to follow</h1>
-            <section className="flex flex-col gap-4">
-              {data &&
-                followListAside?.map((user: UserPartial) => {
-                  return (
-                    <FollowListRow
-                      isUser={user.id === data?.id}
-                      user={user}
-                      key={user.id}
-                      currentUser={data}
-                    ></FollowListRow>
-                  );
-                })}
-            </section>
-            <Link
-              href="/connect-people"
-              className="text-sm text-primary font-light"
-            >
-              Show more
-            </Link>
-          </div>
-        </aside>
+        <div className={cn(`gap-[8px] lg:w-[450px] relative`)}>
+          <aside className="p-4 font-bold px-8 lg:w-[450px] fixed">
+            <div className="flex flex-col border border-border p-3 rounded-xl gap-4">
+              <h1>Who to follow</h1>
+              <section className="flex flex-col gap-4">
+                {data &&
+                  followListAside?.map((user: UserPartial) => {
+                    return (
+                      <FollowListRow
+                        isUser={user.id === data?.id}
+                        user={user}
+                        key={user.id}
+                        currentUser={data}
+                      ></FollowListRow>
+                    );
+                  })}
+              </section>
+              <Link
+                href="/connect-people"
+                className="text-sm text-primary font-light"
+              >
+                Show more
+              </Link>
+            </div>
+          </aside>
+        </div>
       </Activity>
     </div>
   );

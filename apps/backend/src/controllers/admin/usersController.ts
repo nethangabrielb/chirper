@@ -90,18 +90,28 @@ const userController = (() => {
             currentUser.id,
             Number(_req.query.limit)
           );
-        } else {
-          users = await UserService.getFollowLists(currentUser.id);
-        }
 
-        if (!users) {
-          throw new Error('Failed to fetch users');
-        }
+          if (!users) {
+            throw new Error('Failed to fetch users');
+          }
 
-        return res.json({
-          status: 'success',
-          data: users,
-        });
+          return res.json({
+            status: 'success',
+            data: users,
+          });
+        } else if (_req.query.page) {
+          const pageParam = Number(_req.query.page);
+          users = await UserService.getFollowLists(currentUser.id, pageParam);
+
+          if (!users) {
+            throw new Error('Failed to fetch users');
+          }
+
+          return res.json({
+            status: 'success',
+            data: { data: users, nextPage: Number(_req.query.page) + 1 },
+          });
+        }
       } else {
         const users = await UserService.getAllUsers();
         return res.json({ status: 'success', data: users });

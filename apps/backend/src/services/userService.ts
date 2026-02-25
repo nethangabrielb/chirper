@@ -97,8 +97,8 @@ const UserService = {
     return user;
   },
 
-  getFollowLists: async (userId: number) => {
-    const users = await UserRepository.findFollowingList(userId);
+  getFollowLists: async (userId: number, pageParam: number) => {
+    const users = await UserRepository.findFollowingList(userId, pageParam);
     if (!users) {
       throw new Error('Failed to fetch follow list');
     }

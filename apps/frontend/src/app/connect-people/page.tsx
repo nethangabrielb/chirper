@@ -1,29 +1,42 @@
 "use client";
 
 import useUser from "@/stores/user.store";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
-import { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import Head from "next/head";
 import { useRouter } from "next/navigation";
 
 import FollowListRow from "@/components/follow-list";
+import { Spinner } from "@/components/ui/spinner";
 
 import userApi from "@/lib/api/user";
+import { cn } from "@/lib/utils";
 
 import { User, UserPartial } from "@/types/user";
 
 const ConnectPeople = () => {
   const router = useRouter();
   const currentUser = useUser((state) => state.user) as User;
+  const followsContainer = useRef<HTMLElement>(null);
+  const [reachedBottom, setReachedBottom] = useState<boolean>(false);
 
-  const { data } = useQuery({
+  const { data, fetchNextPage, isFetching, hasNextPage } = useInfiniteQuery({
     queryKey: ["followListPage"],
-    queryFn: async () => {
-      const res = await userApi.getUserFollowList();
+    queryFn: async ({ pageParam }) => {
+      const res = await userApi.getUserFollowList(pageParam);
       return res;
     },
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => {
+      if (lastPage.data.length === 20) {
+        return lastPage.nextPage;
+      } else {
+        return undefined;
+      }
+    },
+
     refetchOnMount: false,
     refetchOnWindowFocus: false,
   });
@@ -31,6 +44,23 @@ const ConnectPeople = () => {
   useEffect(() => {
     document.title = "Follow / Twitter Clone";
   }, []);
+
+  useEffect(() => {
+    window.addEventListener("scroll", () => {
+      const elementRect = followsContainer.current?.getBoundingClientRect();
+      if (elementRect?.bottom === window.innerHeight) {
+        setReachedBottom(true);
+      } else {
+        setReachedBottom(false);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    if (reachedBottom === true && hasNextPage) {
+      fetchNextPage();
+    }
+  }, [reachedBottom]);
 
   return (
     <>
@@ -66,19 +96,38 @@ const ConnectPeople = () => {
             <div className="flex flex-col">Follow</div>
           </div>
         </div>
-        <main className="flex flex-col border-x border-x-border">
+        <main
+          className={cn(
+            "flex flex-col border-x border-x-border",
+            (isFetching && "h-svh") || (!data && "h-svh"),
+          )}
+          ref={followsContainer}
+        >
           {currentUser &&
-            data?.map((user: UserPartial) => {
-              return (
-                <FollowListRow
-                  isUser={user.id === currentUser?.id}
-                  user={user}
-                  key={user.id}
-                  currentUser={currentUser}
-                  className="p-4 hover:bg-secondary/40"
-                ></FollowListRow>
-              );
-            })}
+            data?.pages?.map(
+              (page: { data: UserPartial[]; nextPage: number }, i) => {
+                return (
+                  <React.Fragment key={i}>
+                    {page?.data?.map((user: UserPartial) => {
+                      return (
+                        <FollowListRow
+                          isUser={user.id === currentUser?.id}
+                          user={user}
+                          key={user.id}
+                          currentUser={currentUser}
+                          className="p-4 hover:bg-secondary/40"
+                        ></FollowListRow>
+                      );
+                    })}
+                  </React.Fragment>
+                );
+              },
+            )}
+          {isFetching && (
+            <div className="flex justify-center w-full h-full py-4">
+              <Spinner className="size-7 text-primary"></Spinner>
+            </div>
+          )}
         </main>
       </div>
     </>

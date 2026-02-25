@@ -160,13 +160,15 @@ const UserRepository = {
       },
       take: 10,
     }),
-  findFollowingList: (id: number) =>
+  findFollowingList: (id: number, pageParam: number) =>
     prisma.user.findMany({
       where: {
         id: { not: id },
         Followings: { every: { followerId: { not: id } } },
       },
       orderBy: { Followings: { _count: 'desc' } },
+      skip: pageParam * 20,
+      take: 20,
       select: {
         Followings: true,
         id: true,

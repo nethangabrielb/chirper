@@ -17,6 +17,7 @@ import { Activity, useState } from "react";
 
 import { ActionButton } from "@/components/button";
 import { TooltipIcon } from "@/components/tool-tip-icon";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 
 import postApi from "@/lib/api/post";
@@ -113,12 +114,14 @@ const CreatePost = ({ refetch }: Props) => {
         ></Progress>
       </Activity>
 
-      <img
-        src={`${user?.avatar}`}
-        alt={`${user?.username}'s icon`}
-        loading="eager"
-        className="size-[48px]! min-w-[48px]! rounded-full object-cover"
-      />
+      <Avatar>
+        <AvatarImage
+          src={`${user?.avatar}`}
+          alt={`${user?.username}'s icon`}
+          loading="eager"
+          className="size-[48px]! min-w-[48px]! rounded-full object-cover"
+        ></AvatarImage>
+      </Avatar>
       <form
         onSubmit={handleSubmit(createPost)}
         className="w-full max-w-full flex flex-col gap-4 overflow-hidden"

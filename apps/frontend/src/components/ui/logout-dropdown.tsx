@@ -1,5 +1,6 @@
 import { Ellipsis } from "lucide-react";
 
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -36,12 +37,13 @@ export function LogoutDropdown({
       <DropdownMenuTrigger asChild>
         {shrinkView ? (
           <div className={cn("mt-auto relative")}>
-            <img
-              src={data?.avatar}
-              alt="User avatar"
-              loading="eager"
-              className="size-[48px] min-w-[48px]! rounded-full object-cover cursor-pointer hover:shadow-md transition-all hover:shadow-secondary"
-            />
+            <Avatar>
+              <AvatarImage
+                src={data?.avatar}
+                alt="User avatar"
+                className="size-[48px] min-w-[48px]! rounded-full object-cover cursor-pointer hover:shadow-md transition-all hover:shadow-secondary"
+              ></AvatarImage>
+            </Avatar>
           </div>
         ) : (
           <div

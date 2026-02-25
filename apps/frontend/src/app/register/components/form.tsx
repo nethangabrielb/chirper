@@ -119,9 +119,9 @@ const RegisterForm = () => {
   };
 
   return (
-    <>
-      <div>
-        <h1 className="font-extrabold text-7xl tracking-tighter rotate-x-[35deg]">
+    <main className="flex flex-col">
+      <div className="flex justify-between w-fit gap-30 items-end">
+        <h1 className="font-extrabold text-4xl tracking-tighter rotate-x-[35deg]">
           Create your account
         </h1>
         <Link
@@ -235,7 +235,7 @@ const RegisterForm = () => {
           {mutation.isPending ? "Processing..." : "Register"}
         </FormButton>
       </form>
-    </>
+    </main>
   );
 };
 

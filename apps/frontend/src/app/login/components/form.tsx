@@ -2,7 +2,7 @@
 
 import { LoginSchema } from "@/app/login/schema/loginSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
@@ -16,6 +16,7 @@ import { InputSharp } from "@/components/input";
 export type Login = z.infer<typeof LoginSchema>;
 
 const LoginForm = () => {
+  const queryClient = useQueryClient();
   const router = useRouter();
   const {
     handleSubmit,
@@ -40,6 +41,7 @@ const LoginForm = () => {
       if (res) {
         const data = await res.json();
         if (data.status === "success") {
+          await queryClient.refetchQueries({ queryKey: ["user"] });
           router.replace("/home");
           router.refresh();
         } else {

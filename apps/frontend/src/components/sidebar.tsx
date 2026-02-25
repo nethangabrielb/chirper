@@ -92,7 +92,7 @@ const Sidebar = ({ children }: Props) => {
   });
 
   const { data: followListAside } = useQuery({
-    queryKey: ["followList"],
+    queryKey: ["followList", user],
     queryFn: async () => {
       if (path !== "/") {
         const res = await userApi.getUserFollowListLimit(3);

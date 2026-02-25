@@ -4,9 +4,12 @@ import { authApi } from "@/lib/api/auth";
 
 export const RegisterSchema = z
   .object({
-    name: z.string().refine((val) => val.trim().length >= 1, {
-      message: "Name is required",
-    }),
+    name: z
+      .string()
+      .refine((val) => val.trim().length >= 1, {
+        message: "Name is required",
+      })
+      .max(50, { error: "Name must not exceed 50 characters" }),
     username: z
       .string()
       .refine((val) => val.trim().length >= 1, {

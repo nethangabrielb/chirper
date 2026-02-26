@@ -15,10 +15,11 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 
 import { ActionButton } from "@/components/button";
+import { CreatePostDialog } from "@/components/post-dialog";
 
 import postApi from "@/lib/api/post";
 import roomApi from "@/lib/api/room";
-import { chatroomExisted } from "@/lib/utils";
+import { chatroomExisted, cn } from "@/lib/utils";
 
 import { FollowType } from "@/types/follow";
 import { PostType } from "@/types/post";
@@ -304,7 +305,17 @@ const Profile = () => {
         </div>
 
         {/* Posts section */}
-        <section>
+        <section
+          className={cn(
+            (feedType === "replies" && posts?.length > 0) ||
+              (feedType === "likes" && posts?.length > 0)
+              ? "border-x border-x-border"
+              : "",
+            feedType === "posts" && user && user.Post.length > 0
+              ? "border-x border-x-border"
+              : "",
+          )}
+        >
           <Activity mode={feedType === "posts" ? "visible" : "hidden"}>
             {user?.Post.map((post) => {
               return (
@@ -316,6 +327,7 @@ const Profile = () => {
               );
             })}
           </Activity>
+
           <Activity
             mode={
               feedType === "replies" || feedType === "likes"
@@ -333,6 +345,104 @@ const Profile = () => {
                   ></FeedPost>
                 );
               })}
+          </Activity>
+
+          <Activity
+            mode={
+              (feedType === "replies" && posts?.length > 0) ||
+              (feedType === "likes" && posts?.length > 0) ||
+              feedType === "posts"
+                ? "hidden"
+                : "visible"
+            }
+          >
+            <div className="h-full flex justify-center items-center mt-auto flex-col">
+              <svg
+                viewBox="0 0 1024 1024"
+                className="size-24"
+                version="1.1"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="#000000"
+              >
+                <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+                <g
+                  id="SVGRepo_tracerCarrier"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                ></g>
+                <g id="SVGRepo_iconCarrier">
+                  <path
+                    d="M151.963012 337.651783v30.025437h22.107732l7.917705 60.050874c0 11.025197 3.281552 21.170877 8.473675 30.025438h673.634633c5.191099-8.85456 8.475723-19.00024 8.475723-30.025438l7.975043-60.050874h22.050394v-30.025437H151.963012zM269.365799 790.671893c5.512599 31.433279 25.626826 57.294575 57.294575 57.294575h401.238133c31.667749 0 50.845121-25.392356 57.354985-57.294575l51.869006-302.892924h-619.686115l51.929416 302.892924z m146.373622-228.414482l21.231286-21.231286 90.310781 90.253444 90.310782-90.253444 21.228214 21.231286-90.310781 90.250372 90.604636 90.604636-21.231286 21.228215-90.601565-90.604636-90.604636 90.604636-21.228214-21.228215 90.602588-90.604636-90.311805-90.250372z"
+                    fill="#1d9bf0"
+                  ></path>
+                  <path
+                    d="M121.937575 307.626346v30.025437h22.107732l7.917705 60.050874c0 11.025197 3.281552 21.170877 8.473675 30.025437h673.634633c5.191099-8.85456 8.475723-19.00024 8.475723-30.025437l7.975043-60.050874h22.050394v-30.025437H121.937575zM239.340362 760.646456c5.512599 31.433279 25.626826 57.294575 57.294575 57.294575H697.87307c31.667749 0 50.845121-25.392356 57.354984-57.294575l51.869007-302.892924h-619.686115l51.929416 302.892924z m146.373622-228.414482l21.231286-21.231286 90.310781 90.253444 90.310782-90.253444 21.228214 21.231286-90.310781 90.250372 90.604636 90.604636-21.231286 21.228215-90.601565-90.604637-90.604636 90.604637-21.228214-21.228215 90.602588-90.604636-90.311805-90.250372z"
+                    fill="#16181c"
+                  ></path>
+                  <path
+                    d="M306.141858 413.762503a27.013167 57.402083 55.515 1 0 94.63014-65.001024 27.013167 57.402083 55.515 1 0-94.63014 65.001024Z"
+                    fill="#FEFEFE"
+                  ></path>
+                  <path
+                    d="M248.134573 508.228533a18.008095 31.51519 55.515 1 0 51.954332-35.687201 18.008095 31.51519 55.515 1 0-51.954332 35.687201Z"
+                    fill="#FEFEFE"
+                  ></path>
+                </g>
+              </svg>
+              <p className="font-bold text-lg">Nothing to see here!</p>
+            </div>
+          </Activity>
+
+          <Activity
+            mode={
+              (user && user?.Post.length > 0) || feedType !== "posts"
+                ? "hidden"
+                : "visible"
+            }
+          >
+            <div className="h-full flex justify-center items-center mt-auto flex-col">
+              <svg
+                viewBox="0 0 1024 1024"
+                className="size-24"
+                version="1.1"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="#000000"
+              >
+                <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+                <g
+                  id="SVGRepo_tracerCarrier"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                ></g>
+                <g id="SVGRepo_iconCarrier">
+                  <path
+                    d="M151.963012 337.651783v30.025437h22.107732l7.917705 60.050874c0 11.025197 3.281552 21.170877 8.473675 30.025438h673.634633c5.191099-8.85456 8.475723-19.00024 8.475723-30.025438l7.975043-60.050874h22.050394v-30.025437H151.963012zM269.365799 790.671893c5.512599 31.433279 25.626826 57.294575 57.294575 57.294575h401.238133c31.667749 0 50.845121-25.392356 57.354985-57.294575l51.869006-302.892924h-619.686115l51.929416 302.892924z m146.373622-228.414482l21.231286-21.231286 90.310781 90.253444 90.310782-90.253444 21.228214 21.231286-90.310781 90.250372 90.604636 90.604636-21.231286 21.228215-90.601565-90.604636-90.604636 90.604636-21.228214-21.228215 90.602588-90.604636-90.311805-90.250372z"
+                    fill="#1d9bf0"
+                  ></path>
+                  <path
+                    d="M121.937575 307.626346v30.025437h22.107732l7.917705 60.050874c0 11.025197 3.281552 21.170877 8.473675 30.025437h673.634633c5.191099-8.85456 8.475723-19.00024 8.475723-30.025437l7.975043-60.050874h22.050394v-30.025437H121.937575zM239.340362 760.646456c5.512599 31.433279 25.626826 57.294575 57.294575 57.294575H697.87307c31.667749 0 50.845121-25.392356 57.354984-57.294575l51.869007-302.892924h-619.686115l51.929416 302.892924z m146.373622-228.414482l21.231286-21.231286 90.310781 90.253444 90.310782-90.253444 21.228214 21.231286-90.310781 90.250372 90.604636 90.604636-21.231286 21.228215-90.601565-90.604637-90.604636 90.604637-21.228214-21.228215 90.602588-90.604636-90.311805-90.250372z"
+                    fill="#16181c"
+                  ></path>
+                  <path
+                    d="M306.141858 413.762503a27.013167 57.402083 55.515 1 0 94.63014-65.001024 27.013167 57.402083 55.515 1 0-94.63014 65.001024Z"
+                    fill="#FEFEFE"
+                  ></path>
+                  <path
+                    d="M248.134573 508.228533a18.008095 31.51519 55.515 1 0 51.954332-35.687201 18.008095 31.51519 55.515 1 0-51.954332 35.687201Z"
+                    fill="#FEFEFE"
+                  ></path>
+                </g>
+              </svg>
+              <p className="font-bold text-lg">Such empty!</p>
+              <div className="flex items-center gap-2 mt-2">
+                <p className="font-light">Maybe you can </p>
+                <p className="bg-primary rounded-lg font-bold text-neutral-200 cursor-pointer -rotate-5 hover:rotate-0 transition-all">
+                  <CreatePostDialog>
+                    <button className="p-1 px-2">make a tweet?</button>
+                  </CreatePostDialog>
+                </p>
+              </div>
+            </div>
           </Activity>
         </section>
       </div>

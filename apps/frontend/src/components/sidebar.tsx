@@ -13,6 +13,7 @@ import { ActionButton } from "@/components/button";
 import FollowListRow from "@/components/follow-list";
 import Icon from "@/components/icon";
 import NavIcon from "@/components/navIcon";
+import { CreatePostDialog } from "@/components/post-dialog";
 import { LogoutDropdown } from "@/components/ui/logout-dropdown";
 
 import { authApi } from "@/lib/api/auth";
@@ -212,14 +213,16 @@ const Sidebar = ({ children }: Props) => {
               );
             })}
             <Activity mode={path.includes("/messages") ? "hidden" : "visible"}>
-              <ActionButton
-                className={cn(
-                  "bg-primary text-white py-3! mx-8! hover:brightness-90 hover:bg-primary!",
-                  path.includes("/messages") && "w-fit lg:w-0!",
-                )}
-              >
-                Tweet
-              </ActionButton>
+              <CreatePostDialog>
+                <ActionButton
+                  className={cn(
+                    "bg-primary text-white py-3! mx-8! hover:brightness-90 hover:bg-primary!",
+                    path.includes("/messages") ? "w-full lg:w-0!" : "w-[80%]",
+                  )}
+                >
+                  Tweet
+                </ActionButton>
+              </CreatePostDialog>
             </Activity>
             <LogoutDropdown
               data={data}

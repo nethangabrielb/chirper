@@ -68,6 +68,7 @@ const postsController = (() => {
           const cursor = Number(req.query.cursor);
 
           const posts = await postService.getPostsCursorPagination(cursor);
+
           return res.json({
             status: 'success',
             message: 'Posts fetched success',
@@ -75,6 +76,15 @@ const postsController = (() => {
             nextCursor: posts.at(-1)?.id,
           });
         }
+      } else if (req.query.filter && req.query.filter === 'followings') {
+        const user = req.user as User;
+        const posts = await postService.getPostsByFollowing(user.id);
+
+        return res.json({
+          status: 'success',
+          message: 'Posts fetched success',
+          data: posts,
+        });
       }
     } catch (err: unknown) {
       res.json({

@@ -59,6 +59,13 @@ const postService = {
     }
     return posts;
   },
+  getPostsByFollowing: async (userId: number) => {
+    const posts = await postRepository.findByFollowing(userId);
+    if (!posts) {
+      throw new Error('There was a problem fetching posts');
+    }
+    return posts;
+  },
 };
 
 export default postService;

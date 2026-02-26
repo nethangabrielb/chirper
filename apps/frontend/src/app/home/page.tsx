@@ -134,10 +134,12 @@ export const FeedControlBtn = ({
 }) => {
   return (
     <button
-      className="bg-transparent flex-1 p-4 hover:bg-neutral-900 border-b border-b-border"
+      className={
+        "bg-transparent flex-1 p-4 hover:bg-neutral-900 border-b border-b-border"
+      }
       onClick={handleClick}
     >
-      <span className={cn(isActive && "border-b-2 border-b-primary")}>
+      <span className={cn(isActive && "border-b-3 border-b-primary")}>
         {children}
       </span>
     </button>

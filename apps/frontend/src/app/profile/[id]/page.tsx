@@ -293,13 +293,22 @@ const Profile = () => {
         </section>
         {/*SECTION - User Profile Post Feeds controls*/}
         <div className="flex mt-6 border-x border-x-border">
-          <FeedControlBtn handleClick={() => setFeedType("posts")}>
+          <FeedControlBtn
+            handleClick={() => setFeedType("posts")}
+            isActive={feedType === "posts"}
+          >
             Posts
           </FeedControlBtn>
-          <FeedControlBtn handleClick={() => setFeedType("replies")}>
+          <FeedControlBtn
+            handleClick={() => setFeedType("replies")}
+            isActive={feedType === "replies"}
+          >
             Replies
           </FeedControlBtn>
-          <FeedControlBtn handleClick={() => setFeedType("likes")}>
+          <FeedControlBtn
+            handleClick={() => setFeedType("likes")}
+            isActive={feedType === "likes"}
+          >
             Likes
           </FeedControlBtn>
         </div>

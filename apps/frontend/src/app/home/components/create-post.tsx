@@ -23,13 +23,10 @@ import { Progress } from "@/components/ui/progress";
 import postApi from "@/lib/api/post";
 import { cn } from "@/lib/utils";
 
-import { PostType } from "@/types/post";
 import { User } from "@/types/user";
 
 type Props = {
-  refetch: (
-    options?: RefetchOptions,
-  ) => Promise<QueryObserverResult<PostType[], Error>>;
+  refetch: () => Promise<void>;
 };
 
 const CreatePost = ({ refetch }: Props) => {
@@ -104,7 +101,7 @@ const CreatePost = ({ refetch }: Props) => {
     <div
       className={cn(
         mutation.isPending && "brightness-110",
-        "flex gap-4 p-4 border-b border-b-border w-full relative",
+        "flex gap-4 p-4 border-b border-b-border border-x border-x-border w-full relative",
       )}
     >
       <Activity mode={mutation.isPending ? "visible" : "hidden"}>

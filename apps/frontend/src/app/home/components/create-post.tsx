@@ -4,11 +4,7 @@ import PostSchema from "@/app/home/schema/create-post.schema";
 import { NewPost } from "@/app/home/types/create-post.type";
 import useUser from "@/stores/user.store";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  QueryObserverResult,
-  RefetchOptions,
-  useMutation,
-} from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { Image, Smile } from "lucide-react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";

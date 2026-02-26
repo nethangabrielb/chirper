@@ -19,6 +19,7 @@ const Home = () => {
   const queryClient = useQueryClient();
   const postsContainerRef = useRef<HTMLDivElement>(null);
   const [reachedBottom, setReachedBottom] = useState<boolean>(false);
+  const [feedType, setFeedType] = useState<"default" | "followings">("default");
   // POSTS FEED CONTENT QUERY
   const {
     data: posts,
@@ -26,7 +27,7 @@ const Home = () => {
     fetchNextPage,
     isFetching,
   } = useInfiniteQuery({
-    queryKey: ["posts"],
+    queryKey: ["posts", feedType],
     initialPageParam: undefined,
     getNextPageParam: (lastPage) => {
       if (lastPage.data.length < 20) {
@@ -36,10 +37,17 @@ const Home = () => {
       }
     },
     queryFn: async ({ pageParam }: { pageParam: number | undefined }) => {
-      const posts = await postApi.getPosts(pageParam);
-      return posts;
+      if (feedType === "default") {
+        const posts = await postApi.getPosts(pageParam);
+        return posts;
+      } else {
+        const posts = await postApi.getFollowingsPosts(pageParam);
+        return posts;
+      }
     },
   });
+
+  console.log(posts);
 
   useEffect(() => {
     document.title = "Home / Twitter Clone";
@@ -81,8 +89,18 @@ const Home = () => {
       <div className="lg:w-[600px] h-full relative">
         {/* FEED CONTROL UI */}
         <div className="flex backdrop-blur-lg absolute top-0 w-full border-x border-x-border">
-          <FeedControlBtn>For you</FeedControlBtn>
-          <FeedControlBtn>Following</FeedControlBtn>
+          <FeedControlBtn
+            isActive={feedType === "default"}
+            handleClick={() => setFeedType("default")}
+          >
+            For you
+          </FeedControlBtn>
+          <FeedControlBtn
+            isActive={feedType === "followings"}
+            handleClick={() => setFeedType("followings")}
+          >
+            Following
+          </FeedControlBtn>
         </div>
         <div className="mt-[57.1px]"></div>
 

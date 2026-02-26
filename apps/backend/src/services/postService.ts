@@ -59,8 +59,15 @@ const postService = {
     }
     return posts;
   },
-  getPostsByFollowing: async (userId: number) => {
+  getPostsByFollowingInitial: async (userId: number) => {
     const posts = await postRepository.findByFollowing(userId);
+    if (!posts) {
+      throw new Error('There was a problem fetching posts');
+    }
+    return posts;
+  },
+  getPostsByFollowing: async (userId: number, cursor: number) => {
+    const posts = await postRepository.findByFollowingCursor(userId, cursor);
     if (!posts) {
       throw new Error('There was a problem fetching posts');
     }

@@ -20,6 +20,23 @@ const postApi = (() => {
     return data;
   };
 
+  const getFollowingsPosts = async (pageParam: number | undefined) => {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API}/api/posts?filter=following&cursorFollowing=${pageParam}`,
+      {
+        credentials: "include",
+      },
+    );
+
+    if (!res.ok) {
+      throw new Error("Error fetching from the server.");
+    }
+    const data = await res.json();
+
+    console.log(data);
+    return data;
+  };
+
   const getPost = async (id: ParamValue | Number) => {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API}/api/posts/${id}`, {
       credentials: "include",
@@ -157,6 +174,7 @@ const postApi = (() => {
     getUserReplies,
     getUserLiked,
     getUserBookmarkedPosts,
+    getFollowingsPosts,
   };
 })();
 

@@ -14,7 +14,7 @@ type Props = {
 
 const FeedPost = ({ post, displayReplies = true, bookmarkedPosts }: Props) => {
   return (
-    <div className="flex flex-col border-b border-b-border border-x border-x-border">
+    <div className="flex flex-col border-b border-b-border ">
       {bookmarkedPosts ? (
         <Post bookmarkedPost={true} post={post} displayReplies={false}></Post>
       ) : (

@@ -89,9 +89,97 @@ const postRepository = {
         deleted: false,
         replyId: null,
       },
-      orderBy: {
-        createdAt: 'desc',
+      orderBy: [{ createdAt: 'desc' }, { id: 'asc' }],
+      take: 20,
+      include: {
+        _count: {
+          select: {
+            Like: true,
+            replies: {
+              where: {
+                deleted: false,
+              },
+            },
+          },
+        },
+        user: {
+          select: {
+            avatar: true,
+            username: true,
+            name: true,
+            id: true,
+            createdAt: true,
+            _count: {
+              select: {
+                Followers: true,
+                Followings: true,
+                Post: true,
+              },
+            },
+          },
+        },
+        Like: {
+          select: {
+            userId: true,
+          },
+        },
+        replies: {
+          where: {
+            deleted: false,
+          },
+          include: {
+            _count: {
+              select: {
+                Like: true,
+                replies: {
+                  where: {
+                    deleted: false,
+                  },
+                },
+              },
+            },
+            user: {
+              select: {
+                avatar: true,
+                username: true,
+                name: true,
+                id: true,
+                createdAt: true,
+                _count: {
+                  select: {
+                    Followers: true,
+                    Followings: true,
+                    Post: true,
+                  },
+                },
+              },
+            },
+            Like: {
+              select: {
+                userId: true,
+              },
+            },
+            bookmarks: true,
+          },
+          orderBy: {
+            Like: {
+              _count: 'desc',
+            },
+          },
+        },
+        bookmarks: true,
       },
+    }),
+  findAllByCursor: (cursor: number) =>
+    prisma.post.findMany({
+      where: {
+        deleted: false,
+        replyId: null,
+      },
+      orderBy: [{ createdAt: 'desc' }, { id: 'asc' }],
+      cursor: { id: cursor },
+      skip: 1,
+      take: 20,
       include: {
         _count: {
           select: {

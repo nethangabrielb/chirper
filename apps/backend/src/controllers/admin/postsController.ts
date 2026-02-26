@@ -54,14 +54,27 @@ const postsController = (() => {
           message: 'Bookmarked posts fetched success',
           data: posts,
         });
-      } else {
-        const posts = await postService.getPosts(req.user as User);
+      } else if (req.query.cursor) {
+        if (req.query.cursor === 'undefined') {
+          const posts = await postService.getPosts();
 
-        res.json({
-          status: 'success',
-          message: 'Posts fetched success',
-          data: posts,
-        });
+          return res.json({
+            status: 'success',
+            message: 'Posts fetched success',
+            data: posts,
+            nextCursor: posts.at(-1)?.id,
+          });
+        } else {
+          const cursor = Number(req.query.cursor);
+
+          const posts = await postService.getPostsCursorPagination(cursor);
+          return res.json({
+            status: 'success',
+            message: 'Posts fetched success',
+            data: posts,
+            nextCursor: posts.at(-1)?.id,
+          });
+        }
       }
     } catch (err: unknown) {
       res.json({

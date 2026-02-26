@@ -5,16 +5,19 @@ import { ParamValue } from "next/dist/server/request/params";
 import { PostType } from "@/types/post";
 
 const postApi = (() => {
-  const getPosts = async () => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API}/api/posts`, {
-      credentials: "include",
-    });
+  const getPosts = async (pageParam: number | undefined) => {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API}/api/posts?cursor=${pageParam}`,
+      {
+        credentials: "include",
+      },
+    );
 
     if (!res.ok) {
       throw new Error("Error fetching from the server.");
     }
     const data = await res.json();
-    return data.data as PostType[];
+    return data;
   };
 
   const getPost = async (id: ParamValue | Number) => {

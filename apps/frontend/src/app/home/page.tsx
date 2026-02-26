@@ -2,9 +2,9 @@
 
 import CreatePost from "@/app/home/components/create-post";
 import FeedPost from "@/app/home/components/feed-post";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 
-import { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import Head from "next/head";
 
@@ -16,15 +16,27 @@ import { cn } from "@/lib/utils";
 import { PostType } from "@/types/post";
 
 const Home = () => {
+  const queryClient = useQueryClient();
+  const postsContainerRef = useRef<HTMLDivElement>(null);
+  const [reachedBottom, setReachedBottom] = useState<boolean>(false);
   // POSTS FEED CONTENT QUERY
   const {
     data: posts,
-    isPending,
-    refetch,
-  } = useQuery<PostType[]>({
+    hasNextPage,
+    fetchNextPage,
+    isFetching,
+  } = useInfiniteQuery({
     queryKey: ["posts"],
-    queryFn: async () => {
-      const posts = await postApi.getPosts();
+    initialPageParam: undefined,
+    getNextPageParam: (lastPage) => {
+      if (lastPage.data.length < 20) {
+        return null;
+      } else {
+        return lastPage.nextCursor;
+      }
+    },
+    queryFn: async ({ pageParam }: { pageParam: number | undefined }) => {
+      const posts = await postApi.getPosts(pageParam);
       return posts;
     },
   });
@@ -32,6 +44,30 @@ const Home = () => {
   useEffect(() => {
     document.title = "Home / Twitter Clone";
   }, []);
+
+  useEffect(() => {
+    window.addEventListener("scroll", () => {
+      const elementRect = postsContainerRef.current?.getBoundingClientRect();
+      if (
+        Math.floor(elementRect?.bottom as number) ===
+        Math.floor(window.innerHeight)
+      ) {
+        setReachedBottom(true);
+      } else {
+        setReachedBottom(false);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    if (reachedBottom === true && hasNextPage) {
+      fetchNextPage();
+    }
+  }, [reachedBottom]);
+
+  const refetchPosts = async () => {
+    await queryClient.invalidateQueries({ queryKey: ["posts"] });
+  };
 
   return (
     <>
@@ -42,36 +78,45 @@ const Home = () => {
           content="Home page of my attempt to make a clone of Twitter"
         />
       </Head>
-      <div className="lg:w-[600px] border-l border-r border-l-border border-r-border h-full relative">
+      <div className="lg:w-[600px] h-full relative">
         {/* FEED CONTROL UI */}
-        <div className="flex backdrop-blur-lg absolute top-0 w-full">
+        <div className="flex backdrop-blur-lg absolute top-0 w-full border-x border-x-border">
           <FeedControlBtn>For you</FeedControlBtn>
           <FeedControlBtn>Following</FeedControlBtn>
         </div>
         <div className="mt-[57.1px]"></div>
 
         {/* CREATE POST SECTION */}
-        <CreatePost refetch={refetch}></CreatePost>
+        <CreatePost refetch={refetchPosts}></CreatePost>
 
         {/* RENDER POSTS */}
-        <div className="w-full">
+        <div
+          className="w-full border-x border-x-border"
+          ref={postsContainerRef}
+        >
           {/* PENDING STATE */}
-          {isPending && (
+          {posts &&
+            posts.pages.map((pageGroup, i) => {
+              return (
+                <React.Fragment key={i}>
+                  {pageGroup?.data.map((post: PostType) => {
+                    return (
+                      <FeedPost
+                        post={post}
+                        key={post.id}
+                        displayReplies={true}
+                      ></FeedPost>
+                    );
+                  })}
+                </React.Fragment>
+              );
+            })}
+
+          {isFetching && (
             <div className="flex justify-center items-center w-full h-full py-4">
               <Spinner className="size-7 text-primary"></Spinner>
             </div>
           )}
-          {/* POSTS */}
-          {posts &&
-            posts.map((post: PostType) => {
-              return (
-                <FeedPost
-                  post={post}
-                  key={post.id}
-                  displayReplies={true}
-                ></FeedPost>
-              );
-            })}
         </div>
       </div>
     </>

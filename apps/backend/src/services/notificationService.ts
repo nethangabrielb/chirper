@@ -2,7 +2,7 @@ import notificationRepository from '../repositories/notificationRepository';
 
 const notificationService = {
   getAll: async (userId: number) => {
-    const notifications = notificationRepository.findAll(userId);
+    const notifications = await notificationRepository.findAll(userId);
     if (!notifications) {
       throw new Error('Error fetching notifications');
     }

@@ -83,13 +83,14 @@ export const initSocket = (io: Server) => {
           } else if (type === 'follow') {
             content = `${user.name} (@${user.username}) followed you`;
           }
+
           const notification = await notificationRepository.create({
             receiverId,
             content,
           });
 
           if (notification) {
-            socket.emit('notification', receiverId, notification);
+            io.emit('notification', receiverId, notification);
           }
         }
       }

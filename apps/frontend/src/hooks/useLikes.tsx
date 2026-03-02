@@ -69,13 +69,13 @@ export const useLikes = (post: PostType | ReplyType, user: User) => {
       if (res.message === "Post liked successfully") {
         setLikes((prev: number) => prev + 1);
         setUserHasLiked(true);
+        notificationHandler.emitLikeNotification(user, post?.userId);
       } else if (res.message === "Unlike success") {
         setLikes((prev: number) => prev - 1);
         setUserHasLiked(false);
       }
     },
     onSettled: async () => {
-      notificationHandler.emitLikeNotification(user, post?.userId);
       await queryClient.invalidateQueries({ queryKey: ["post"] });
       await queryClient.invalidateQueries({ queryKey: ["user"] });
       await queryClient.invalidateQueries({ queryKey: ["posts"] });

@@ -67,10 +67,11 @@ const Sidebar = ({ children }: Props) => {
   const setUser = useUser((state) => state.setUser);
   const removeUser = useUser((state) => state.removeUser);
   const user = useUser((state) => state.user) as User;
-  const { notifications, setUnreadCount, unreadCount } = useNotifications(user);
   const [visible, setVisible] = useState<boolean>(false);
   const [asideVisible, setAsideVisible] = useState<boolean>(false);
   const path = usePathname();
+  const { notifications, setUnreadCount, unreadCount } = useNotifications(user);
+
   const { data } = useQuery({
     queryKey: ["user"],
     queryFn: async () => {
@@ -199,11 +200,19 @@ const Sidebar = ({ children }: Props) => {
                   href={link.url}
                   key={crypto.randomUUID()}
                   className={cn(
-                    "text-lg flex items-center gap-6 w-fit hover:bg-muted transition-all p-3 rounded-4xl px-8",
+                    "text-lg flex items-center gap-6 w-fit hover:bg-muted transition-all p-3 rounded-4xl px-8 relative",
                     path.includes("/messages") && "p-3!",
                   )}
+                  onClick={() => setUnreadCount(0)}
                 >
-                  <NavIcon title={link.title}></NavIcon>
+                  <div className="relative">
+                    <NavIcon title={link.title}></NavIcon>
+                    {link.title === "Notifications" && unreadCount > 0 && (
+                      <p className="absolute top-0 right-0 -translate-y-4 translate-x-2 bg-red-500 p-2 w-[24px] h-[24px] text-sm flex justify-center items-center rounded-full">
+                        {unreadCount}
+                      </p>
+                    )}
+                  </div>
                   {
                     <Activity
                       mode={path.includes("/messages") ? "hidden" : "visible"}

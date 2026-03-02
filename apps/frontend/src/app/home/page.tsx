@@ -45,6 +45,7 @@ const Home = () => {
         return posts;
       }
     },
+    refetchOnWindowFocus: false,
   });
 
   useEffect(() => {

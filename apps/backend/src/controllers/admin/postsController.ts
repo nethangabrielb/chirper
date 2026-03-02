@@ -78,7 +78,6 @@ const postsController = (() => {
         }
       } else if (req.query.filter && req.query.filter === 'following') {
         const cursor = req.query.cursorFollowing;
-        console.log(cursor);
 
         let posts;
 

@@ -2,8 +2,10 @@ import { ChatMessage } from '@twitter-clone/shared';
 import { Server, Socket } from 'socket.io';
 
 import { isSocketValid } from '../middlewares/authMiddleware';
+import notificationRepository from '../repositories/notificationRepository';
 import messageService from '../services/messageService';
 import roomService from '../services/roomService';
+import { User } from '../types/user';
 import { validateEventSender } from '../utils/validateEventSender';
 
 export const initSocket = (io: Server) => {
@@ -64,5 +66,33 @@ export const initSocket = (io: Server) => {
         }
       }
     });
+
+    socket.on(
+      'notification',
+      async (
+        user: User,
+        receiverId: number,
+        type: 'reply' | 'like' | 'follow'
+      ) => {
+        if (validateEventSender(user.id, socket.data.userId)) {
+          let content: string = '';
+          if (type === 'reply') {
+            content = `${user.name} (@${user.username}) replied to your post`;
+          } else if (type === 'like') {
+            content = `${user.name} (@${user.username}) liked your post`;
+          } else if (type === 'follow') {
+            content = `${user.name} (@${user.username}) followed you`;
+          }
+          const notification = await notificationRepository.create({
+            receiverId,
+            content,
+          });
+
+          if (notification) {
+            socket.emit('notification', receiverId, notification);
+          }
+        }
+      }
+    );
   });
 };

@@ -4,7 +4,7 @@ import Message from "@/app/messages/components/message";
 import useRooms from "@/app/messages/hooks/useRooms";
 import useBoxHeight from "@/hooks/useBoxHeight";
 import { socket } from "@/socket/client";
-import messageEventsHandler from "@/socket/handlers/message";
+import { messageEventsHandler } from "@/socket/handlers/message";
 import useUser from "@/stores/user.store";
 import { useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";

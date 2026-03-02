@@ -1,3 +1,5 @@
+import { notificationHandler } from "@/socket/handlers/message";
+import useUser from "@/stores/user.store";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { startTransition, useEffect, useOptimistic, useState } from "react";
@@ -73,6 +75,7 @@ export const useLikes = (post: PostType | ReplyType, user: User) => {
       }
     },
     onSettled: async () => {
+      notificationHandler.emitLikeNotification(user, post?.userId);
       await queryClient.invalidateQueries({ queryKey: ["post"] });
       await queryClient.invalidateQueries({ queryKey: ["user"] });
       await queryClient.invalidateQueries({ queryKey: ["posts"] });

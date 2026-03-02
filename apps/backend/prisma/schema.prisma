@@ -23,15 +23,24 @@ model User {
   avatar    String?
   onboarded Boolean @default(false)
 
-  Followings Follow[]   @relation("Followings")
-  Followers  Follow[]   @relation("Followers")
-  Post       Post[]
-  createdAt  DateTime   @default(now())
-  PostLike   PostLike[]
-  Sender     Message[]  @relation("Sender")
-  Receiver   Message[]  @relation("Receiver")
-  rooms      Room[]
-  bookmarks  Bookmark[]
+  Followings    Follow[]       @relation("Followings")
+  Followers     Follow[]       @relation("Followers")
+  Post          Post[]
+  createdAt     DateTime       @default(now())
+  PostLike      PostLike[]
+  Sender        Message[]      @relation("Sender")
+  Receiver      Message[]      @relation("Receiver")
+  rooms         Room[]
+  bookmarks     Bookmark[]
+  notifications Notification[]
+}
+
+model Notification {
+  id         Int      @id @default(autoincrement())
+  receiverId Int
+  user       User     @relation(fields: [receiverId], references: [id])
+  content    String
+  createdAt  DateTime @default(now())
 }
 
 model Follow {

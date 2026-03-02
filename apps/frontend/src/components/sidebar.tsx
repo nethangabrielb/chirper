@@ -1,5 +1,6 @@
 "use client";
 
+import useNotifications from "@/hooks/useNotifications";
 import useUser from "@/stores/user.store";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -66,6 +67,7 @@ const Sidebar = ({ children }: Props) => {
   const setUser = useUser((state) => state.setUser);
   const removeUser = useUser((state) => state.removeUser);
   const user = useUser((state) => state.user) as User;
+  const { notifications, setUnreadCount, unreadCount } = useNotifications(user);
   const [visible, setVisible] = useState<boolean>(false);
   const [asideVisible, setAsideVisible] = useState<boolean>(false);
   const path = usePathname();

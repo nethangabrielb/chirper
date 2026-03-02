@@ -70,7 +70,7 @@ const Sidebar = ({ children }: Props) => {
   const [visible, setVisible] = useState<boolean>(false);
   const [asideVisible, setAsideVisible] = useState<boolean>(false);
   const path = usePathname();
-  const { notifications, setUnreadCount, unreadCount } = useNotifications(user);
+  const { setUnreadCount, unreadCount } = useNotifications(user);
 
   const { data } = useQuery({
     queryKey: ["user"],

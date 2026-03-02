@@ -16,7 +16,7 @@ const useNotifications = (user: User) => {
     queryKey: ["notifications", user],
     queryFn: async () => {
       const notifications = await notificationsApi.getNotifications();
-      return notifications;
+      return notifications.data;
     },
   });
 

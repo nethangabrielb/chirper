@@ -17,7 +17,7 @@ const TextInput = ({ className, placeholder, register, watch }: Props) => {
         type="text"
         className={cn(className)}
         placeholder={placeholder}
-        {...register("message")}
+        {...register("message", { minLength: 1 })}
       />
       <div
         className={cn(

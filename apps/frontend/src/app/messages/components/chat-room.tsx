@@ -9,7 +9,7 @@ import useUser from "@/stores/user.store";
 import { useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 import { useRouter } from "next/navigation";
 
@@ -50,6 +50,13 @@ const ChatRoom = ({
   const { getValues, register, handleSubmit, watch, setValue } = useForm();
   const queryClient = useQueryClient();
 
+  const updateMessageMemoized = useCallback(
+    (message: MessageType) => {
+      updateMessagesOptimistic(message, bottomMessages.current!);
+    },
+    [updateMessagesOptimistic],
+  );
+
   const currentRoom = chatRooms?.find(
     (room: RoomType) => room.id === Number(paramsId),
   );
@@ -70,28 +77,52 @@ const ChatRoom = ({
   }, [paramsId]);
 
   useEffect(() => {
-    const updateMessage = (message: MessageType) => {
-      updateMessagesOptimistic(message, bottomMessages.current!);
+    const handler = (message: MessageType) => {
+      updateMessageMemoized(message);
     };
-    socket.on("newMessage", updateMessage);
+
+    if (!currentUser?.id || !paramsId) return;
+
+    const join = () => {
+      socket.emit(
+        "joinRoom",
+        String(paramsId),
+        currentUser.id,
+        (res: { status: string }) => {
+          if (res.status === "ok") {
+            socket.on("newMessage", handler);
+          }
+        },
+      );
+    };
+
+    if (socket.connected) {
+      join();
+    }
+
+    socket.once("connect", join);
 
     return () => {
-      socket.off("newMessage", updateMessage);
+      socket.off("connect", join);
+      socket.emit(
+        "leaveRoom",
+        String(paramsId),
+        currentUser.id,
+        (res: { status: string }) => {
+          if (res.status === "ok") {
+            socket.off("newMessage", handler);
+          }
+        },
+      );
     };
-  }, []);
-
-  useEffect(() => {
-    if (currentUser?.id) {
-      socket.emit("joinRoom", String(paramsId), currentUser?.id);
-
-      return () => {
-        socket.emit("leaveRoom", String(paramsId), currentUser?.id);
-      };
-    }
   }, [paramsId, currentUser?.id]);
 
   const messageHandler = () => {
     const values = getValues();
+
+    if (values.message.length === 0) return;
+
+    if (values.message.trim().length === 0) return;
 
     setValue("message", "");
 

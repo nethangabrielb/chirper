@@ -1,5 +1,4 @@
 import { notificationHandler } from "@/socket/handlers/message";
-import useUser from "@/stores/user.store";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { startTransition, useEffect, useOptimistic, useState } from "react";

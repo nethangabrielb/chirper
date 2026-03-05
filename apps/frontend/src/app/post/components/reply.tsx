@@ -3,6 +3,7 @@
 import { CurrentUserPostDropdown } from "@/app/home/components/post-controls";
 import PostSingle from "@/app/post/components/post";
 import { useBookmark } from "@/hooks/useBookmark";
+import { notificationHandler } from "@/socket/handlers/message";
 import useUser from "@/stores/user.store";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Bookmark, Heart, MessageCircle } from "lucide-react";
@@ -99,6 +100,7 @@ const Reply = ({ reply }: Props) => {
       if (res.message === "Post liked successfully") {
         setLikes((prev: number) => prev + 1);
         setUserHasLiked(true);
+        notificationHandler.emitLikeNotification(user, post?.userId, post?.id);
       } else if (res.message === "Unlike success") {
         setLikes((prev: number) => prev - 1);
         setUserHasLiked(false);

@@ -13,6 +13,10 @@ export function formatDateSlugPost(date: Date) {
   return format(date, "h:mm b . PP");
 }
 
+export function formatDateNotification(date: Date) {
+  return format(date, "PP, h:mm b");
+}
+
 export function formatDateFeedPost(date: Date) {
   return format(date, "PP");
 }

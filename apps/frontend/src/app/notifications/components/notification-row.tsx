@@ -4,7 +4,7 @@ import Link from "next/link";
 
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 
-import { formatDateFeedPost } from "@/lib/utils";
+import { formatDateNotification } from "@/lib/utils";
 
 import { Notification } from "@/types/notification";
 
@@ -35,8 +35,8 @@ const NotificationRow = ({ notification }: Props) => {
         <div className="flex items-center gap-2">
           <p className="text-text">{notification.content}</p>
           <Dot size={8}></Dot>
-          <p className="text-darker">
-            {formatDateFeedPost(notification.createdAt)}
+          <p className="text-darker text-sm font-light">
+            {formatDateNotification(notification.createdAt)}
           </p>
         </div>
         {notification.post && (

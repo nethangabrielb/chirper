@@ -14,6 +14,7 @@ const notificationRepository = {
           select: { content: true },
         },
       },
+      orderBy: { createdAt: 'desc' },
     }),
 };
 

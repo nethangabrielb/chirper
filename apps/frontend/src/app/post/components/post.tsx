@@ -166,7 +166,9 @@ const PostSingle = ({ post, className, settingsCn, buttonCn }: Props) => {
             </Link>
           </div>
         </div>
-        <p className="text-text text-[15px] py-2">{post.content}</p>
+        <p className="text-text text-[15px] py-2 whitespace-normal break-words">
+          {post.content}
+        </p>
         <p className="border-b border-b-border pb-1 text-darker font-light text-[14px]">
           {formatDateSlugPost(post.createdAt)}
         </p>

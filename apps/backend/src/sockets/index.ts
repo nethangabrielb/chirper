@@ -88,7 +88,8 @@ export const initSocket = (io: Server) => {
       async (
         user: User,
         receiverId: number,
-        type: 'reply' | 'like' | 'follow'
+        type: 'reply' | 'like' | 'follow',
+        postId?: number
       ) => {
         if (validateEventSender(user.id, socket.data.userId)) {
           let content: string = '';
@@ -101,8 +102,10 @@ export const initSocket = (io: Server) => {
           }
 
           const notification = await notificationRepository.create({
-            receiverId,
+            senderId: user.id,
+            receiverId: receiverId,
             content,
+            postId: postId ?? undefined,
           });
 
           if (notification) {

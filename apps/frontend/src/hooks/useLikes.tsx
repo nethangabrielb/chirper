@@ -70,7 +70,11 @@ export const useLikes = (post: PostType | ReplyType, user: User) => {
         setLikes((prev: number) => prev + 1);
         setUserHasLiked(true);
         if (post?.userId !== user.id)
-          notificationHandler.emitLikeNotification(user, post?.userId);
+          notificationHandler.emitLikeNotification(
+            user,
+            post?.userId,
+            post?.id,
+          );
       } else if (res.message === "Unlike success") {
         setLikes((prev: number) => prev - 1);
         setUserHasLiked(false);

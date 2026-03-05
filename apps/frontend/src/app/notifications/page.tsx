@@ -9,15 +9,18 @@ import { useEffect } from "react";
 import Head from "next/head";
 import { useRouter } from "next/navigation";
 
+import { Spinner } from "@/components/ui/spinner";
+
 import notificationsApi from "@/lib/api/notifications";
 
+import { Notification } from "@/types/notification";
 import { User } from "@/types/user";
 
 const Notifications = () => {
   const router = useRouter();
   const user = useUser((state) => state.user) as User;
   // query for user's notifications
-  const { data: notifications } = useQuery({
+  const { data: notifications, isPending } = useQuery({
     queryKey: ["notifications", user.id],
     queryFn: async () => {
       const notifications = await notificationsApi.getNotifications();
@@ -67,22 +70,20 @@ const Notifications = () => {
             <div className="flex flex-col">Notifications</div>
           </div>
         </div>
+        {isPending && (
+          <div className="flex justify-center items-center w-full h-full py-4">
+            <Spinner className="size-7 text-primary"></Spinner>
+          </div>
+        )}
         {notifications && notifications.length > 0 ? (
-          notifications.map(
-            (notification: {
-              id: number;
-              createdAt: Date;
-              content: string;
-              receiverId: number;
-            }) => {
-              return (
-                <NotificationRow
-                  notification={notification}
-                  key={notification.id}
-                ></NotificationRow>
-              );
-            },
-          )
+          notifications.map((notification: Notification) => {
+            return (
+              <NotificationRow
+                notification={notification}
+                key={notification.id}
+              ></NotificationRow>
+            );
+          })
         ) : (
           <div className="flex justify-center items-center flex-col mt-50">
             <svg

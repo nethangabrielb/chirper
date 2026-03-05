@@ -48,8 +48,8 @@ const messageEventsHandler = {
 };
 
 const notificationHandler = {
-  emitLikeNotification: (user: User, receiverId: number) => {
-    socket.emit("notification", user, receiverId, "like");
+  emitLikeNotification: (user: User, receiverId: number, postId: number) => {
+    socket.emit("notification", user, receiverId, "like", postId);
   },
 };
 

@@ -15,7 +15,11 @@ type Props = {
 const NotificationRow = ({ notification }: Props) => {
   const redirectLink = () => {
     if (notification.post) {
-      return `/post/${notification?.postId}`;
+      if (notification.post.deleted) {
+        return `/post/invalid`;
+      } else {
+        return `/post/${notification?.postId}`;
+      }
     } else {
       return `/profile/${notification?.senderId}`;
     }

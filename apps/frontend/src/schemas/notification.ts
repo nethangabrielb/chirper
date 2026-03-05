@@ -14,6 +14,7 @@ export const notificationSchema = z.object({
   }),
   post: z.object({
     content: z.string(),
+    deleted: z.boolean(),
   }),
   postId: z.number().optional(),
 });

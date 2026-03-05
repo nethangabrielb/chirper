@@ -11,7 +11,7 @@ const notificationRepository = {
           select: { id: true, name: true, username: true, avatar: true },
         },
         post: {
-          select: { content: true },
+          select: { content: true, deleted: true },
         },
       },
       orderBy: { createdAt: 'desc' },

@@ -2,6 +2,7 @@
 
 import { newComment } from "@/app/post/schema/comment";
 import { Comment } from "@/app/post/types/coment";
+import notificationHandler from "@/socket/handlers/notification";
 import useUser from "@/stores/user.store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -77,6 +78,7 @@ const CreateReply = ({ refetch, postId, className }: Props) => {
             width: "fit-content",
           },
         });
+        notificationHandler.emitLikeNotification;
       } else if (data.status === "deleted") {
         toast.error(data.message);
         await queryClient.invalidateQueries({ queryKey: ["post"] });

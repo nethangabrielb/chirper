@@ -47,10 +47,4 @@ const messageEventsHandler = {
   },
 };
 
-const notificationHandler = {
-  emitLikeNotification: (user: User, receiverId: number, postId: number) => {
-    socket.emit("notification", user, receiverId, "like", postId);
-  },
-};
-
-export { messageEventsHandler, notificationHandler };
+export { messageEventsHandler };

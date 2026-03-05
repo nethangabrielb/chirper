@@ -2,7 +2,7 @@
 
 import { CurrentUserPostDropdown } from "@/app/home/components/post-controls";
 import { useBookmark } from "@/hooks/useBookmark";
-import { notificationHandler } from "@/socket/handlers/message";
+import notificationHandler from "@/socket/handlers/notification";
 import useUser from "@/stores/user.store";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Bookmark, Heart, MessageCircle } from "lucide-react";

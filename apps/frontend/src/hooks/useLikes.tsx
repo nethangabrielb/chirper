@@ -1,4 +1,4 @@
-import { notificationHandler } from "@/socket/handlers/message";
+import notificationHandler from "@/socket/handlers/notification";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { startTransition, useEffect, useOptimistic, useState } from "react";

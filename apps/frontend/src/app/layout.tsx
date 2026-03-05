@@ -27,7 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={inter.className} suppressHydrationWarning>
-      <body className={`antialiased h-svh bg-background`}>
+      <body className={`antialiased min-h-svh bg-background`}>
         <Toaster position="top-right" richColors />
         <ThemeProvider
           attribute="class"

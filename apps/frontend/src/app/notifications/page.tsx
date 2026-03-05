@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { Spinner } from "@/components/ui/spinner";
 
 import notificationsApi from "@/lib/api/notifications";
+import { cn } from "@/lib/utils";
 
 import { Notification } from "@/types/notification";
 import { User } from "@/types/user";
@@ -45,8 +46,16 @@ const Notifications = () => {
           content="Home page of my attempt to make a clone of Twitter"
         />
       </Head>
-      <div className="lg:w-[600px] border-l border-r border-l-border border-r-border h-full relative">
-        <div className="flex backdrop-blur-md top-0 z-100 w-full sticky">
+      <div
+        className={cn(
+          "lg:w-[600px] min-h-svh relative border-x border-x-border",
+        )}
+      >
+        <div
+          className={cn(
+            "flex backdrop-blur-md top-0 z-100 w-full sticky border-x border-x-border",
+          )}
+        >
           <div className="bg-transparent flex-1 p-2 border-b border-b-border font-bold flex items-center gap-8">
             <button
               className="p-2 rounded-full hover:bg-neutral-500/20 transition-all cursor-pointer"

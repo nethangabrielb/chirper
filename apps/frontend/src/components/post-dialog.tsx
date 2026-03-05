@@ -34,6 +34,7 @@ export function CreatePostDialog({ children }: { children: React.ReactNode }) {
   const [dashOffset, setDashOffset] = useState(565.48);
   const [progressValue, setProgressValue] = useState(0);
   const [inputDisabled, setInputDisabled] = useState(true);
+  const [openDialog, setOpenDialog] = useState(false);
   const user = useUser((state) => state.user) as User;
   const queryClient = useQueryClient();
   const {
@@ -72,6 +73,7 @@ export function CreatePostDialog({ children }: { children: React.ReactNode }) {
       }
     },
     onSettled: async () => {
+      setOpenDialog(false);
       setProgressValue(0);
       await queryClient.invalidateQueries({ queryKey: ["post"] });
       await queryClient.invalidateQueries({ queryKey: ["user"] });
@@ -101,7 +103,7 @@ export function CreatePostDialog({ children }: { children: React.ReactNode }) {
     setDashOffset((prev) => prev - 2.26192 * length);
   };
   return (
-    <Dialog>
+    <Dialog open={openDialog} onOpenChange={setOpenDialog}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-lg field-sizing-content">
         <DialogHeader>

@@ -37,15 +37,16 @@ model User {
 }
 
 model Notification {
-  id         Int      @id @default(autoincrement())
-  senderId   Int
-  receiverId Int
-  receiver   User     @relation("NotificationReceiver", fields: [receiverId], references: [id])
-  sender     User     @relation("NotificationSender", fields: [senderId], references: [id])
-  post       Post?    @relation(fields: [postId], references: [id])
-  content    String
-  createdAt  DateTime @default(now())
-  postId     Int?
+  id           Int      @id @default(autoincrement())
+  senderId     Int
+  receiverId   Int
+  receiver     User     @relation("NotificationReceiver", fields: [receiverId], references: [id])
+  sender       User     @relation("NotificationSender", fields: [senderId], references: [id])
+  post         Post?    @relation(fields: [postId], references: [id])
+  content      String
+  createdAt    DateTime @default(now())
+  postId       Int?
+  replyContent String?
 }
 
 model Follow {

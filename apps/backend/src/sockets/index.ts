@@ -89,7 +89,8 @@ export const initSocket = (io: Server) => {
         user: User,
         receiverId: number,
         type: 'reply' | 'like' | 'follow',
-        postId?: number
+        postId?: number,
+        postContent?: string
       ) => {
         if (validateEventSender(user.id, socket.data.userId)) {
           let content: string = '';
@@ -106,6 +107,7 @@ export const initSocket = (io: Server) => {
             receiverId: receiverId,
             content,
             postId: postId ?? undefined,
+            replyContent: postContent ?? undefined,
           });
 
           if (notification) {

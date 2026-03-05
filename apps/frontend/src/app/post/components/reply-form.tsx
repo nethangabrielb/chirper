@@ -34,9 +34,17 @@ type Props = {
   ) => Promise<QueryObserverResult<any, Error>>;
   postId: number;
   className?: string;
+  postContent: string;
+  postUserId: number;
 };
 
-const CreateReply = ({ refetch, postId, className }: Props) => {
+const CreateReply = ({
+  refetch,
+  postId,
+  className,
+  postContent,
+  postUserId,
+}: Props) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [displayIndicator, setDisplayIndicator] = useState(false);
@@ -78,7 +86,14 @@ const CreateReply = ({ refetch, postId, className }: Props) => {
             width: "fit-content",
           },
         });
-        notificationHandler.emitLikeNotification;
+        if (postUserId !== user?.id) {
+          notificationHandler.emitReplyNotification(
+            user,
+            postUserId,
+            data?.data?.id,
+            data?.data?.content,
+          );
+        }
       } else if (data.status === "deleted") {
         toast.error(data.message);
         await queryClient.invalidateQueries({ queryKey: ["post"] });

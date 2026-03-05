@@ -3,4 +3,5 @@ export interface NotificationBody {
   content: string;
   postId?: number;
   senderId: number;
+  replyContent?: string;
 }

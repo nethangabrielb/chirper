@@ -45,7 +45,11 @@ const useNotifications = (user: User) => {
         queryClient.setQueryData(
           ["notifications", user.id],
           (old: NotificationBody[]) => {
-            return [...old, { ...notification, unread: true }];
+            return [...old, { ...notification, unread: true }].sort(
+              (a, b) =>
+                new Date(b.createdAt).getTime() -
+                new Date(a.createdAt).getTime(),
+            );
           },
         );
       }

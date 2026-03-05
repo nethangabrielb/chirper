@@ -37,16 +37,24 @@ const NotificationRow = ({ notification }: Props) => {
       </Avatar>
       <div>
         <div className="flex items-center gap-2">
-          <p className="text-text">{notification.content}</p>
+          <p className="text-text max-w-[80%] text-wrap">
+            {notification.content}
+          </p>
           <Dot size={8}></Dot>
           <p className="text-darker text-sm font-light">
             {formatDateNotification(notification.createdAt)}
           </p>
         </div>
-        {notification.post && (
+        {notification.replyContent ? (
           <p className="text-darker font-light overflow-x-hidden max-w-[60%] overflow-ellipsis">
-            {notification.post.content}
+            "{notification.replyContent}"
           </p>
+        ) : (
+          notification.post && (
+            <p className="text-darker font-light overflow-x-hidden max-w-[60%] overflow-ellipsis">
+              {notification.post.content}
+            </p>
+          )
         )}
       </div>
     </Link>

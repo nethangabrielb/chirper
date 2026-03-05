@@ -70,7 +70,8 @@ const Sidebar = ({ children }: Props) => {
   const [visible, setVisible] = useState<boolean>(false);
   const [asideVisible, setAsideVisible] = useState<boolean>(false);
   const path = usePathname();
-  const { setUnreadCount, unreadCount } = useNotifications(user);
+  const { notificationsCount, resetNotificationsCache } =
+    useNotifications(user);
 
   const { data } = useQuery({
     queryKey: ["user"],
@@ -203,15 +204,20 @@ const Sidebar = ({ children }: Props) => {
                     "text-lg flex items-center gap-6 w-fit hover:bg-muted transition-all p-3 rounded-4xl px-8 relative",
                     path.includes("/messages") && "p-3!",
                   )}
-                  onClick={() => setUnreadCount(0)}
+                  onClick={() => {
+                    if (link.title === "Notifications") {
+                      resetNotificationsCache();
+                    }
+                  }}
                 >
                   <div className="relative">
                     <NavIcon title={link.title}></NavIcon>
-                    {link.title === "Notifications" && unreadCount > 0 && (
-                      <p className="absolute top-0 right-0 -translate-y-4 translate-x-2 bg-red-500 p-2 w-[24px] h-[24px] text-sm flex justify-center items-center rounded-full">
-                        {unreadCount}
-                      </p>
-                    )}
+                    {link.title === "Notifications" &&
+                      notificationsCount > 0 && (
+                        <p className="absolute top-0 right-0 -translate-y-4 translate-x-2 bg-red-500 p-2 w-[24px] h-[24px] text-sm flex justify-center items-center rounded-full">
+                          {notificationsCount}
+                        </p>
+                      )}
                   </div>
                   {
                     <Activity

@@ -1,20 +1,31 @@
 "use client";
 
 import NotificationRow from "@/app/notifications/components/notification-row";
-import useNotifications from "@/hooks/useNotifications";
 import useUser from "@/stores/user.store";
+import { useQuery } from "@tanstack/react-query";
 
 import { useEffect } from "react";
 
 import Head from "next/head";
 import { useRouter } from "next/navigation";
 
+import notificationsApi from "@/lib/api/notifications";
+
 import { User } from "@/types/user";
 
 const Notifications = () => {
   const router = useRouter();
   const user = useUser((state) => state.user) as User;
-  const { notifications } = useNotifications(user);
+  // query for user's notifications
+  const { data: notifications } = useQuery({
+    queryKey: ["notifications", user.id],
+    queryFn: async () => {
+      const notifications = await notificationsApi.getNotifications();
+      return notifications.data;
+    },
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+  });
 
   useEffect(() => {
     document.title = "Notifications / Twitter Clone";

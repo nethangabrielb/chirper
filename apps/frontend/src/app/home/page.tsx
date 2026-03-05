@@ -76,8 +76,6 @@ const Home = () => {
     await queryClient.invalidateQueries({ queryKey: ["posts"] });
   };
 
-  console.log(posts);
-
   return (
     <>
       <Head>

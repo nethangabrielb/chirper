@@ -105,8 +105,6 @@ export const initSocket = (io: Server) => {
             content,
           });
 
-          console.log(notification);
-
           if (notification) {
             socket.broadcast.emit('notification', receiverId, notification);
           }

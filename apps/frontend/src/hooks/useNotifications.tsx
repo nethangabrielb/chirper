@@ -1,41 +1,69 @@
 import { socket } from "@/socket/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import notificationsApi from "@/lib/api/notifications";
 
 import { User } from "@/types/user";
 
+interface NotificationBody {
+  id: number;
+  receiverId: number;
+  content: string;
+  createdAt: Date;
+  unread?: boolean;
+}
+
 const useNotifications = (user: User) => {
   const queryClient = useQueryClient();
-  const [unreadCount, setUnreadCount] = useState<number>(0);
 
   // query for user's notifications
   const { data: notifications } = useQuery({
-    queryKey: ["notifications", user],
+    queryKey: ["notifications", user.id],
     queryFn: async () => {
       const notifications = await notificationsApi.getNotifications();
       return notifications.data;
     },
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
+
+  const resetNotificationsCache = async () => {
+    await queryClient.invalidateQueries({
+      queryKey: ["notifications", user.id],
+    });
+  };
 
   // useEffect to initiate socket listening for notifications
   useEffect(() => {
-    const resetNotificationsCache = async () => {
-      await queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    const notificationHandler = (
+      receiverId: number,
+      notification: NotificationBody,
+    ) => {
+      if (receiverId === user.id) {
+        queryClient.setQueryData(
+          ["notifications", user.id],
+          (old: NotificationBody[]) => {
+            return [...old, { ...notification, unread: true }];
+          },
+        );
+      }
     };
 
-    socket.on("notification", (receiverId, notification) => {
-      if (receiverId === user.id) {
-        setUnreadCount((prev) => prev + 1);
-        resetNotificationsCache();
-      }
-    });
-  }, [user]);
+    socket.on("notification", notificationHandler);
+
+    return () => {
+      socket.off("notification", notificationHandler);
+    };
+  }, [user.id]);
+
+  const notificationsCount = notifications?.filter(
+    (notification: NotificationBody) => notification.unread,
+  ).length;
 
   // return the notifications
-  return { notifications, setUnreadCount, unreadCount };
+  return { notifications, resetNotificationsCache, notificationsCount };
 };
 
 export default useNotifications;

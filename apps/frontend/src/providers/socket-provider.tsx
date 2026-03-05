@@ -25,7 +25,7 @@ const SocketProvider = ({ children }: { children: ReactNode }) => {
       }
       prevUser.current = user;
     };
-  }, [user]);
+  }, [user.id]);
 
   return <>{children}</>;
 };

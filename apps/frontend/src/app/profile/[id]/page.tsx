@@ -47,6 +47,7 @@ const ProfileSideButton = ({
   const queryClient = useQueryClient();
   const { optimisticFollow, followMutation, unfollowMutation } = useFollows({
     pathId,
+    currentUser,
     currentUserId,
     currentUserFollowings,
     visitedUserId,

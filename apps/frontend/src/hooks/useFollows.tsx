@@ -1,3 +1,4 @@
+import notificationHandler from "@/socket/handlers/notification";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { startTransition, useEffect, useOptimistic, useState } from "react";
@@ -6,9 +7,11 @@ import followApi from "@/lib/api/follow";
 import { isFollowing } from "@/lib/utils";
 
 import { FollowType } from "@/types/follow";
+import { User } from "@/types/user";
 
 type Props = {
   pathId?: number;
+  currentUser?: User;
   currentUserId: number;
   visitedUserId: number;
   currentUserFollowings: Array<{ id: number; following: FollowType }>;
@@ -22,6 +25,7 @@ type Follow = {
 
 const useFollows = ({
   pathId,
+  currentUser,
   currentUserId,
   currentUserFollowings,
   visitedUserId,
@@ -54,6 +58,13 @@ const useFollows = ({
       if (data.status === "success") {
         setIsUserFollowing(true);
         setFollow(data.data);
+        if (currentUser && visitedUserId !== currentUser?.id) {
+          console.log("Following");
+          notificationHandler.emitFollowNotification(
+            currentUser,
+            visitedUserId,
+          );
+        }
       } else {
         setIsUserFollowing(false);
       }

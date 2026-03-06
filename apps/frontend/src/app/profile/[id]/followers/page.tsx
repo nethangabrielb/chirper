@@ -60,7 +60,7 @@ const FollowersIndex = () => {
           content="Home page of my attempt to make a clone of Twitter"
         />
       </Head>
-      <div className="lg:w-[600px] h-full relative border-l border-r border-l-border border-r-border">
+      <div className="lg:w-[600px] min-h-svh relative border-l border-r border-l-border border-r-border">
         <div
           className="flex backdrop-blur-lg absolute top-0 w-full flex-col border-b border-b-border"
           ref={elementRef}
@@ -118,6 +118,7 @@ const FollowersIndex = () => {
                   follow={follow?.follower}
                   isUser={follow?.follower?.id === currentUser?.id}
                   pathId={Number(params?.id) as number}
+                  currentUser={currentUser}
                   currentUserId={currentUser?.id}
                   visitedUserId={follow?.follower?.id}
                   currentUserFollowings={currentUser?.followings}

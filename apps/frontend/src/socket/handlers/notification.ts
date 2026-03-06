@@ -21,6 +21,8 @@ const notificationHandler = {
       postContent,
     );
   },
+  emitFollowNotification: (follower: User, followingId: number) =>
+    socket.emit("notification", follower, followingId, "follow"),
 };
 
 export default notificationHandler;

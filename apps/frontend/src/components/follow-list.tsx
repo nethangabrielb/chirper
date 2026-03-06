@@ -22,6 +22,7 @@ const FollowListRow = ({
 }) => {
   const { optimisticFollow, followMutation, unfollowMutation } = useFollows({
     currentUserId: currentUser.id,
+    currentUser,
     currentUserFollowings: currentUser.followings,
     visitedUserId: user.id,
   });

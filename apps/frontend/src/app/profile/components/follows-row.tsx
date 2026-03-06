@@ -4,11 +4,13 @@ import { ActionButton } from "@/components/button";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 
 import { FollowType } from "@/types/follow";
+import { User } from "@/types/user";
 
 type Props = {
   follow: FollowType;
   isUser: boolean;
   pathId: number;
+  currentUser: User;
   currentUserId: number;
   visitedUserId: number;
   currentUserFollowings: Array<{ id: number; following: FollowType }>;
@@ -18,12 +20,14 @@ const Follows = ({
   follow,
   isUser,
   pathId,
+  currentUser,
   currentUserId,
   currentUserFollowings,
   visitedUserId,
 }: Props) => {
   const { optimisticFollow, followMutation, unfollowMutation } = useFollows({
     pathId: Number(pathId),
+    currentUser,
     currentUserId,
     currentUserFollowings,
     visitedUserId,

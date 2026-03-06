@@ -53,7 +53,7 @@ const MessagesSlug = ({ params }: { params: Promise<{ id: string }> }) => {
   }, []);
 
   return (
-    <>
+    <div className="h-svh">
       <Head>
         <title>{document.title}</title>
         <meta
@@ -78,7 +78,7 @@ const MessagesSlug = ({ params }: { params: Promise<{ id: string }> }) => {
           updateMessagesOptimistic={updateMessagesOptimistic}
         ></ChatRoom>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -1,5 +1,6 @@
 "use client";
 
+import useRooms from "@/app/messages/hooks/useRooms";
 import useNotifications from "@/hooks/useNotifications";
 import useMessagesNotifications from "@/stores/messages.store";
 import useUser from "@/stores/user.store";
@@ -72,6 +73,7 @@ const Sidebar = ({ children }: Props) => {
   );
   const { notificationsCount, resetNotificationsCache } =
     useNotifications(user);
+  const { newMessagesCount } = useRooms();
 
   const { data } = useQuery({
     queryKey: ["user"],
@@ -218,11 +220,13 @@ const Sidebar = ({ children }: Props) => {
                           {notificationsCount}
                         </p>
                       )}
-                    {link.title === "Messages" && unreadMessagesCount > 0 && (
-                      <p className="absolute top-0 right-0 -translate-y-4 translate-x-2 bg-primary p-2 w-[24px] h-[24px] text-sm flex justify-center items-center rounded-full text-white">
-                        {unreadMessagesCount}
-                      </p>
-                    )}
+                    {link.title === "Messages" &&
+                      typeof newMessagesCount === "number" &&
+                      newMessagesCount > 0 && (
+                        <p className="absolute top-0 right-0 -translate-y-4 translate-x-2 bg-primary p-2 w-[24px] h-[24px] text-sm flex justify-center items-center rounded-full text-white">
+                          {newMessagesCount}
+                        </p>
+                      )}
                   </div>
                   {
                     <Activity

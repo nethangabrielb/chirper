@@ -49,10 +49,6 @@ let links: Array<{ title: string; url: string }> = [
     url: "/bookmarks",
   },
   {
-    title: "Chat",
-    url: "/chat",
-  },
-  {
     title: "Profile",
     url: "",
   },

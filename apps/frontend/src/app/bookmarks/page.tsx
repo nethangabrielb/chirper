@@ -24,7 +24,7 @@ const Bookmarks = () => {
   });
 
   useEffect(() => {
-    document.title = "Bookmarks / Twitter Clone";
+    document.title = "Bookmarks / Chirper";
   }, []);
 
   return (

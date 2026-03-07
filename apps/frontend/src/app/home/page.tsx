@@ -49,7 +49,7 @@ const Home = () => {
   });
 
   useEffect(() => {
-    document.title = "Home / Twitter Clone";
+    document.title = "Home / Chirper";
   }, []);
 
   useEffect(() => {

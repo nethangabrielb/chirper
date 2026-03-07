@@ -50,7 +50,7 @@ const Messages = () => {
   });
 
   useEffect(() => {
-    document.title = "Messages / Twitter Clone";
+    document.title = "Messages / Chirper";
   }, []);
 
   const messageUser = (visitedUserId: number, visitedUser: UserPartial) => {

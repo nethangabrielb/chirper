@@ -172,7 +172,7 @@ const Profile = () => {
   });
 
   useEffect(() => {
-    document.title = `${user?.name} (@${user?.username}) / Twitter Clone`;
+    document.title = `${user?.name} (@${user?.username}) / Chirper`;
   }, [user]);
 
   const displayReplies = (post: PostType) => {

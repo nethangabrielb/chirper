@@ -32,7 +32,7 @@ const Notifications = () => {
   });
 
   useEffect(() => {
-    document.title = "Notifications / Twitter Clone";
+    document.title = "Notifications / Chirper";
   }, []);
 
   console.log(notifications);

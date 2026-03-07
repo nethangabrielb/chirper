@@ -30,7 +30,7 @@ const Post = () => {
   });
 
   useEffect(() => {
-    document.title = `${post?.user?.username} on Twitter Clone: ${post?.content}`;
+    document.title = `${post?.user?.username} on Chirper: ${post?.content}`;
   }, [post]);
 
   useEffect(() => {

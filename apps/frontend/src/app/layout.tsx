@@ -17,7 +17,8 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "Twitter",
-  description: "A twitter clone I made for learning purposes",
+  description:
+    "A twitter-inspired social media platform I created for learning purposes",
 };
 
 export default function RootLayout({

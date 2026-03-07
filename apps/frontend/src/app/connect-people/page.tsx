@@ -42,7 +42,7 @@ const ConnectPeople = () => {
   });
 
   useEffect(() => {
-    document.title = "Follow / Twitter Clone";
+    document.title = "Follow / Chirper";
   }, []);
 
   useEffect(() => {

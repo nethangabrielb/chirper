@@ -1,5 +1,7 @@
 import z from "zod";
 
+import { messageSchema } from "@/schemas/message";
+
 const roomSchema = z.object({
   id: z.number(),
   users: z.array(
@@ -10,6 +12,7 @@ const roomSchema = z.object({
       avatar: z.string(),
     }),
   ),
+  messages: z.array(messageSchema),
 });
 
 export default roomSchema;

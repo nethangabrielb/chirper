@@ -15,6 +15,7 @@ export interface ChatMessage {
   roomId: number;
   receiverId: number;
   senderId: number;
+  unread: boolean;
 }
 
 export interface Room {

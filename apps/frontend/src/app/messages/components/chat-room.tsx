@@ -27,6 +27,7 @@ export interface NewMessage {
   roomId: number;
   loading?: boolean;
   tempId?: string;
+  unread: boolean;
 }
 
 const ChatRoom = ({
@@ -62,7 +63,7 @@ const ChatRoom = ({
   );
   const roomOtherUser =
     currentRoom &&
-    currentRoom?.users?.find((user: User) => user.id !== currentUser.id);
+    currentRoom?.users?.find((user) => user.id !== currentUser.id);
 
   useEffect(() => {
     if (typeInputRef?.current?.getBoundingClientRect()) {
@@ -131,11 +132,12 @@ const ChatRoom = ({
     updateMessagesOptimistic(
       {
         senderId: currentUser?.id,
-        receiverId: roomOtherUser?.id,
+        receiverId: roomOtherUser?.id!,
         content: values.message,
-        roomId: currentRoom.id,
+        roomId: currentRoom?.id!,
         loading: true,
         tempId: id,
+        unread: true,
       },
       bottomMessages.current as HTMLDivElement,
     );
@@ -143,9 +145,10 @@ const ChatRoom = ({
     messageEventsHandler.create(
       {
         senderId: currentUser?.id,
-        receiverId: roomOtherUser?.id,
+        receiverId: roomOtherUser?.id!,
         content: values.message,
-        roomId: currentRoom.id,
+        roomId: currentRoom?.id!,
+        unread: true,
       },
       queryClient,
       paramsId!,
@@ -153,6 +156,8 @@ const ChatRoom = ({
       currentUser?.id,
     );
   };
+
+  console.log(messages);
 
   return (
     <div className="flex flex-col w-[65%] h-full gap-2 relative pr-2 py-2">

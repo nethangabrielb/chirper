@@ -11,6 +11,13 @@ const messageService = {
     }
     return messages;
   },
+  patchMessagesUnreadStatus: async (roomId: number) => {
+    const messages = await messageRepository.updateByRoomId(roomId);
+    if (!messages) {
+      throw new Error('Error occured fetching messages');
+    }
+    return messages;
+  },
 };
 
 export default messageService;

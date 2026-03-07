@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { followSchema } from "@/schemas/follow";
+import { messageSchema } from "@/schemas/message";
 import { postSchema } from "@/schemas/post";
 
 const userSchema = z.object({
@@ -31,6 +32,7 @@ const userSchema = z.object({
           avatar: z.string(),
         }),
       ),
+      messages: z.array(messageSchema),
     }),
   ),
 });

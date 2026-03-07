@@ -9,4 +9,5 @@ export const messageSchema = z.object({
   senderId: z.number(),
   loading: z.boolean().optional(),
   tempId: z.string().optional(),
+  unread: z.boolean(),
 });

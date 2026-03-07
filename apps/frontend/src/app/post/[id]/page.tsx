@@ -6,7 +6,7 @@ import Reply from "@/app/post/components/reply";
 import CreateReply from "@/app/post/components/reply-form";
 import { useQuery } from "@tanstack/react-query";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import Head from "next/head";
 import { useParams, useRouter } from "next/navigation";

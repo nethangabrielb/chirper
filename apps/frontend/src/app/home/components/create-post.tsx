@@ -3,13 +3,15 @@
 import PostSchema from "@/app/home/schema/create-post.schema";
 import { NewPost } from "@/app/home/types/create-post.type";
 import useUser from "@/stores/user.store";
+import data from "@emoji-mart/data/sets/14/twitter.json";
+import Picker from "@emoji-mart/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { Image, Smile } from "lucide-react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { Activity, useState } from "react";
+import React, { Activity, useState } from "react";
 
 import { ActionButton } from "@/components/button";
 import { TooltipIcon } from "@/components/tool-tip-icon";
@@ -25,11 +27,33 @@ type Props = {
   refetch: () => Promise<void>;
 };
 
+type EmojiPickerProps = {
+  handleEmojiSelect: (emoji: any) => void;
+  openEmojiPicker: boolean;
+  setOpenEmojiPicker: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+const EmojiPicker = React.memo(
+  ({
+    handleEmojiSelect,
+    openEmojiPicker,
+    setOpenEmojiPicker,
+  }: EmojiPickerProps) => (
+    <Picker
+      data={data}
+      onEmojiSelect={handleEmojiSelect}
+      searchPosition="sticky"
+      onClickOutside={() => openEmojiPicker && setOpenEmojiPicker(false)}
+    />
+  ),
+);
+
 const CreatePost = ({ refetch }: Props) => {
   const [displayIndicator, setDisplayIndicator] = useState(false);
   const [dashOffset, setDashOffset] = useState(565.48);
   const [progressValue, setProgressValue] = useState(0);
   const [inputDisabled, setInputDisabled] = useState(true);
+  const [openEmojiPicker, setOpenEmojiPicker] = useState(false);
   const user = useUser((state) => state.user) as User;
 
   const {
@@ -37,6 +61,7 @@ const CreatePost = ({ refetch }: Props) => {
     handleSubmit,
     register,
     resetField,
+    setValue,
     formState: { errors },
   } = useForm<NewPost>({
     resolver: zodResolver(PostSchema),
@@ -93,6 +118,25 @@ const CreatePost = ({ refetch }: Props) => {
     setDashOffset((prev) => prev - 2.26192 * length);
   };
 
+  const handleEmojiSelect = (emoji: any) => {
+    let currentValue = getValues("content");
+    const updatedValue = currentValue + emoji.native;
+    setValue("content", updatedValue);
+    const length = updatedValue.length;
+
+    if (!inputDisabled) {
+      updateLimitOffset(length);
+    }
+
+    if (length > 0) {
+      setDisplayIndicator(true);
+    } else {
+      setDisplayIndicator(false);
+    }
+
+    checkLengthExceed(length);
+  };
+
   return (
     <div
       className={cn(
@@ -146,7 +190,7 @@ const CreatePost = ({ refetch }: Props) => {
         />
         <div
           className={cn(
-            "flex items-center justify-between w-[95%] max-w-[95%] transition-all ",
+            "flex items-center justify-between w-[95%] max-w-[95%] transition-all z-30 ",
             mutation.isPending && "h-0! hidden",
           )}
         >
@@ -154,9 +198,38 @@ const CreatePost = ({ refetch }: Props) => {
             <TooltipIcon content="Upload image">
               <Image size={20} className="text-primary" />
             </TooltipIcon>
-            <TooltipIcon content="Emoji">
-              <Smile size={20} className="text-primary" />
-            </TooltipIcon>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                openEmojiPicker
+                  ? setOpenEmojiPicker(false)
+                  : setOpenEmojiPicker(true);
+              }}
+              className="relative z-30"
+            >
+              <TooltipIcon content="Emoji">
+                <Smile size={20} className="text-primary" />
+              </TooltipIcon>
+              <div
+                className={cn(
+                  "fixed top-0 z-[9999] transition-all ease-out",
+                  openEmojiPicker
+                    ? "translate-x-10 translate-y-40 visible"
+                    : "translate-x-10 translate-y-100 opacity-80 invisible h-0",
+                )}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                }}
+              >
+                <EmojiPicker
+                  handleEmojiSelect={handleEmojiSelect}
+                  openEmojiPicker={openEmojiPicker}
+                  setOpenEmojiPicker={setOpenEmojiPicker}
+                />
+              </div>
+            </button>
           </div>
           <div className="flex items-center gap-4">
             {displayIndicator && (

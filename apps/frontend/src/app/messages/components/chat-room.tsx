@@ -157,8 +157,6 @@ const ChatRoom = ({
     );
   };
 
-  console.log(messages);
-
   return (
     <div className="flex flex-col w-[65%] h-full gap-2 relative pr-2 py-2">
       <div

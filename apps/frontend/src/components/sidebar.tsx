@@ -1,6 +1,7 @@
 "use client";
 
 import useNotifications from "@/hooks/useNotifications";
+import useMessagesNotifications from "@/stores/messages.store";
 import useUser from "@/stores/user.store";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -66,6 +67,9 @@ const Sidebar = ({ children }: Props) => {
   const [visible, setVisible] = useState<boolean>(false);
   const [asideVisible, setAsideVisible] = useState<boolean>(false);
   const path = usePathname();
+  const unreadMessagesCount = useMessagesNotifications(
+    (state) => state.unreadMessages,
+  );
   const { notificationsCount, resetNotificationsCache } =
     useNotifications(user);
 
@@ -210,10 +214,15 @@ const Sidebar = ({ children }: Props) => {
                     <NavIcon title={link.title}></NavIcon>
                     {link.title === "Notifications" &&
                       notificationsCount > 0 && (
-                        <p className="absolute top-0 right-0 -translate-y-4 translate-x-2 bg-red-500 p-2 w-[24px] h-[24px] text-sm flex justify-center items-center rounded-full">
+                        <p className="absolute top-0 right-0 -translate-y-4 translate-x-2 bg-primary text-white p-2 w-[24px] h-[24px] text-sm flex justify-center items-center rounded-full">
                           {notificationsCount}
                         </p>
                       )}
+                    {link.title === "Messages" && unreadMessagesCount > 0 && (
+                      <p className="absolute top-0 right-0 -translate-y-4 translate-x-2 bg-primary p-2 w-[24px] h-[24px] text-sm flex justify-center items-center rounded-full text-white">
+                        {unreadMessagesCount}
+                      </p>
+                    )}
                   </div>
                   {
                     <Activity

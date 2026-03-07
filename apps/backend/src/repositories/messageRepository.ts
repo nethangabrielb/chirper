@@ -11,6 +11,15 @@ const messageRepository = {
         createdAt: 'asc',
       },
     }),
+  updateByRoomId: async (roomId: number) =>
+    await prisma.message.updateManyAndReturn({
+      where: {
+        roomId,
+      },
+      data: {
+        unread: false,
+      },
+    }),
 };
 
 export default messageRepository;

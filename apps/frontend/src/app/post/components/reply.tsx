@@ -3,6 +3,7 @@
 import { CurrentUserPostDropdown } from "@/app/home/components/post-controls";
 import PostSingle from "@/app/post/components/post";
 import { useBookmark } from "@/hooks/useBookmark";
+import notificationHandler from "@/socket/handlers/notification";
 import useUser from "@/stores/user.store";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Bookmark, Heart, MessageCircle } from "lucide-react";
@@ -99,6 +100,7 @@ const Reply = ({ reply }: Props) => {
       if (res.message === "Post liked successfully") {
         setLikes((prev: number) => prev + 1);
         setUserHasLiked(true);
+        notificationHandler.emitLikeNotification(user, post?.userId, post?.id);
       } else if (res.message === "Unlike success") {
         setLikes((prev: number) => prev - 1);
         setUserHasLiked(false);
@@ -178,95 +180,96 @@ const Reply = ({ reply }: Props) => {
               handleDelete={handleDelete}
             ></CurrentUserPostDropdown>
           </Activity>
+
           <Link
-            className="flex flex-col gap-2 w-full p-4 pb-0! hover:bg-secondary/40"
+            className="flex w-full gap-2 p-4 pb-0! hover:bg-secondary/40"
             href={`/post/${post?.id}`}
           >
-            <div className="flex items-center gap-2">
-              <div className="self-start items-center flex flex-col">
-                {post?.user && (
-                  <ProfileHoverCard user={post?.user}></ProfileHoverCard>
-                )}
-                <div className="bg-neutral-600 w-[2px] h-[100px]"></div>
+            <div className="self-start items-center flex flex-col">
+              {post?.user && (
+                <ProfileHoverCard user={post?.user}></ProfileHoverCard>
+              )}
+              <div className="bg-neutral-600 w-[2px] h-[100px]"></div>
+            </div>
+            <div className="flex flex-col gap-2 w-full min-w-0">
+              <div className="flex items-center gap-1">
+                <p className="font-bold text-text space tracking-[0.2px] text-[18px]">
+                  {post?.user.name}
+                </p>
+                <Link
+                  className="text-darker font-light text-[15px] hover:underline"
+                  href={`/profile/${post?.user.id}`}
+                >
+                  @{post?.user.username}
+                </Link>
+                <div className="text-darker font-light w-0.8 my-auto flex justify-center text-a items-center">
+                  .
+                </div>
+                <p className="text-darker font-light text-[14px]">
+                  {post && formatDateFeedPost(post?.createdAt)}
+                </p>
               </div>
-              <div className="flex flex-col self-start">
-                <div className="flex items-center gap-1">
-                  <p className="font-bold text-text space tracking-[0.2px] text-[18px]">
-                    {post?.user.name}
-                  </p>
-                  <Link
-                    className="text-darker font-light text-[15px] hover:underline"
-                    href={`/profile/${post?.user.id}`}
-                  >
-                    @{post?.user.username}
-                  </Link>
-                  <div className="text-darker font-light w-0.8 my-auto flex justify-center text-a items-center">
-                    .
+              <p className="text-text text-[15px] py-2 whitespace-normal break-words">
+                {post?.content}
+              </p>
+              <div className="flex justify-start w-full pb-2">
+                {/* render comments */}
+                <div className="flex items-center flex-1 group cursor-pointer">
+                  <div className="p-2 rounded-full group-hover:bg-primary/20 transition-all">
+                    <MessageCircle
+                      size={20}
+                      className="stroke-darker text-darker font-light stroke-[1.2px] group-hover:stroke-primary! transition-all"
+                    ></MessageCircle>
                   </div>
-                  <p className="text-darker font-light text-[14px]">
-                    {post && formatDateFeedPost(post?.createdAt)}
+                  <p className="text-darker text-[14px] font-light group-hover:text-primary transition-all">
+                    {post?._count.replies}
                   </p>
                 </div>
-                <p className="text-text text-[15px] py-2">{post?.content}</p>
-                <div className="flex justify-start w-full pb-2">
-                  {/* render comments */}
-                  <div className="flex items-center flex-1 group cursor-pointer">
-                    <div className="p-2 rounded-full group-hover:bg-primary/20 transition-all">
-                      <MessageCircle
-                        size={20}
-                        className="stroke-darker text-darker font-light stroke-[1.2px] group-hover:stroke-primary! transition-all"
-                      ></MessageCircle>
-                    </div>
-                    <p className="text-darker text-[14px] font-light group-hover:text-primary transition-all">
-                      {post?._count.replies}
-                    </p>
+
+                {/* render likes */}
+                <button
+                  className="flex items-center flex-1 group cursor-pointer"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    likeMutation.mutate();
+                  }}
+                >
+                  <div className="p-2 rounded-full group-hover:bg-red-500/20 transition-all bg-transparent group">
+                    <Heart
+                      size={20}
+                      className={cn(
+                        "text-darker font-light stroke-[1.2px] group-hover:stroke-red-500! group-active:scale-150 duration-500",
+                        optimisticHasLiked
+                          ? "fill-red-500 stroke-red-500!"
+                          : "stroke-darker",
+                      )}
+                    ></Heart>
                   </div>
+                  <p className="text-darker text-[14px] font-light group-hover:text-red-500 transition-all">
+                    {optimisticLikes}
+                  </p>
+                </button>
 
-                  {/* render likes */}
-                  <button
-                    className="flex items-center flex-1 group cursor-pointer"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      likeMutation.mutate();
-                    }}
-                  >
-                    <div className="p-2 rounded-full group-hover:bg-red-500/20 transition-all bg-transparent group">
-                      <Heart
-                        size={20}
-                        className={cn(
-                          "text-darker font-light stroke-[1.2px] group-hover:stroke-red-500! group-active:scale-150 duration-500",
-                          optimisticHasLiked
-                            ? "fill-red-500 stroke-red-500!"
-                            : "stroke-darker",
-                        )}
-                      ></Heart>
-                    </div>
-                    <p className="text-darker text-[14px] font-light group-hover:text-red-500 transition-all">
-                      {optimisticLikes}
-                    </p>
-                  </button>
-
-                  {/* Bookmark button */}
-                  <button
-                    className="flex items-center group cursor-pointer"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      bookmarkMutation.mutate();
-                    }}
-                  >
-                    <div className="p-2 rounded-full group-hover:bg-blue-500/20 transition-all bg-transparent group">
-                      <Bookmark
-                        size={20}
-                        className={cn(
-                          "text-darker font-light stroke-[1.2px] group-hover:stroke-blue-500! group-active:scale-150 duration-500",
-                          optimisticBookmark
-                            ? "fill-blue-500 stroke-blue-500!"
-                            : "stroke-darker",
-                        )}
-                      ></Bookmark>
-                    </div>
-                  </button>
-                </div>
+                {/* Bookmark button */}
+                <button
+                  className="flex items-center group cursor-pointer"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    bookmarkMutation.mutate();
+                  }}
+                >
+                  <div className="p-2 rounded-full group-hover:bg-blue-500/20 transition-all bg-transparent group">
+                    <Bookmark
+                      size={20}
+                      className={cn(
+                        "text-darker font-light stroke-[1.2px] group-hover:stroke-blue-500! group-active:scale-150 duration-500",
+                        optimisticBookmark
+                          ? "fill-blue-500 stroke-blue-500!"
+                          : "stroke-darker",
+                      )}
+                    ></Bookmark>
+                  </div>
+                </button>
               </div>
             </div>
           </Link>

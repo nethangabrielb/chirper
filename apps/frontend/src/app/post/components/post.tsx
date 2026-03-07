@@ -2,6 +2,7 @@
 
 import { CurrentUserPostDropdown } from "@/app/home/components/post-controls";
 import { useBookmark } from "@/hooks/useBookmark";
+import notificationHandler from "@/socket/handlers/notification";
 import useUser from "@/stores/user.store";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Bookmark, Heart, MessageCircle } from "lucide-react";
@@ -110,6 +111,7 @@ const PostSingle = ({ post, className, settingsCn, buttonCn }: Props) => {
       if (res.message === "Post liked successfully") {
         setLikes((prev: number) => prev + 1);
         setUserHasLiked(true);
+        notificationHandler.emitLikeNotification(user, post?.userId, post?.id);
       } else if (res.message === "Unlike success") {
         setLikes((prev: number) => prev - 1);
         setUserHasLiked(false);
@@ -166,7 +168,9 @@ const PostSingle = ({ post, className, settingsCn, buttonCn }: Props) => {
             </Link>
           </div>
         </div>
-        <p className="text-text text-[15px] py-2">{post.content}</p>
+        <p className="text-text text-[15px] py-2 whitespace-normal break-words">
+          {post.content}
+        </p>
         <p className="border-b border-b-border pb-1 text-darker font-light text-[14px]">
           {formatDateSlugPost(post.createdAt)}
         </p>

@@ -25,7 +25,28 @@ const messageController = (() => {
     }
   };
 
-  return { getMessages };
+  const patchMessages = async (
+    req: Request<{ roomId: number }, object, object>,
+    res: Response
+  ) => {
+    try {
+      const messages = await messageService.patchMessagesUnreadStatus(
+        Number(req.params.roomId)
+      );
+
+      res.json({
+        status: 'success',
+        data: messages,
+      });
+    } catch (err: unknown) {
+      res.json({
+        status: 'error',
+        message: err instanceof Error ? err.message : GENERIC_ERROR_MESSAGE,
+      });
+    }
+  };
+
+  return { getMessages, patchMessages };
 })();
 
 export default messageController;

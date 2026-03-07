@@ -4,12 +4,12 @@ import Message from "@/app/messages/components/message";
 import useRooms from "@/app/messages/hooks/useRooms";
 import useBoxHeight from "@/hooks/useBoxHeight";
 import { socket } from "@/socket/client";
-import messageEventsHandler from "@/socket/handlers/message";
+import { messageEventsHandler } from "@/socket/handlers/message";
 import useUser from "@/stores/user.store";
 import { useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 import { useRouter } from "next/navigation";
 
@@ -27,6 +27,7 @@ export interface NewMessage {
   roomId: number;
   loading?: boolean;
   tempId?: string;
+  unread: boolean;
 }
 
 const ChatRoom = ({
@@ -50,12 +51,19 @@ const ChatRoom = ({
   const { getValues, register, handleSubmit, watch, setValue } = useForm();
   const queryClient = useQueryClient();
 
+  const updateMessageMemoized = useCallback(
+    (message: MessageType) => {
+      updateMessagesOptimistic(message, bottomMessages.current!);
+    },
+    [updateMessagesOptimistic],
+  );
+
   const currentRoom = chatRooms?.find(
     (room: RoomType) => room.id === Number(paramsId),
   );
   const roomOtherUser =
     currentRoom &&
-    currentRoom?.users?.find((user: User) => user.id !== currentUser.id);
+    currentRoom?.users?.find((user) => user.id !== currentUser.id);
 
   useEffect(() => {
     if (typeInputRef?.current?.getBoundingClientRect()) {
@@ -70,28 +78,52 @@ const ChatRoom = ({
   }, [paramsId]);
 
   useEffect(() => {
-    const updateMessage = (message: MessageType) => {
-      updateMessagesOptimistic(message, bottomMessages.current!);
+    const handler = (message: MessageType) => {
+      updateMessageMemoized(message);
     };
-    socket.on("newMessage", updateMessage);
+
+    if (!currentUser?.id || !paramsId) return;
+
+    const join = () => {
+      socket.emit(
+        "joinRoom",
+        String(paramsId),
+        currentUser.id,
+        (res: { status: string }) => {
+          if (res.status === "ok") {
+            socket.on("newMessage", handler);
+          }
+        },
+      );
+    };
+
+    if (socket.connected) {
+      join();
+    }
+
+    socket.once("connect", join);
 
     return () => {
-      socket.off("newMessage", updateMessage);
+      socket.off("connect", join);
+      socket.emit(
+        "leaveRoom",
+        String(paramsId),
+        currentUser.id,
+        (res: { status: string }) => {
+          if (res.status === "ok") {
+            socket.off("newMessage", handler);
+          }
+        },
+      );
     };
-  }, []);
-
-  useEffect(() => {
-    if (currentUser?.id) {
-      socket.emit("joinRoom", String(paramsId), currentUser?.id);
-
-      return () => {
-        socket.emit("leaveRoom", String(paramsId), currentUser?.id);
-      };
-    }
   }, [paramsId, currentUser?.id]);
 
   const messageHandler = () => {
     const values = getValues();
+
+    if (values.message.length === 0) return;
+
+    if (values.message.trim().length === 0) return;
 
     setValue("message", "");
 
@@ -100,11 +132,12 @@ const ChatRoom = ({
     updateMessagesOptimistic(
       {
         senderId: currentUser?.id,
-        receiverId: roomOtherUser?.id,
+        receiverId: roomOtherUser?.id!,
         content: values.message,
-        roomId: currentRoom.id,
+        roomId: currentRoom?.id!,
         loading: true,
         tempId: id,
+        unread: true,
       },
       bottomMessages.current as HTMLDivElement,
     );
@@ -112,9 +145,10 @@ const ChatRoom = ({
     messageEventsHandler.create(
       {
         senderId: currentUser?.id,
-        receiverId: roomOtherUser?.id,
+        receiverId: roomOtherUser?.id!,
         content: values.message,
-        roomId: currentRoom.id,
+        roomId: currentRoom?.id!,
+        unread: true,
       },
       queryClient,
       paramsId!,

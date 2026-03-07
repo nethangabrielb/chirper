@@ -30,6 +30,13 @@ const roomRepository = {
             avatar: true,
           },
         },
+        messages: {
+          select: {
+            id: true,
+            unread: true,
+            senderId: true,
+          },
+        },
       },
     }),
   findByUsers: async (users: User[]) =>
@@ -41,6 +48,15 @@ const roomRepository = {
             users: { some: { id: user.id } },
           })),
         ],
+      },
+      include: {
+        messages: {
+          select: {
+            id: true,
+            unread: true,
+            senderId: true,
+          },
+        },
       },
     }),
 };

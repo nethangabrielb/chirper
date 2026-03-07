@@ -14,6 +14,7 @@ import commentRouter from './routes/admin/commentRoutes';
 import followRouter from './routes/admin/followRoutes';
 import likesRouter from './routes/admin/likeRoutes';
 import messageRouter from './routes/admin/messageRoutes';
+import notificationRouter from './routes/admin/notificationRoutes';
 import postRouter from './routes/admin/postRoutes';
 import roomRouter from './routes/admin/roomRoutes';
 import userRouter from './routes/admin/userRoutes';
@@ -61,6 +62,7 @@ app.use('/api/likes', likesRouter);
 app.use('/api/rooms', roomRouter);
 app.use('/api/messages', messageRouter);
 app.use('/api/bookmarks', bookmarkRouter);
+app.use('/api/notifications', notificationRouter);
 
 const PORT = process.env.PORT! || 5000;
 

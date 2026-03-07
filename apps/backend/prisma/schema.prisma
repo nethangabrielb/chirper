@@ -23,15 +23,30 @@ model User {
   avatar    String?
   onboarded Boolean @default(false)
 
-  Followings Follow[]   @relation("Followings")
-  Followers  Follow[]   @relation("Followers")
-  Post       Post[]
-  createdAt  DateTime   @default(now())
-  PostLike   PostLike[]
-  Sender     Message[]  @relation("Sender")
-  Receiver   Message[]  @relation("Receiver")
-  rooms      Room[]
-  bookmarks  Bookmark[]
+  Followings           Follow[]       @relation("Followings")
+  Followers            Follow[]       @relation("Followers")
+  Post                 Post[]
+  createdAt            DateTime       @default(now())
+  PostLike             PostLike[]
+  Sender               Message[]      @relation("Sender")
+  Receiver             Message[]      @relation("Receiver")
+  rooms                Room[]
+  bookmarks            Bookmark[]
+  NotificationSender   Notification[] @relation("NotificationSender")
+  notificationReceiver Notification[] @relation("NotificationReceiver")
+}
+
+model Notification {
+  id           Int      @id @default(autoincrement())
+  senderId     Int
+  receiverId   Int
+  receiver     User     @relation("NotificationReceiver", fields: [receiverId], references: [id])
+  sender       User     @relation("NotificationSender", fields: [senderId], references: [id])
+  post         Post?    @relation(fields: [postId], references: [id])
+  content      String
+  createdAt    DateTime @default(now())
+  postId       Int?
+  replyContent String?
 }
 
 model Follow {
@@ -57,8 +72,9 @@ model Post {
   reply   Post?  @relation("PostReplies", fields: [replyId], references: [id])
   replyId Int?
 
-  Like      PostLike[]
-  bookmarks Bookmark[]
+  Like          PostLike[]
+  bookmarks     Bookmark[]
+  notifications Notification[]
 }
 
 model PostLike {
@@ -82,6 +98,7 @@ model Message {
   receiverId Int
   sender     User     @relation("Sender", fields: [senderId], references: [id])
   senderId   Int
+  unread     Boolean
 }
 
 model Room {

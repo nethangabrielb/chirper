@@ -68,8 +68,6 @@ const NavIcon = ({ title }: Props) => {
           />
         </svg>
       );
-    case "Chat":
-      return <MessageCircle size={24}></MessageCircle>;
     case "Profile":
       return (
         <svg

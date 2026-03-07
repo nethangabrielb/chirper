@@ -1,5 +1,8 @@
 "use client";
 
+import useRooms from "@/app/messages/hooks/useRooms";
+import useNotifications from "@/hooks/useNotifications";
+import useMessagesNotifications from "@/stores/messages.store";
 import useUser from "@/stores/user.store";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -48,10 +51,6 @@ let links: Array<{ title: string; url: string }> = [
     url: "/bookmarks",
   },
   {
-    title: "Chat",
-    url: "/chat",
-  },
-  {
     title: "Profile",
     url: "",
   },
@@ -69,6 +68,13 @@ const Sidebar = ({ children }: Props) => {
   const [visible, setVisible] = useState<boolean>(false);
   const [asideVisible, setAsideVisible] = useState<boolean>(false);
   const path = usePathname();
+  const unreadMessagesCount = useMessagesNotifications(
+    (state) => state.unreadMessages,
+  );
+  const { notificationsCount, resetNotificationsCache } =
+    useNotifications(user);
+  const { newMessagesCount } = useRooms();
+
   const { data } = useQuery({
     queryKey: ["user"],
     queryFn: async () => {
@@ -139,7 +145,7 @@ const Sidebar = ({ children }: Props) => {
   };
 
   const renderAsideVisible = (path: string) => {
-    if (path === "/messages" || path.includes("messages")) {
+    if (path === "/messages" || path.includes("messages") || path === "/") {
       setAsideVisible(false);
     } else {
       setAsideVisible(true);
@@ -197,11 +203,31 @@ const Sidebar = ({ children }: Props) => {
                   href={link.url}
                   key={crypto.randomUUID()}
                   className={cn(
-                    "text-lg flex items-center gap-6 w-fit hover:bg-muted transition-all p-3 rounded-4xl px-8",
+                    "text-lg flex items-center gap-6 w-fit hover:bg-muted transition-all p-3 rounded-4xl px-8 relative",
                     path.includes("/messages") && "p-3!",
                   )}
+                  onClick={() => {
+                    if (link.title === "Notifications") {
+                      resetNotificationsCache();
+                    }
+                  }}
                 >
-                  <NavIcon title={link.title}></NavIcon>
+                  <div className="relative">
+                    <NavIcon title={link.title}></NavIcon>
+                    {link.title === "Notifications" &&
+                      notificationsCount > 0 && (
+                        <p className="absolute top-0 right-0 -translate-y-4 translate-x-2 bg-primary text-white p-2 w-[24px] h-[24px] text-sm flex justify-center items-center rounded-full">
+                          {notificationsCount}
+                        </p>
+                      )}
+                    {link.title === "Messages" &&
+                      typeof newMessagesCount === "number" &&
+                      newMessagesCount > 0 && (
+                        <p className="absolute top-0 right-0 -translate-y-4 translate-x-2 bg-primary p-2 w-[24px] h-[24px] text-sm flex justify-center items-center rounded-full text-white">
+                          {newMessagesCount}
+                        </p>
+                      )}
+                  </div>
                   {
                     <Activity
                       mode={path.includes("/messages") ? "hidden" : "visible"}

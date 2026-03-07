@@ -21,6 +21,7 @@ export function ProfileHoverCard({ user }: Readonly<{ user: User }>) {
   const currentUser = useUser((state) => state.user) as User;
   const { isUserFollowing, followMutation, unfollowMutation } = useFollows({
     currentUserId: currentUser?.id,
+    currentUser,
     currentUserFollowings: currentUser?.followings,
     visitedUserId: user?.id,
   });

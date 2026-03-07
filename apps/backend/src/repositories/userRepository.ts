@@ -40,6 +40,12 @@ const UserRepository = {
                 avatar: true,
               },
             },
+            messages: {
+              select: {
+                id: true,
+                unread: true,
+              },
+            },
           },
         },
         Post: {

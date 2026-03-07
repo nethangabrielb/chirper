@@ -3,6 +3,7 @@ import { socket } from "@/socket/client";
 import { QueryClient } from "@tanstack/react-query";
 
 import { MessageType } from "@/types/message";
+import { User } from "@/types/user";
 
 const messageEventsHandler = {
   create: (
@@ -46,4 +47,4 @@ const messageEventsHandler = {
   },
 };
 
-export default messageEventsHandler;
+export { messageEventsHandler };

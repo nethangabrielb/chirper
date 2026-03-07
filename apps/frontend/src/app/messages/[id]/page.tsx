@@ -3,7 +3,7 @@
 import ChatRoom, { NewMessage } from "@/app/messages/components/chat-room";
 import ChatRows from "@/app/messages/components/chat-rows";
 import { socket } from "@/socket/client";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { use, useEffect } from "react";
 
@@ -24,8 +24,19 @@ const MessagesSlug = ({ params }: { params: Promise<{ id: string }> }) => {
     refetchOnWindowFocus: false,
   });
   const queryClient = useQueryClient();
+  const setReadMutation = useMutation({
+    mutationFn: async (params: number) => {
+      const res = await messageApi.setMessagesRead(params);
+      return res;
+    },
+    onSuccess: (res) => {
+      if (res.status === "success") {
+        queryClient.invalidateQueries({ queryKey: ["chatRooms"] });
+      }
+    },
+  });
 
-  const updateMessagesOptimistic = (
+  const updateMessagesOptimistic = async (
     newMessage: NewMessage,
     element?: HTMLDivElement,
   ) => {
@@ -33,10 +44,17 @@ const MessagesSlug = ({ params }: { params: Promise<{ id: string }> }) => {
       if (!prev) return [newMessage];
       return [...prev, newMessage];
     });
+
+    await queryClient.invalidateQueries({ queryKey: ["chatRooms"] });
+
     setTimeout(() => {
       element && element.scrollIntoView({ behavior: "smooth" });
     }, 100);
   };
+
+  useEffect(() => {
+    setReadMutation.mutate(Number(id));
+  }, [id]);
 
   useEffect(() => {
     const handleReconnect = async () => refetch();
@@ -53,7 +71,7 @@ const MessagesSlug = ({ params }: { params: Promise<{ id: string }> }) => {
   }, []);
 
   return (
-    <>
+    <div className="h-svh">
       <Head>
         <title>{document.title}</title>
         <meta
@@ -78,7 +96,7 @@ const MessagesSlug = ({ params }: { params: Promise<{ id: string }> }) => {
           updateMessagesOptimistic={updateMessagesOptimistic}
         ></ChatRoom>
       </div>
-    </>
+    </div>
   );
 };
 

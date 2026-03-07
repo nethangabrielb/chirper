@@ -45,6 +45,7 @@ const Home = () => {
         return posts;
       }
     },
+    refetchOnWindowFocus: false,
   });
 
   useEffect(() => {
@@ -74,8 +75,6 @@ const Home = () => {
   const refetchPosts = async () => {
     await queryClient.invalidateQueries({ queryKey: ["posts"] });
   };
-
-  console.log(posts);
 
   return (
     <>

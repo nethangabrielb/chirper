@@ -1,9 +1,9 @@
-import {FormButton} from "@/components/button";
+import { FormButton } from "@/components/button";
 import Icon from "@/components/icon";
 
 const LandingPage = () => {
   return (
-    <div className="flex gap-4 h-full justify-evenly items-center">
+    <div className="flex gap-4 h-svh justify-evenly items-center">
       <div className="flex-1 flex justify-center">
         <Icon width={450} height={450} alt="Twitter Icon"></Icon>
       </div>

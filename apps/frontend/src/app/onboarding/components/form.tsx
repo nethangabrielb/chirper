@@ -120,7 +120,7 @@ const ConfirmForm = ({ user }: Props) => {
         setValue("avatar", e.target.files[0], { shouldValidate: true });
         setFilePreview(e.target.files[0]);
       } else {
-        toast.error("Avatar must be 2MB or smaller.");
+        toast.error("Avatar must be 5MB or smaller.");
       }
     }
   };

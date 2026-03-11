@@ -141,6 +141,16 @@ const Post = ({ post, displayReplies, bookmarkedPost }: Props) => {
             <p className="text-text text-[15px] whitespace-normal break-words">
               {post.content}
             </p>
+            <Activity mode={post.imageUrl ? "visible" : "hidden"}>
+              <div className="relative">
+                <img
+                  src={post.imageUrl}
+                  alt="User Icon"
+                  className={cn("rounded-lg border h-full w-full object-cover")}
+                  loading="lazy"
+                ></img>
+              </div>
+            </Activity>
             <div className="flex justify-between w-[100%] ">
               {/* render comments */}
               <div className="flex items-center group cursor-pointer">

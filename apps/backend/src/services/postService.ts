@@ -1,9 +1,54 @@
+import { decode } from 'base64-arraybuffer';
+
 import postRepository from '../repositories/postRepository';
+import { client } from '../supabase/client';
 import { Post } from '../types/post';
 
 const postService = {
-  createPost: async (data: Post) => {
-    const newPost = await postRepository.create(data);
+  createPost: async (post: Post, file: Express.Multer.File | null) => {
+    let updatedPost: Post;
+
+    if (file) {
+      // decode buffer to base64 string
+      const base64 = file.buffer.toString('base64');
+
+      // upload file image
+      const { data, error } = await client.storage
+        .from('images')
+        .upload(
+          `${post.userId}-postImage-${Date.now().toString()}-${crypto.randomUUID()}`,
+          decode(base64),
+          {
+            cacheControl: '3600',
+            contentType: file.mimetype,
+            upsert: false,
+          }
+        );
+
+      if (error) {
+        throw new Error('There was an error processing the form.');
+      }
+
+      // get the file public link
+      const { data: image } = client.storage
+        .from('images')
+        .getPublicUrl(data.path);
+
+      updatedPost = {
+        ...post,
+        imageUrl: image.publicUrl,
+        userId: Number(post.userId),
+      };
+    } else {
+      updatedPost = {
+        ...post,
+        userId: Number(post.userId),
+      };
+    }
+
+    console.log(updatedPost);
+
+    const newPost = await postRepository.create(updatedPost);
     if (!newPost) {
       throw new Error('There was a problem making a post');
     }

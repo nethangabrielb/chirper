@@ -7,11 +7,11 @@ import data from "@emoji-mart/data/sets/14/twitter.json";
 import Picker from "@emoji-mart/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { Image, Smile } from "lucide-react";
+import { Image, Smile, X } from "lucide-react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import React, { Activity, useState } from "react";
+import React, { Activity, useRef, useState } from "react";
 
 import { ActionButton } from "@/components/button";
 import { TooltipIcon } from "@/components/tool-tip-icon";
@@ -54,6 +54,8 @@ const CreatePost = ({ refetch }: Props) => {
   const [progressValue, setProgressValue] = useState(0);
   const [inputDisabled, setInputDisabled] = useState(true);
   const [openEmojiPicker, setOpenEmojiPicker] = useState(false);
+  const [filePreview, setFilePreview] = useState<File | null>(null);
+  const fileInput = useRef<null | HTMLInputElement>(null);
   const user = useUser((state) => state.user) as User;
 
   const {
@@ -66,6 +68,7 @@ const CreatePost = ({ refetch }: Props) => {
   } = useForm<NewPost>({
     resolver: zodResolver(PostSchema),
     defaultValues: {
+      imageUrl: null,
       userId: user.id,
     },
   });
@@ -73,13 +76,27 @@ const CreatePost = ({ refetch }: Props) => {
   // CREATE POSTS MUTATION
   const mutation = useMutation({
     mutationFn: async (values: NewPost) => {
+      const formData = new FormData();
+
+      for (const key in values) {
+        if (values.hasOwnProperty(key)) {
+          const value = values[key as keyof typeof values];
+          if (value !== null) {
+            formData.append(key, value as any);
+          }
+        }
+      }
+
       setProgressValue(80);
-      const res = await postApi.createPost(values);
+
+      const res = await postApi.createPost(formData);
       return res;
     },
     onSuccess: (data) => {
       if (data.status === "success") {
         resetField("content");
+        resetField("imageUrl");
+        setFilePreview(null);
         toast.success(data.message, {
           position: "top-right",
           style: {
@@ -100,7 +117,10 @@ const CreatePost = ({ refetch }: Props) => {
 
   const createPost: SubmitHandler<NewPost> = () => {
     const values = getValues();
+
     const updatedValues = { ...values, userId: user.id };
+
+    console.log(updatedValues.imageUrl);
 
     mutation.mutate(updatedValues);
   };
@@ -137,6 +157,28 @@ const CreatePost = ({ refetch }: Props) => {
     checkLengthExceed(length);
   };
 
+  const uploadHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    fileInput?.current?.click();
+  };
+
+  const uploadImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      if (e.target.files[0].size <= 5 * 1024 * 1024) {
+        setValue("imageUrl", e.target.files[0], { shouldValidate: true });
+        setFilePreview(e.target.files[0]);
+      } else {
+        toast.error("Avatar must be 5MB or smaller.");
+      }
+    }
+  };
+
+  const removePreviewImage = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setFilePreview(null);
+    setValue("imageUrl", null);
+  };
+
   return (
     <div
       className={cn(
@@ -161,32 +203,64 @@ const CreatePost = ({ refetch }: Props) => {
       </Avatar>
       <form
         onSubmit={handleSubmit(createPost)}
-        className="w-full max-w-full flex flex-col gap-4 overflow-hidden"
+        className="w-full max-w-full h-fit flex flex-col gap-4 overflow-hidden"
       >
-        <textarea
-          {...register("content")}
-          placeholder="What's happening?"
-          className={cn(
-            `transition-all bg-transparent pt-3 pb-8 border-b border-b-border outline-0 placeholder:text-gray field-sizing-content placeholder:text-lg w-full max-w-full resize-none text-lg`,
-            mutation.isPending && "brightness-50 border-b-0 pb-0",
+        <div className="border-b border-b-border pb-4">
+          <textarea
+            {...register("content")}
+            placeholder="What's happening?"
+            className={cn(
+              `transition-all bg-transparent pt-3 pb-2s outline-0 placeholder:text-gray field-sizing-content placeholder:text-lg w-full max-w-full resize-none text-lg overflow-hidden`,
+              mutation.isPending && "brightness-50 border-b-0 pb-0",
+            )}
+            onChange={(e) => {
+              const length = e.target.value.length;
+
+              if (!inputDisabled) {
+                updateLimitOffset(length);
+              }
+
+              if (length > 0) {
+                setDisplayIndicator(true);
+              } else {
+                setDisplayIndicator(false);
+              }
+
+              checkLengthExceed(length);
+            }}
+            maxLength={250}
+            disabled={mutation.isPending}
+          />
+          {filePreview && (
+            <div className="relative">
+              <img
+                src={URL.createObjectURL(filePreview)}
+                alt="User Icon"
+                className={cn(
+                  "rounded-lg border h-full w-full object-cover",
+                  filePreview ? "block" : "hidden",
+                  mutation.isPending && "animation-pulse brightness-75",
+                )}
+              ></img>
+              <Activity mode={mutation.isPending ? "hidden" : "visible"}>
+                <button
+                  className="absolute top-0 right-0 m-2 bg-muted/90 rounded-full p-1 "
+                  onClick={removePreviewImage}
+                >
+                  <X size={24}></X>
+                </button>
+              </Activity>
+            </div>
           )}
-          onChange={(e) => {
-            const length = e.target.value.length;
-
-            if (!inputDisabled) {
-              updateLimitOffset(length);
-            }
-
-            if (length > 0) {
-              setDisplayIndicator(true);
-            } else {
-              setDisplayIndicator(false);
-            }
-
-            checkLengthExceed(length);
-          }}
-          maxLength={250}
-          disabled={mutation.isPending}
+        </div>
+        <input
+          type="file"
+          name="avatar"
+          id="avatar"
+          className="invisible h-0 absolute"
+          ref={fileInput}
+          accept="image/*"
+          onChange={uploadImage}
         />
         <div
           className={cn(
@@ -195,9 +269,11 @@ const CreatePost = ({ refetch }: Props) => {
           )}
         >
           <div className="flex items-center">
-            <TooltipIcon content="Upload image">
-              <Image size={20} className="text-primary" />
-            </TooltipIcon>
+            <button onClick={uploadHandler}>
+              <TooltipIcon content="Upload image">
+                <Image size={20} className="text-primary" />
+              </TooltipIcon>
+            </button>
             <button
               onClick={(e) => {
                 e.stopPropagation();

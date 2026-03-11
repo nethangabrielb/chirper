@@ -182,14 +182,14 @@ const Reply = ({ reply }: Props) => {
           </Activity>
 
           <Link
-            className="flex w-full gap-2 p-4 pb-0! hover:bg-secondary/40"
+            className="flex w-full gap-2 p-4 pb-0! hover:bg-secondary/40 items-stretch"
             href={`/post/${post?.id}`}
           >
-            <div className="self-start items-center flex flex-col">
+            <div className="self-stretch items-center flex flex-col">
               {post?.user && (
                 <ProfileHoverCard user={post?.user}></ProfileHoverCard>
               )}
-              <div className="bg-neutral-600 w-[2px] h-[100px]"></div>
+              <div className="bg-neutral-600 w-[2px] flex-1"></div>
             </div>
             <div className="flex flex-col gap-2 w-full min-w-0">
               <div className="flex items-center gap-1">
@@ -212,6 +212,18 @@ const Reply = ({ reply }: Props) => {
               <p className="text-text text-[15px] py-2 whitespace-normal break-words">
                 {post?.content}
               </p>
+              <Activity mode={post?.imageUrl ? "visible" : "hidden"}>
+                <div className="relative">
+                  <img
+                    src={post?.imageUrl}
+                    alt="User Icon"
+                    className={cn(
+                      "rounded-lg border h-full w-full object-cover",
+                    )}
+                    loading="lazy"
+                  ></img>
+                </div>
+              </Activity>
               <div className="flex justify-start w-full pb-2">
                 {/* render comments */}
                 <div className="flex items-center flex-1 group cursor-pointer">

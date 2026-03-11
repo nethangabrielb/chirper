@@ -88,7 +88,7 @@ const Post = ({ post, displayReplies, bookmarkedPost }: Props) => {
       ) : (
         <Link
           className={cn(
-            "flex gap-4 relative hover:bg-secondary/40 transition-all",
+            "flex gap-4 relative hover:bg-secondary/40 items-stretch transition-all",
             displayReplies && post?.replies?.length > 0 ? "pt-4 px-4" : "p-4",
           )}
           href={`/post/${post.id}`}
@@ -99,9 +99,9 @@ const Post = ({ post, displayReplies, bookmarkedPost }: Props) => {
             ></CurrentUserPostDropdown>
           </Activity>
           {displayReplies ? (
-            <div className="self-start items-center flex flex-col">
+            <div className="self-stretch items-center flex flex-col">
               <ProfileHoverCard user={post.user}></ProfileHoverCard>
-              <div className="bg-neutral-600 w-[2px] h-[100px] translate-y-2"></div>
+              <div className="bg-neutral-600 w-[2px] translate-y-2 flex-1"></div>
             </div>
           ) : (
             <ProfileHoverCard user={post.user}></ProfileHoverCard>

@@ -78,8 +78,6 @@ const CreateReply = ({
   const [openEmojiPicker, setOpenEmojiPicker] = useState(false);
   const user = useUser((state) => state.user) as User;
 
-  console.log(openEmojiPicker);
-
   const {
     getValues,
     handleSubmit,

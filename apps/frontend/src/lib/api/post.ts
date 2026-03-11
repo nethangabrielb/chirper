@@ -48,14 +48,11 @@ const postApi = (() => {
     return data.data as PostType;
   };
 
-  const createPost = async (values: NewPost) => {
+  const createPost = async (values: FormData) => {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API}/api/posts`, {
-      headers: {
-        "Content-Type": "application/json",
-      },
       credentials: "include",
       method: "POST",
-      body: JSON.stringify(values),
+      body: values,
     });
 
     if (!res.ok) {

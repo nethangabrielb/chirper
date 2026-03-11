@@ -11,7 +11,7 @@ const postsController = (() => {
     res: Response
   ) => {
     try {
-      const newPost = await postService.createPost(req.body);
+      const newPost = await postService.createPost(req.body, req.file ?? null);
 
       res.json({
         status: 'success',

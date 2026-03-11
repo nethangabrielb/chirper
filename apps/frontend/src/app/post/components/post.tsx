@@ -171,6 +171,16 @@ const PostSingle = ({ post, className, settingsCn, buttonCn }: Props) => {
         <p className="text-text text-[15px] py-2 whitespace-normal break-words">
           {post.content}
         </p>
+        <Activity mode={post?.imageUrl ? "visible" : "hidden"}>
+          <div className="relative">
+            <img
+              src={post.imageUrl}
+              alt="User Icon"
+              className={cn("rounded-lg border h-full w-full object-cover")}
+              loading="lazy"
+            ></img>
+          </div>
+        </Activity>
         <p className="border-b border-b-border pb-1 text-darker font-light text-[14px]">
           {formatDateSlugPost(post.createdAt)}
         </p>

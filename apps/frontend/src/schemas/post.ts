@@ -35,4 +35,5 @@ export const postSchema = z.object({
   replies: z.array(replySchema),
   reply: replySchema.optional(),
   bookmarks: z.array(bookmarkSchema),
+  imageUrl: z.string().optional(),
 });

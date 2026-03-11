@@ -64,6 +64,7 @@ model Post {
   content   String   @db.VarChar(280)
   createdAt DateTime @default(now())
   deleted   Boolean  @default(false)
+  imageUrl  String?
 
   user   User @relation(fields: [userId], references: [id])
   userId Int

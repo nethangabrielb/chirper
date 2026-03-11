@@ -16,7 +16,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Twitter",
+  title: "Chirper",
   description:
     "A twitter-inspired social media platform I created for learning purposes",
 };

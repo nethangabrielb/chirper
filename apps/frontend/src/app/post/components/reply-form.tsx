@@ -13,11 +13,11 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
-import { Image, Smile } from "lucide-react";
+import { Image, Smile, X } from "lucide-react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import React, { Activity, useState } from "react";
+import React, { Activity, useRef, useState } from "react";
 
 import { useRouter } from "next/navigation";
 
@@ -76,6 +76,8 @@ const CreateReply = ({
   const [inputDisabled, setInputDisabled] = useState(true);
   const [openReplyControls, setOpenReplyControls] = useState(false);
   const [openEmojiPicker, setOpenEmojiPicker] = useState(false);
+  const [filePreview, setFilePreview] = useState<File | null>(null);
+  const fileInput = useRef<null | HTMLInputElement>(null);
   const user = useUser((state) => state.user) as User;
 
   const {
@@ -90,8 +92,11 @@ const CreateReply = ({
     defaultValues: {
       userId: user.id,
       replyId: postId,
+      imageUrl: null,
     },
   });
+
+  console.log(errors);
 
   // CREATE REPLY MUTATION
   const mutation = useMutation({
@@ -102,7 +107,6 @@ const CreateReply = ({
     },
     onSuccess: async (data) => {
       if (data.status === "success") {
-        resetField("content");
         toast.success(data.message, {
           position: "top-right",
           style: {
@@ -111,6 +115,12 @@ const CreateReply = ({
             width: "fit-content",
           },
         });
+        resetField("content");
+        setValue("imageUrl", null);
+        setFilePreview(null);
+        if (fileInput.current) {
+          fileInput.current.value = "";
+        }
         if (postUserId !== user?.id) {
           notificationHandler.emitReplyNotification(
             user,
@@ -137,7 +147,9 @@ const CreateReply = ({
   });
 
   const createReply: SubmitHandler<Comment> = () => {
+    console.log("yawa");
     const values = getValues();
+    console.log(values);
     const updatedValues = { ...values, userId: user.id, replyId: postId };
 
     mutation.mutate(updatedValues);
@@ -175,6 +187,33 @@ const CreateReply = ({
     checkLengthExceed(length);
   };
 
+  const uploadHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    fileInput?.current?.click();
+  };
+
+  const uploadImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    if (e.target.files) {
+      if (e.target.files[0].size <= 5 * 1024 * 1024) {
+        setValue("imageUrl", e.target.files[0], { shouldValidate: true });
+        setFilePreview(e.target.files[0]);
+      } else {
+        toast.error("Avatar must be 5MB or smaller.");
+      }
+    }
+  };
+
+  const removePreviewImage = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setFilePreview(null);
+    setValue("imageUrl", null);
+
+    if (fileInput.current) {
+      fileInput.current.value = "";
+    }
+  };
+
   return (
     <div
       className={cn(
@@ -199,47 +238,81 @@ const CreateReply = ({
         onSubmit={handleSubmit(createReply)}
         className={cn("w-full max-w-full flex flex-col gap-1")}
       >
-        <textarea
-          {...register("content")}
-          placeholder="Reply here"
-          className={cn(
-            `transition-all bg-transparent pt-3 pb-3 outline-0 placeholder:text-gray field-sizing-content placeholder:text-lg w-full max-w-full resize-none text-lg`,
-            mutation.isPending && "brightness-50 border-b-0 pb-0",
+        <div className="border-b border-b-border pb-4">
+          <textarea
+            {...register("content")}
+            placeholder="Reply here"
+            className={cn(
+              `transition-all bg-transparent pt-3 pb-3 outline-0 placeholder:text-gray field-sizing-content placeholder:text-lg w-full max-w-full resize-none text-lg`,
+              mutation.isPending && "brightness-50 border-b-0 pb-0",
+            )}
+            onChange={(e) => {
+              const length = e.target.value.length;
+
+              if (!inputDisabled) {
+                updateLimitOffset(length);
+              }
+
+              if (length > 0) {
+                setDisplayIndicator(true);
+              } else {
+                setDisplayIndicator(false);
+              }
+
+              checkLengthExceed(length);
+            }}
+            maxLength={250}
+            disabled={mutation.isPending}
+            onClick={() => {
+              setOpenReplyControls(true);
+            }}
+          />
+          {filePreview && (
+            <div className="relative">
+              <img
+                src={URL.createObjectURL(filePreview)}
+                alt="User Icon"
+                className={cn(
+                  "rounded-lg border h-full w-full object-cover",
+                  filePreview ? "block" : "hidden",
+                  mutation.isPending && "animation-pulse brightness-75",
+                )}
+              ></img>
+              <Activity mode={mutation.isPending ? "hidden" : "visible"}>
+                <button
+                  className="absolute top-0 right-0 m-2 bg-muted/90 rounded-full p-1 "
+                  onClick={removePreviewImage}
+                >
+                  <X size={24}></X>
+                </button>
+              </Activity>
+            </div>
           )}
-          onChange={(e) => {
-            const length = e.target.value.length;
-
-            if (!inputDisabled) {
-              updateLimitOffset(length);
-            }
-
-            if (length > 0) {
-              setDisplayIndicator(true);
-            } else {
-              setDisplayIndicator(false);
-            }
-
-            checkLengthExceed(length);
-          }}
-          maxLength={250}
-          disabled={mutation.isPending}
-          onClick={() => {
-            setOpenReplyControls(true);
-          }}
+        </div>
+        <input
+          type="file"
+          name="avatar"
+          id="avatar"
+          className="invisible h-0 absolute"
+          ref={fileInput}
+          accept="image/*"
+          onChange={uploadImage}
         />
         <div
           className={cn(
             "relative",
-            mutation.isPending && "h-0! hidden",
+            mutation.isPending && "h-0! hidden invisible",
             openReplyControls
               ? "items-center flex h-auto transition-all -translate-y-0 justify-between opacity-100 z-[20]"
               : "w-[95%] max-w-[95%] transition-all -translate-y-5 h-0 invisible opacity-0",
           )}
         >
           <div className="flex items-center gap-2 z-[30]">
-            <TooltipIcon content="Upload image">
-              <Image size={20} className="text-primary" />
-            </TooltipIcon>
+            <button onClick={uploadHandler}>
+              <TooltipIcon content="Upload image">
+                <Image size={20} className="text-primary" />
+              </TooltipIcon>
+            </button>
             <button
               onClick={(e) => {
                 e.stopPropagation();

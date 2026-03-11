@@ -2,13 +2,21 @@ import { Comment } from "@/app/post/types/coment";
 
 const commentApi = (() => {
   const createComment = async (comment: Comment) => {
+    const formData = new FormData();
+
+    for (const key in comment) {
+      if (comment.hasOwnProperty(key)) {
+        const value = comment[key as keyof typeof comment];
+        if (value !== null) {
+          formData.append(key, value as any);
+        }
+      }
+    }
+
     const res = await fetch(`${process.env.NEXT_PUBLIC_API}/api/comments`, {
-      headers: {
-        "Content-Type": "application/json",
-      },
       credentials: "include",
       method: "POST",
-      body: JSON.stringify(comment),
+      body: formData,
     });
 
     if (!res.ok) {

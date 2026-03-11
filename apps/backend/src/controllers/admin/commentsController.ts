@@ -19,7 +19,10 @@ const commentsController = (() => {
         content: req.body.content,
       };
 
-      const comment = await commentService.createComment(data);
+      const comment = await commentService.createComment(
+        data,
+        req.file ?? null
+      );
 
       if (comment === 'deleted') {
         res.json({

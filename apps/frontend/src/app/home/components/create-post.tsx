@@ -95,8 +95,11 @@ const CreatePost = ({ refetch }: Props) => {
     onSuccess: (data) => {
       if (data.status === "success") {
         resetField("content");
-        resetField("imageUrl");
+        setValue("imageUrl", null);
         setFilePreview(null);
+        if (fileInput.current) {
+          fileInput.current.value = "";
+        }
         toast.success(data.message, {
           position: "top-right",
           style: {
@@ -177,6 +180,9 @@ const CreatePost = ({ refetch }: Props) => {
     e.preventDefault();
     setFilePreview(null);
     setValue("imageUrl", null);
+    if (fileInput.current) {
+      fileInput.current.value = "";
+    }
   };
 
   return (

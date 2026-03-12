@@ -123,8 +123,6 @@ const CreatePost = ({ refetch }: Props) => {
 
     const updatedValues = { ...values, userId: user.id };
 
-    console.log(updatedValues.imageUrl);
-
     mutation.mutate(updatedValues);
   };
 
@@ -216,7 +214,7 @@ const CreatePost = ({ refetch }: Props) => {
             {...register("content")}
             placeholder="What's happening?"
             className={cn(
-              `transition-all bg-transparent pt-3 pb-2s outline-0 placeholder:text-gray field-sizing-content placeholder:text-lg w-full max-w-full resize-none text-lg overflow-hidden`,
+              `transition-all bg-transparent pt-3 pb-2 outline-0 placeholder:text-gray field-sizing-content placeholder:text-lg w-full max-w-full resize-none text-lg overflow-hidden`,
               mutation.isPending && "brightness-50 border-b-0 pb-0",
             )}
             onChange={(e) => {

@@ -1,13 +1,15 @@
 import PostSchema from "@/app/home/schema/create-post.schema";
 import { NewPost } from "@/app/home/types/create-post.type";
 import useUser from "@/stores/user.store";
+import data from "@emoji-mart/data/sets/14/twitter.json";
+import Picker from "@emoji-mart/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Image, Smile } from "lucide-react";
+import { Image, Smile, X } from "lucide-react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import React, { Activity, useState } from "react";
+import React, { Activity, useRef, useState } from "react";
 
 import { ActionButton } from "@/components/button";
 import { TooltipIcon } from "@/components/tool-tip-icon";
@@ -29,12 +31,36 @@ import { cn } from "@/lib/utils";
 
 import { User } from "@/types/user";
 
+type EmojiPickerProps = {
+  handleEmojiSelect: (emoji: any) => void;
+  openEmojiPicker: boolean;
+  setOpenEmojiPicker: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+const EmojiPicker = React.memo(
+  ({
+    handleEmojiSelect,
+    openEmojiPicker,
+    setOpenEmojiPicker,
+  }: EmojiPickerProps) => (
+    <Picker
+      data={data}
+      onEmojiSelect={handleEmojiSelect}
+      searchPosition="sticky"
+      onClickOutside={() => openEmojiPicker && setOpenEmojiPicker(false)}
+    />
+  ),
+);
+
 export function CreatePostDialog({ children }: { children: React.ReactNode }) {
   const [displayIndicator, setDisplayIndicator] = useState(false);
   const [dashOffset, setDashOffset] = useState(565.48);
   const [progressValue, setProgressValue] = useState(0);
   const [inputDisabled, setInputDisabled] = useState(true);
   const [openDialog, setOpenDialog] = useState(false);
+  const [openEmojiPicker, setOpenEmojiPicker] = useState(false);
+  const [filePreview, setFilePreview] = useState<File | null>(null);
+  const fileInput = useRef<null | HTMLInputElement>(null);
   const user = useUser((state) => state.user) as User;
   const queryClient = useQueryClient();
   const {
@@ -42,10 +68,12 @@ export function CreatePostDialog({ children }: { children: React.ReactNode }) {
     handleSubmit,
     register,
     resetField,
+    setValue,
     formState: { errors },
   } = useForm<NewPost>({
     resolver: zodResolver(PostSchema),
     defaultValues: {
+      imageUrl: null,
       userId: user.id,
     },
   });
@@ -53,13 +81,29 @@ export function CreatePostDialog({ children }: { children: React.ReactNode }) {
   // CREATE POSTS MUTATION
   const mutation = useMutation({
     mutationFn: async (values: NewPost) => {
+      const formData = new FormData();
+
+      for (const key in values) {
+        if (values.hasOwnProperty(key)) {
+          const value = values[key as keyof typeof values];
+          if (value !== null) {
+            formData.append(key, value as any);
+          }
+        }
+      }
+
       setProgressValue(80);
-      const res = await postApi.createPost(values);
+      const res = await postApi.createPost(formData);
       return res;
     },
     onSuccess: (data) => {
       if (data.status === "success") {
         resetField("content");
+        setValue("imageUrl", null);
+        setFilePreview(null);
+        if (fileInput.current) {
+          fileInput.current.value = "";
+        }
         toast.success(data.message, {
           position: "top-right",
           style: {
@@ -102,10 +146,54 @@ export function CreatePostDialog({ children }: { children: React.ReactNode }) {
     setDashOffset(565.48);
     setDashOffset((prev) => prev - 2.26192 * length);
   };
+
+  const handleEmojiSelect = (emoji: any) => {
+    let currentValue = getValues("content");
+    const updatedValue = currentValue + emoji.native;
+    setValue("content", updatedValue);
+    const length = updatedValue.length;
+
+    if (!inputDisabled) {
+      updateLimitOffset(length);
+    }
+
+    if (length > 0) {
+      setDisplayIndicator(true);
+    } else {
+      setDisplayIndicator(false);
+    }
+
+    checkLengthExceed(length);
+  };
+
+  const uploadHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    fileInput?.current?.click();
+  };
+
+  const uploadImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      if (e.target.files[0].size <= 5 * 1024 * 1024) {
+        setValue("imageUrl", e.target.files[0], { shouldValidate: true });
+        setFilePreview(e.target.files[0]);
+      } else {
+        toast.error("Avatar must be 5MB or smaller.");
+      }
+    }
+  };
+
+  const removePreviewImage = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setFilePreview(null);
+    setValue("imageUrl", null);
+    if (fileInput.current) {
+      fileInput.current.value = "";
+    }
+  };
   return (
     <Dialog open={openDialog} onOpenChange={setOpenDialog}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="sm:max-w-lg field-sizing-content">
+      <DialogContent className="sm:max-w-lg overflow-visible -translate-y-60">
         <DialogHeader>
           <DialogTitle>New Tweet</DialogTitle>
           <DialogDescription>
@@ -116,13 +204,13 @@ export function CreatePostDialog({ children }: { children: React.ReactNode }) {
         <div
           className={cn(
             mutation.isPending && "brightness-110",
-            "flex gap-4 w-full relative max-w-full overflow-hidden",
+            "grid grid-cols-[60px_1fr] gap-4 relative",
           )}
         >
           <Activity mode={mutation.isPending ? "visible" : "hidden"}>
             <Progress
               value={progressValue}
-              className="absolute top-0 w-full left-0 rounded-none! h-[4px] duration-500 bg-transparent"
+              className="absolute top-0 w-full left-0 rounded-none! h-[4px] duration-500 bg-transparent -translate-y-2"
             ></Progress>
           </Activity>
 
@@ -136,32 +224,64 @@ export function CreatePostDialog({ children }: { children: React.ReactNode }) {
           </Avatar>
           <form
             onSubmit={handleSubmit(createPost)}
-            className="w-full max-w-full flex flex-col gap-4 overflow-hidden"
+            className="w-full flex flex-col gap-4 max-w-full overflow-hidden"
           >
-            <textarea
-              {...register("content")}
-              placeholder="What's happening?"
-              className={cn(
-                `transition-all bg-transparent pt-3 pb-8 border-b border-b-border outline-0 placeholder:text-gray field-sizing-content placeholder:text-lg w-full max-w-full resize-none text-lg`,
-                mutation.isPending && "brightness-50 border-b-0 pb-0",
+            <div className="border-b border-b-border pb-4 w-full">
+              <textarea
+                {...register("content")}
+                placeholder="What's happening?"
+                className={cn(
+                  `min-w-0 transition-all bg-transparent pb-2 outline-0 placeholder:text-gray placeholder:text-lg field-sizing-content resize-none text-lg w-full`,
+                  mutation.isPending && "brightness-50 border-b-0 pb-0",
+                )}
+                onChange={(e) => {
+                  const length = e.target.value.length;
+
+                  if (!inputDisabled) {
+                    updateLimitOffset(length);
+                  }
+
+                  if (length > 0) {
+                    setDisplayIndicator(true);
+                  } else {
+                    setDisplayIndicator(false);
+                  }
+
+                  checkLengthExceed(length);
+                }}
+                maxLength={250}
+                disabled={mutation.isPending}
+              />
+              {filePreview && (
+                <div className="relative">
+                  <img
+                    src={URL.createObjectURL(filePreview)}
+                    alt="User Icon"
+                    className={cn(
+                      "rounded-lg border h-full w-full object-cover",
+                      filePreview ? "block" : "hidden",
+                      mutation.isPending && "animation-pulse brightness-75",
+                    )}
+                  ></img>
+                  <Activity mode={mutation.isPending ? "hidden" : "visible"}>
+                    <button
+                      className="absolute top-0 right-0 m-2 bg-muted/90 rounded-full p-1 "
+                      onClick={removePreviewImage}
+                    >
+                      <X size={24}></X>
+                    </button>
+                  </Activity>
+                </div>
               )}
-              onChange={(e) => {
-                const length = e.target.value.length;
-
-                if (!inputDisabled) {
-                  updateLimitOffset(length);
-                }
-
-                if (length > 0) {
-                  setDisplayIndicator(true);
-                } else {
-                  setDisplayIndicator(false);
-                }
-
-                checkLengthExceed(length);
-              }}
-              maxLength={250}
-              disabled={mutation.isPending}
+            </div>
+            <input
+              type="file"
+              name="avatar"
+              id="avatar"
+              className="invisible h-0 absolute"
+              ref={fileInput}
+              accept="image/*"
+              onChange={uploadImage}
             />
             <div
               className={cn(
@@ -170,12 +290,43 @@ export function CreatePostDialog({ children }: { children: React.ReactNode }) {
               )}
             >
               <div className="flex items-center">
-                <TooltipIcon content="Upload image">
-                  <Image size={20} className="text-primary" />
-                </TooltipIcon>
-                <TooltipIcon content="Emoji">
-                  <Smile size={20} className="text-primary" />
-                </TooltipIcon>
+                <button onClick={uploadHandler}>
+                  <TooltipIcon content="Upload image">
+                    <Image size={20} className="text-primary" />
+                  </TooltipIcon>
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    openEmojiPicker
+                      ? setOpenEmojiPicker(false)
+                      : setOpenEmojiPicker(true);
+                  }}
+                  className="relative z-30"
+                >
+                  <TooltipIcon content="Emoji">
+                    <Smile size={20} className="text-primary" />
+                  </TooltipIcon>
+                  <div
+                    className={cn(
+                      "fixed top-0 z-[9999] transition-all ease-out",
+                      openEmojiPicker
+                        ? "translate-x-10 translate-y-40 visible"
+                        : "translate-x-10 translate-y-100 opacity-80 invisible h-0",
+                    )}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                    }}
+                  >
+                    <EmojiPicker
+                      handleEmojiSelect={handleEmojiSelect}
+                      openEmojiPicker={openEmojiPicker}
+                      setOpenEmojiPicker={setOpenEmojiPicker}
+                    />
+                  </div>
+                </button>
               </div>
               <div className="flex items-center gap-4">
                 {displayIndicator && (

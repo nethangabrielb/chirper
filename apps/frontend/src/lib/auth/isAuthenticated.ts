@@ -4,9 +4,6 @@ const isAuthenticated = async (request: NextRequest) => {
   const cookie = request.cookies.get("token");
   const value = cookie?.value;
 
-  console.log(cookie);
-  console.log(value);
-
   if (!cookie || !value) {
     return false;
   }

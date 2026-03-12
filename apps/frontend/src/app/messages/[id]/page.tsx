@@ -3,6 +3,7 @@
 import ChatRoom, { NewMessage } from "@/app/messages/components/chat-room";
 import ChatRows from "@/app/messages/components/chat-rows";
 import { socket } from "@/socket/client";
+import useUser from "@/stores/user.store";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { use, useEffect } from "react";
@@ -12,9 +13,11 @@ import Head from "next/head";
 import messageApi from "@/lib/api/message";
 
 import { MessageType } from "@/types/message";
+import { User } from "@/types/user";
 
 const MessagesSlug = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = use(params);
+  const currentUser = useUser((store) => store.user) as User;
   const { data, refetch } = useQuery({
     queryKey: ["messages", id],
     queryFn: async () => {
@@ -31,7 +34,9 @@ const MessagesSlug = ({ params }: { params: Promise<{ id: string }> }) => {
     },
     onSuccess: (res) => {
       if (res.status === "success") {
-        queryClient.invalidateQueries({ queryKey: ["chatRooms"] });
+        queryClient.invalidateQueries({
+          queryKey: ["chatRooms", currentUser?.id],
+        });
       }
     },
   });
@@ -45,7 +50,9 @@ const MessagesSlug = ({ params }: { params: Promise<{ id: string }> }) => {
       return [...prev, newMessage];
     });
 
-    await queryClient.invalidateQueries({ queryKey: ["chatRooms"] });
+    await queryClient.invalidateQueries({
+      queryKey: ["chatRooms", currentUser?.id],
+    });
 
     setTimeout(() => {
       element && element.scrollIntoView({ behavior: "smooth" });

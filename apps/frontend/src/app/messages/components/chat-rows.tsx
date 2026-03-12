@@ -22,7 +22,9 @@ const ChatRows = ({ params }: { params?: number }) => {
     },
     onSuccess: (res) => {
       if (res.status === "success") {
-        queryClient.invalidateQueries({ queryKey: ["chatRooms"] });
+        queryClient.invalidateQueries({
+          queryKey: ["chatRooms", currentUser?.id],
+        });
       }
     },
   });

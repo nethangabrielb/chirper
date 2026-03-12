@@ -29,13 +29,12 @@ const Notifications = () => {
     },
     refetchOnWindowFocus: false,
     refetchOnMount: false,
+    enabled: !!user?.id,
   });
 
   useEffect(() => {
     document.title = "Notifications / Chirper";
   }, []);
-
-  console.log(notifications);
 
   return (
     <>

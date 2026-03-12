@@ -27,11 +27,12 @@ const useNotifications = (user: User) => {
     },
     refetchOnWindowFocus: false,
     refetchOnMount: false,
+    enabled: !!user?.id,
   });
 
   const resetNotificationsCache = async () => {
     await queryClient.invalidateQueries({
-      queryKey: ["notifications", user.id],
+      queryKey: ["notifications", user?.id],
     });
   };
 

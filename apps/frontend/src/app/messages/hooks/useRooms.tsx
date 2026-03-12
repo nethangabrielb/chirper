@@ -40,6 +40,8 @@ const useRooms = () => {
         return res;
       }
     },
+    refetchOnWindowFocus: false,
+    enabled: !!user?.id,
   });
 
   return { chatRooms, newMessagesCount };

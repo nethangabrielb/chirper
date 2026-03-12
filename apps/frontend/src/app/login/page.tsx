@@ -4,7 +4,7 @@ import Icon from "@/components/icon";
 
 const Login = () => {
   return (
-    <div className="flex gap-4 h-full justify-evenly items-center">
+    <div className="flex gap-4 min-h-svh justify-evenly items-center">
       <div className="flex-1 flex justify-center">
         <Icon width={450} height={450} alt="Twitter Icon"></Icon>
       </div>

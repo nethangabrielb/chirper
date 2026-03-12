@@ -135,7 +135,7 @@ const ConfirmForm = ({ user }: Props) => {
 
   return (
     <form
-      className="w-full m-auto h-full flex flex-col justify-center items-center gap-8"
+      className="w-full m-auto min-h-svh flex flex-col justify-center items-center gap-8"
       onSubmit={handleSubmit(submitForm)}
       encType="multipart/form-data"
     >

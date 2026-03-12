@@ -4,8 +4,10 @@ import jwt from 'jsonwebtoken';
 import path, { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
+import UserRepository from '../../repositories/userRepository';
 import UserService from '../../services/userService';
 import type { LoginBody, RegistrationBody } from '../../types/auth';
+import { User } from '../../types/user';
 
 const GENERIC_ERROR_MESSAGE = 'An unknown error occurred';
 
@@ -85,7 +87,25 @@ const authController = (() => {
     }
   };
 
-  return { register, login, logout, redirect };
+  const validateUserAuthorization = async (req: Request, res: Response) => {
+    const token = req.headers.authorization?.split(' ')[1];
+
+    if (!token) {
+      return res.json({ authorized: false });
+    }
+
+    const user = jwt.verify(token, process.env.JWT_SECRET!) as User;
+
+    const verifyUser = await UserRepository.findById(user?.id);
+
+    if (verifyUser) {
+      return res.json({ authorized: true });
+    } else {
+      return res.json({ authorized: false });
+    }
+  };
+
+  return { register, login, logout, redirect, validateUserAuthorization };
 })();
 
 export default authController;

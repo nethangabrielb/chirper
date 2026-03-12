@@ -21,5 +21,6 @@ authRouter.get(
   }),
   authController.redirect
 );
+authRouter.get('/user', authController.validateUserAuthorization);
 
 export default authRouter;

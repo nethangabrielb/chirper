@@ -59,7 +59,6 @@ const useFollows = ({
         setIsUserFollowing(true);
         setFollow(data.data);
         if (currentUser && visitedUserId !== currentUser?.id) {
-          console.log("Following");
           notificationHandler.emitFollowNotification(
             currentUser,
             visitedUserId,

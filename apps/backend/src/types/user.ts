@@ -7,6 +7,7 @@ interface User {
   avatar?: string | null;
   cover?: string;
   onboarded: boolean;
+  isGuest?: boolean;
 }
 
 export type { User };

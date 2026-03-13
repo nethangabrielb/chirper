@@ -23,6 +23,7 @@ export const authMiddleware = async (
     const payload = jwt.verify(token, process.env.JWT_SECRET!) as
       | User
       | { guestId: string; isGuest: boolean };
+
     req.user = payload; // attach user info to request
     next();
   } catch {

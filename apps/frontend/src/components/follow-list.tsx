@@ -57,7 +57,11 @@ const FollowListRow = ({
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              unfollowMutation.mutate();
+              if (!currentUser.isGuest) {
+                unfollowMutation.mutate();
+              } else {
+                console.log("IM GUEST");
+              }
             }}
           >
             Following
@@ -67,7 +71,11 @@ const FollowListRow = ({
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              followMutation.mutate();
+              if (!currentUser.isGuest) {
+                followMutation.mutate();
+              } else {
+                console.log("IM GUEST");
+              }
             }}
           >
             Follow back
@@ -77,7 +85,11 @@ const FollowListRow = ({
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              followMutation.mutate();
+              if (!currentUser.isGuest) {
+                followMutation.mutate();
+              } else {
+                console.log("IM GUEST");
+              }
             }}
           >
             Follow

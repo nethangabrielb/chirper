@@ -93,7 +93,7 @@ const Sidebar = ({ children }: Props) => {
   });
 
   const { data: followListAside } = useQuery({
-    queryKey: ["followList", user],
+    queryKey: ["followList", user?.id],
     queryFn: async () => {
       if (path !== "/") {
         const res = await userApi.getUserFollowListLimit(3);
@@ -173,6 +173,8 @@ const Sidebar = ({ children }: Props) => {
   const logOut = () => {
     mutation.mutate();
   };
+
+  console.log(followListAside);
 
   return (
     <div className={cn(visible && "flex justify-center", "h-full")}>

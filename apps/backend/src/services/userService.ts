@@ -105,12 +105,20 @@ const UserService = {
     return users;
   },
 
-  getFollowListsLimit: async (userId: number, limit: number) => {
-    const users = await UserRepository.findFollowingListLimit(userId, limit);
-    if (!users) {
-      throw new Error('Failed to fetch follow list');
+  getFollowListsLimit: async (limit: number, userId?: number) => {
+    if (userId) {
+      const users = await UserRepository.findFollowingListLimit(limit, userId);
+      if (!users) {
+        throw new Error('Failed to fetch follow list');
+      }
+      return users;
+    } else {
+      const users = await UserRepository.findFollowingListLimitGuest(limit);
+      if (!users) {
+        throw new Error('Failed to fetch follow list');
+      }
+      return users;
     }
-    return users;
   },
 };
 

@@ -9,6 +9,7 @@ import roomService from '../../services/roomService';
 import UserService from '../../services/userService';
 import { client } from '../../supabase/client';
 import type { RegistrationBody } from '../../types/auth';
+import { Guest } from '../../types/guest';
 import { User } from '../../types/user';
 import { GENERIC_ERROR_MESSAGE } from '../../utils/errorMessage';
 
@@ -28,8 +29,11 @@ const userController = (() => {
   const getAllUsers = async (_req: Request, res: Response) => {
     try {
       const user: User = _req.user as User;
-      const updatedUser = await UserService.getUserById(user.id);
       if (_req.query.current) {
+        if ((_req.user as Guest).isGuest) {
+          return res.json({ status: 'success', data: _req.user });
+        }
+        const updatedUser = await UserService.getUserById(user.id);
         const followers = await followRepository.findFollowers(user.id);
         const followings = await followRepository.findFollowings(user.id);
         const rooms = await roomService.getUserRooms(user.id);
@@ -89,19 +93,33 @@ const userController = (() => {
         let users;
         const currentUser = _req.user as User;
         if (_req.query.limit) {
-          users = await UserService.getFollowListsLimit(
-            currentUser?.id,
-            Number(_req.query.limit)
-          );
+          if (!currentUser.isGuest) {
+            users = await UserService.getFollowListsLimit(
+              Number(_req.query.limit),
+              currentUser?.id
+            );
 
-          if (!users) {
-            throw new Error('Failed to fetch users');
+            if (!users) {
+              throw new Error('Failed to fetch users');
+            }
+
+            return res.json({
+              status: 'success',
+              data: users,
+            });
+          } else {
+            users = await UserService.getFollowListsLimit(
+              Number(_req.query.limit)
+            );
+            if (!users) {
+              throw new Error('Failed to fetch users');
+            }
+
+            return res.json({
+              status: 'success',
+              data: users,
+            });
           }
-
-          return res.json({
-            status: 'success',
-            data: users,
-          });
         } else if (_req.query.page) {
           const pageParam = Number(_req.query.page);
           users = await UserService.getFollowLists(currentUser?.id, pageParam);

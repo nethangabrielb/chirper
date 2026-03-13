@@ -194,12 +194,30 @@ const UserRepository = {
       skip: pageParam * 20,
       take: 20,
     }),
-  findFollowingListLimit: (id: number, limit: number) =>
+  findFollowingListLimit: (limit: number, id: number) =>
     prisma.user.findMany({
       where: {
         id: { not: id },
         Followings: { every: { followerId: { not: id } } },
       },
+      orderBy: [{ Followings: { _count: 'desc' } }],
+
+      select: {
+        Followers: true,
+        id: true,
+        name: true,
+        username: true,
+        avatar: true,
+        _count: {
+          select: {
+            Followings: true,
+          },
+        },
+      },
+      take: limit,
+    }),
+  findFollowingListLimitGuest: (limit: number) =>
+    prisma.user.findMany({
       orderBy: [{ Followings: { _count: 'desc' } }],
 
       select: {

@@ -52,7 +52,7 @@ const GuestDialog = () => {
 
   return (
     <Dialog open={openDialog} onOpenChange={openGuestDialog}>
-      <DialogContent className="sm:max-w-sm flex flex-col items-center justify-center -translate-y-40">
+      <DialogContent className="sm:max-w-sm flex flex-col items-center justify-center -translate-y-62">
         <VisuallyHidden.Root>
           <DialogTitle>
             Guest Dialog for Unauthorized Actions by Guest

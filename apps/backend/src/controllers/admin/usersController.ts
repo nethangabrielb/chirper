@@ -38,6 +38,7 @@ const userController = (() => {
           username: updatedUser.username,
           email: updatedUser.email,
           avatar: updatedUser.avatar,
+          cover: updatedUser.cover,
           onboarded: user.onboarded,
           followers,
           followings,
@@ -131,40 +132,56 @@ const userController = (() => {
   ) => {
     try {
       // check if there is file
-      if (req.file) {
-        // decode buffer to base64 string
-        const base64 = req.file.buffer.toString('base64');
+      if (req.files && !Array.isArray(req.files)) {
+        for (const keys in req.files) {
+          // decode buffer to base64 string
+          const base64 = req.files[keys][0].buffer.toString('base64');
 
-        // upload file
-        const { data, error } = await client.storage
-          .from('images')
-          .upload(
-            `${req.body.username}-avatar-${Date.now().toString()}`,
-            decode(base64),
-            {
-              cacheControl: '3600',
-              contentType: req.file.mimetype,
-              upsert: false,
-            }
-          );
+          // upload file
+          const { data, error } = await client.storage
+            .from('images')
+            .upload(
+              `${req.body.username}-${keys}-${Date.now().toString()}`,
+              decode(base64),
+              {
+                cacheControl: '3600',
+                contentType: req.files[keys][0].mimetype,
+                upsert: false,
+              }
+            );
 
-        if (error) {
-          throw new Error('There was an error processing the form.');
+          if (error) {
+            throw new Error('There was an error processing the form.');
+          }
+
+          // get the file public link
+          const { data: image } = client.storage
+            .from('images')
+            .getPublicUrl(data.path);
+
+          if (keys === 'avatar') {
+            req.body = { ...req.body, avatar: image.publicUrl };
+          } else if (keys === 'cover') {
+            req.body = { ...req.body, cover: image.publicUrl };
+          }
         }
+      }
 
-        // get the file public link
-        const { data: image } = client.storage
-          .from('images')
-          .getPublicUrl(data.path);
+      const reqUser = req.user as User;
 
-        req.body = { ...req.body, avatar: image.publicUrl };
+      if (Number(req.params.id) !== reqUser.id) {
+        throw new Error('You are unauthorized to perform this action.');
       }
 
       const updatedUser = await UserService.updateUser(
         Number(req.params.id),
         req.body
       );
-      return res.json({ status: 'success', data: updatedUser });
+      return res.json({
+        status: 'success',
+        message: 'Profile updated successfully!',
+        data: updatedUser,
+      });
     } catch (err: unknown) {
       return res.json({
         status: 'error',
@@ -195,7 +212,7 @@ const userController = (() => {
     res: Response
   ) => {
     try {
-      let user: null | User = null;
+      let user;
       const propertyToCheck = req.query.property;
       const value = req.query.value;
 

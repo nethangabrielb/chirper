@@ -1,3 +1,5 @@
+import { EditProfile } from "@/components/edit-profile-dialog";
+
 const userApi = (() => {
   const getUsersChatlist = async () => {
     const res = await fetch(
@@ -59,11 +61,31 @@ const userApi = (() => {
     return data.data;
   };
 
+  const updateUserData = async (userId: number, userData: FormData) => {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API}/api/users/${userId}`,
+      {
+        method: "PUT",
+        credentials: "include",
+        body: userData,
+      },
+    );
+
+    if (!res.ok) {
+      throw new Error("Error fetching from the server.");
+    }
+
+    const data = await res.json();
+
+    return data;
+  };
+
   return {
     getUsersChatlist,
     getUserSearchResults,
     getUserFollowList,
     getUserFollowListLimit,
+    updateUserData,
   };
 })();
 

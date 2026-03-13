@@ -13,6 +13,7 @@ const userSchema = z.object({
   avatar: z.string(),
   onboarded: z.boolean(),
   createdAt: z.date(),
+  cover: z.string(),
   _count: z.object({
     Followers: z.number(),
     Followings: z.number(),
@@ -42,6 +43,7 @@ const userPartialSchema = z.object({
   name: z.string(),
   username: z.string(),
   avatar: z.string(),
+  cover: z.string(),
   _count: z
     .object({
       Following: z.number(),

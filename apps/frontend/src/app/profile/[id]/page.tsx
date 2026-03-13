@@ -15,6 +15,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 
 import { ActionButton } from "@/components/button";
+import EditProfileDialog from "@/components/edit-profile-dialog";
 import { CreatePostDialog } from "@/components/post-dialog";
 
 import postApi from "@/lib/api/post";
@@ -87,9 +88,11 @@ const ProfileSideButton = ({
   if (currentUserId && visitedUserId) {
     if (currentUserId === visitedUserId) {
       return (
-        <ActionButton className="hover:bg-primary! border border-primary absolute right-0 mr-4 bg-primary text-white">
-          Edit profile
-        </ActionButton>
+        <EditProfileDialog>
+          <ActionButton className="hover:bg-primary!  absolute right-0 mr-4 bg-primary text-white">
+            Edit profile
+          </ActionButton>
+        </EditProfileDialog>
       );
     } else if (optimisticFollow) {
       return (
@@ -231,7 +234,7 @@ const Profile = () => {
           {/* cover photo */}
           <div className="flex-1 h-[50%] border-x border-x-border">
             <img
-              src="/blue.jpg"
+              src={user?.cover ?? "/blue.jpg"}
               alt="Default profile cover"
               className="h-full w-full object-cover"
             />
@@ -270,7 +273,7 @@ const Profile = () => {
               <div className="flex items-center gap-2 my-4">
                 <Calendar size={18} className="text-darker"></Calendar>
                 <p className="text-darker ">
-                  Join on {format(user?.createdAt as Date, "LLLL yyyy")}
+                  Joined on {format(user?.createdAt as Date, "LLLL yyyy")}
                 </p>
               </div>
             )}

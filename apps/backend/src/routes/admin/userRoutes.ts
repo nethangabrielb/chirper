@@ -16,7 +16,11 @@ userRouter.use(authMiddleware);
 
 userRouter.get('/', userController.getAllUsers);
 userRouter.get('/:id', userController.getUser);
-userRouter.put('/:id', upload.single('avatar'), userController.updateUser);
+userRouter.put(
+  '/:id',
+  upload.fields([{ name: 'avatar' }, { name: 'cover' }]),
+  userController.updateUser
+);
 userRouter.delete('/:id', userController.deleteUser);
 
 export default userRouter;

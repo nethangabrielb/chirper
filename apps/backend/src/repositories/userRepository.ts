@@ -23,6 +23,7 @@ const UserRepository = {
         createdAt: true,
         avatar: true,
         email: true,
+        cover: true,
         _count: {
           select: {
             Followers: true,

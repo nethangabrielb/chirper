@@ -2,7 +2,6 @@
 
 import useRooms from "@/app/messages/hooks/useRooms";
 import useNotifications from "@/hooks/useNotifications";
-import useMessagesNotifications from "@/stores/messages.store";
 import useUser from "@/stores/user.store";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -58,7 +57,6 @@ let links: Array<{ title: string; url: string }> = [
 
 const Sidebar = ({ children }: Props) => {
   const router = useRouter();
-  const setUser = useUser((state) => state.setUser);
   const removeUser = useUser((state) => state.removeUser);
   const user = useUser((state) => state.user) as User;
   const [visible, setVisible] = useState<boolean>(false);
@@ -68,29 +66,6 @@ const Sidebar = ({ children }: Props) => {
   const { notificationsCount, resetNotificationsCache } =
     useNotifications(user);
   const { newMessagesCount } = useRooms();
-
-  const { data } = useQuery({
-    queryKey: ["user"],
-    queryFn: async () => {
-      if (path !== "/") {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API}/api/users?current=true`,
-          {
-            credentials: "include",
-          },
-        );
-
-        if (!res.ok) {
-          throw new Error("Error fetching from the server.");
-        }
-        const data = await res.json();
-        const user = data.data;
-        setUser(user);
-        return user;
-      }
-    },
-    refetchOnWindowFocus: false,
-  });
 
   const { data: followListAside } = useQuery({
     queryKey: ["followList", user?.id],
@@ -112,10 +87,12 @@ const Sidebar = ({ children }: Props) => {
     onSuccess: (data) => {
       if (data.status === "success") {
         router.push("/");
-        removeUser();
       } else {
         toast.error("Error logging out", { description: data.message });
       }
+    },
+    onSettled: () => {
+      removeUser();
     },
   });
 
@@ -168,7 +145,7 @@ const Sidebar = ({ children }: Props) => {
       },
     );
     links = updatedlinks;
-  }, [user]);
+  }, [user?.id]);
 
   const logOut = () => {
     mutation.mutate();
@@ -254,7 +231,7 @@ const Sidebar = ({ children }: Props) => {
               </CreatePostDialog>
             </Activity>
             <LogoutDropdown
-              data={data}
+              data={user}
               logoutHandler={logOut}
               className={cn(path.includes("/messages") && "w-fit lg:w-0!")}
               shrinkView={path.includes("/messages")}
@@ -269,14 +246,14 @@ const Sidebar = ({ children }: Props) => {
             <div className="flex flex-col border border-border p-3 rounded-xl gap-4">
               <h1>Who to follow</h1>
               <section className="flex flex-col gap-4">
-                {data &&
-                  followListAside?.map((user: UserPartial) => {
+                {user &&
+                  followListAside?.map((followUser: UserPartial) => {
                     return (
                       <FollowListRow
-                        isUser={user.id === data?.id}
-                        user={user}
+                        isUser={followUser.id === user?.id}
+                        user={followUser}
                         key={user.id}
-                        currentUser={data}
+                        currentUser={user}
                       ></FollowListRow>
                     );
                   })}

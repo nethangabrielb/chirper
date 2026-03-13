@@ -8,6 +8,7 @@ import { Toaster } from "@/components/ui/sonner";
 import QueryProvider from "@/providers/query-provider";
 import SocketProvider from "@/providers/socket-provider";
 import { ThemeProvider } from "@/providers/theme-provider";
+import UserProvider from "@/providers/user-provider";
 
 import "./globals.css";
 
@@ -36,11 +37,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <SocketProvider>
-            <QueryProvider>
-              <Sidebar>{children}</Sidebar>
-            </QueryProvider>
-          </SocketProvider>
+          <QueryProvider>
+            <UserProvider>
+              <SocketProvider>
+                <Sidebar>{children}</Sidebar>
+              </SocketProvider>
+            </UserProvider>
+          </QueryProvider>
         </ThemeProvider>
       </body>
     </html>

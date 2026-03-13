@@ -13,19 +13,19 @@ const SocketProvider = ({ children }: { children: ReactNode }) => {
   const prevUser = useRef(user);
 
   useEffect(() => {
-    if (user.id !== prevUser.current.id) {
+    if (user?.id !== prevUser?.current?.id) {
       if (!_.isEmpty(user) && socket.disconnected) {
         socket.connect();
       }
     }
 
     return () => {
-      if (socket.connected && user.id === prevUser.current.id) {
+      if (socket.connected && user?.id === prevUser?.current?.id) {
         socket.disconnect();
       }
       prevUser.current = user;
     };
-  }, [user.id]);
+  }, [user?.id]);
 
   return <>{children}</>;
 };

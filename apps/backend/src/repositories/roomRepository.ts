@@ -8,7 +8,7 @@ const roomRepository = {
     await prisma.room.create({
       data: {
         users: {
-          connect: data.users.map(user => ({ id: user.id })),
+          connect: data.users.map(user => ({ id: user?.id })),
         },
       },
     }),
@@ -43,9 +43,9 @@ const roomRepository = {
     await prisma.room.findFirst({
       where: {
         AND: [
-          { users: { every: { id: { in: users.map(user => user.id) } } } },
+          { users: { every: { id: { in: users.map(user => user?.id) } } } },
           ...users.map(user => ({
-            users: { some: { id: user.id } },
+            users: { some: { id: user?.id } },
           })),
         ],
       },

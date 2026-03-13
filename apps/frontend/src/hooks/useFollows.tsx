@@ -1,4 +1,5 @@
 import notificationHandler from "@/socket/handlers/notification";
+import useGuestDialog from "@/stores/guest-dialog.store";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { startTransition, useEffect, useOptimistic, useState } from "react";
@@ -31,7 +32,7 @@ const useFollows = ({
   visitedUserId,
 }: Props) => {
   const queryClient = useQueryClient();
-
+  const openGuestDialog = useGuestDialog((state) => state.setOpenGuestDialog);
   // Follow information between current user and visited user for mutation calls that
   // needs information on the specific follow (e.g., Follow ID)
   const [follow, setFollow] = useState<Follow | null>(null);
@@ -48,6 +49,10 @@ const useFollows = ({
 
   const followMutation = useMutation({
     mutationFn: async () => {
+      if (currentUser?.isGuest) {
+        openGuestDialog(true);
+        return;
+      }
       startTransition(() => {
         addOptimisticFollow(true);
       });
@@ -59,7 +64,6 @@ const useFollows = ({
         setIsUserFollowing(true);
         setFollow(data.data);
         if (currentUser && visitedUserId !== currentUser?.id) {
-          console.log("Following");
           notificationHandler.emitFollowNotification(
             currentUser,
             visitedUserId,
@@ -76,6 +80,10 @@ const useFollows = ({
 
   const unfollowMutation = useMutation({
     mutationFn: async () => {
+      if (currentUser?.isGuest) {
+        openGuestDialog(true);
+        return;
+      }
       startTransition(() => {
         addOptimisticFollow(false);
       });

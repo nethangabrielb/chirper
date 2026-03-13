@@ -20,7 +20,7 @@ const useNotifications = (user: User) => {
 
   // query for user's notifications
   const { data: notifications } = useQuery({
-    queryKey: ["notifications", user.id],
+    queryKey: ["notifications", user?.id],
     queryFn: async () => {
       const notifications = await notificationsApi.getNotifications();
       return notifications.data;
@@ -42,9 +42,9 @@ const useNotifications = (user: User) => {
       receiverId: number,
       notification: NotificationBody,
     ) => {
-      if (receiverId === user.id) {
+      if (receiverId === user?.id) {
         queryClient.setQueryData(
-          ["notifications", user.id],
+          ["notifications", user?.id],
           (old: NotificationBody[]) => {
             return [...old, { ...notification, unread: true }].sort(
               (a, b) =>
@@ -61,7 +61,7 @@ const useNotifications = (user: User) => {
     return () => {
       socket.off("notification", notificationHandler);
     };
-  }, [user.id]);
+  }, [user?.id]);
 
   const notificationsCount = notifications?.filter(
     (notification: NotificationBody) => notification.unread,

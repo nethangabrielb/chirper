@@ -63,7 +63,7 @@ const ChatRoom = ({
   );
   const roomOtherUser =
     currentRoom &&
-    currentRoom?.users?.find((user) => user.id !== currentUser.id);
+    currentRoom?.users?.find((user) => user?.id !== currentUser?.id);
 
   useEffect(() => {
     if (typeInputRef?.current?.getBoundingClientRect()) {
@@ -88,7 +88,7 @@ const ChatRoom = ({
       socket.emit(
         "joinRoom",
         String(paramsId),
-        currentUser.id,
+        currentUser?.id,
         (res: { status: string }) => {
           if (res.status === "ok") {
             socket.on("newMessage", handler);
@@ -108,7 +108,7 @@ const ChatRoom = ({
       socket.emit(
         "leaveRoom",
         String(paramsId),
-        currentUser.id,
+        currentUser?.id,
         (res: { status: string }) => {
           if (res.status === "ok") {
             socket.off("newMessage", handler);
@@ -204,7 +204,7 @@ const ChatRoom = ({
           <Message
             message={message.content}
             key={message.id ?? message.tempId}
-            className={`${currentUser.id === message.senderId ? "bg-primary self-end" : "bg-accent"}`}
+            className={`${currentUser?.id === message.senderId ? "bg-primary self-end" : "bg-accent"}`}
             loading={message.loading}
           ></Message>
         ))}

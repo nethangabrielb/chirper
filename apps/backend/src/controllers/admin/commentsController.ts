@@ -14,7 +14,7 @@ const commentsController = (() => {
       const user = req.user as User;
 
       const data = {
-        userId: user.id,
+        userId: user?.id,
         replyId: Number(req.body.replyId),
         content: req.body.content,
       };

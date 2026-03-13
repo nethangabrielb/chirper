@@ -1,5 +1,6 @@
 import PostSchema from "@/app/home/schema/create-post.schema";
 import { NewPost } from "@/app/home/types/create-post.type";
+import useGuestDialog from "@/stores/guest-dialog.store";
 import useUser from "@/stores/user.store";
 import data from "@emoji-mart/data/sets/14/twitter.json";
 import Picker from "@emoji-mart/react";
@@ -60,6 +61,7 @@ export function CreatePostDialog({ children }: { children: React.ReactNode }) {
   const [openDialog, setOpenDialog] = useState(false);
   const [openEmojiPicker, setOpenEmojiPicker] = useState(false);
   const [filePreview, setFilePreview] = useState<File | null>(null);
+  const openGuestDialog = useGuestDialog((state) => state.setOpenGuestDialog);
   const fileInput = useRef<null | HTMLInputElement>(null);
   const user = useUser((state) => state.user) as User;
   const queryClient = useQueryClient();
@@ -74,7 +76,7 @@ export function CreatePostDialog({ children }: { children: React.ReactNode }) {
     resolver: zodResolver(PostSchema),
     defaultValues: {
       imageUrl: null,
-      userId: user.id,
+      userId: user?.id,
     },
   });
 
@@ -128,8 +130,12 @@ export function CreatePostDialog({ children }: { children: React.ReactNode }) {
   });
 
   const createPost: SubmitHandler<NewPost> = () => {
+    if (user.isGuest) {
+      openGuestDialog(true);
+      return;
+    }
     const values = getValues();
-    const updatedValues = { ...values, userId: user.id };
+    const updatedValues = { ...values, userId: user?.id };
 
     mutation.mutate(updatedValues);
   };

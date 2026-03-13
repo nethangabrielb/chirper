@@ -44,7 +44,7 @@ passport.use(
 
           await prisma.federatedCredentials.create({
             data: {
-              userId: user.id,
+              userId: user?.id,
               provider: issuer,
               subject: profile.id,
             },

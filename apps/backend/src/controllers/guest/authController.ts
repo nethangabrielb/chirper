@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import path, { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -42,18 +42,44 @@ const authController = (() => {
     res: Response
   ) => {
     try {
-      const token = await UserService.loginUser(req.body);
+      if (req.query.guest) {
+        const guest = {
+          id: 999999999,
+          name: 'Guest',
+          username: 'guest_user',
+          avatar:
+            'https://bcezmxfxuctgrkiavycl.supabase.co/storage/v1/object/public/images/default.svg',
+          cover: '/blue.jpg',
+          isGuest: true,
+          _count: { Followers: 0, Followings: 0, Post: 0 },
+        };
 
-      res.clearCookie('token', { httpOnly: true });
-      res.cookie('token', token, {
-        httpOnly: true,
-        path: '/',
-        maxAge: 60 * 60 * 24 * 14,
-      });
-      res.status(200).json({
-        status: 'success',
-        message: 'Log in success!',
-      });
+        const token = jwt.sign(guest, process.env.JWT_SECRET!);
+
+        res.clearCookie('token', { httpOnly: true });
+        res.cookie('token', token, {
+          httpOnly: true,
+          path: '/',
+          maxAge: 1000 * 60 * 60 * 24 * 14,
+        });
+        res.status(200).json({
+          status: 'success',
+          message: 'Log in success!',
+        });
+      } else {
+        const token = await UserService.loginUser(req.body);
+
+        res.clearCookie('token', { httpOnly: true });
+        res.cookie('token', token, {
+          httpOnly: true,
+          path: '/',
+          maxAge: 1000 * 60 * 60 * 24 * 14,
+        });
+        res.status(200).json({
+          status: 'success',
+          message: 'Log in success!',
+        });
+      }
     } catch (err: unknown) {
       res.status(err instanceof Error ? 400 : 500).json({
         status: 'error',
@@ -94,9 +120,15 @@ const authController = (() => {
       return res.json({ authorized: false });
     }
 
-    const user = jwt.verify(token, process.env.JWT_SECRET!) as User;
+    const payload = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
 
-    const verifyUser = await UserRepository.findById(user?.id);
+    const user: User = payload as User;
+
+    if (user.isGuest) {
+      return res.json({ authorized: true });
+    }
+
+    const verifyUser = await UserRepository.findById((user as User)?.id);
 
     if (verifyUser) {
       return res.json({ authorized: true });

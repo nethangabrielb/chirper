@@ -28,13 +28,16 @@ const userController = (() => {
   const getAllUsers = async (_req: Request, res: Response) => {
     try {
       const user: User = _req.user as User;
-      const updatedUser = await UserService.getUserById(user.id);
       if (_req.query.current) {
-        const followers = await followRepository.findFollowers(user.id);
-        const followings = await followRepository.findFollowings(user.id);
-        const rooms = await roomService.getUserRooms(user.id);
+        if ((_req.user as User).isGuest) {
+          return res.json({ status: 'success', data: _req.user });
+        }
+        const updatedUser = await UserService.getUserById(user?.id);
+        const followers = await followRepository.findFollowers(user?.id);
+        const followings = await followRepository.findFollowings(user?.id);
+        const rooms = await roomService.getUserRooms(user?.id);
         const modifiedUser = {
-          id: user.id,
+          id: user?.id,
           name: updatedUser.name,
           username: updatedUser.username,
           email: updatedUser.email,
@@ -47,7 +50,7 @@ const userController = (() => {
         };
         return res.json({ status: 'success', data: modifiedUser });
       } else if (_req.query.chatUsersList) {
-        const followings = await followRepository.findFollowings(user.id);
+        const followings = await followRepository.findFollowings(user?.id);
 
         if (!followings) {
           return res.json({
@@ -60,7 +63,7 @@ const userController = (() => {
           following => following.following
         );
 
-        const users = await UserService.getUserChatList(user.id, followings);
+        const users = await UserService.getUserChatList(user?.id, followings);
 
         if (!users) {
           return res.json({
@@ -89,22 +92,36 @@ const userController = (() => {
         let users;
         const currentUser = _req.user as User;
         if (_req.query.limit) {
-          users = await UserService.getFollowListsLimit(
-            currentUser.id,
-            Number(_req.query.limit)
-          );
+          if (!currentUser.isGuest) {
+            users = await UserService.getFollowListsLimit(
+              Number(_req.query.limit),
+              currentUser?.id
+            );
 
-          if (!users) {
-            throw new Error('Failed to fetch users');
+            if (!users) {
+              throw new Error('Failed to fetch users');
+            }
+
+            return res.json({
+              status: 'success',
+              data: users,
+            });
+          } else {
+            users = await UserService.getFollowListsLimit(
+              Number(_req.query.limit)
+            );
+            if (!users) {
+              throw new Error('Failed to fetch users');
+            }
+
+            return res.json({
+              status: 'success',
+              data: users,
+            });
           }
-
-          return res.json({
-            status: 'success',
-            data: users,
-          });
         } else if (_req.query.page) {
           const pageParam = Number(_req.query.page);
-          users = await UserService.getFollowLists(currentUser.id, pageParam);
+          users = await UserService.getFollowLists(currentUser?.id, pageParam);
 
           if (!users) {
             throw new Error('Failed to fetch users');
@@ -236,7 +253,7 @@ const userController = (() => {
       if (token) {
         currentUser = jwt.verify(token, process.env.JWT_SECRET!) as User;
 
-        currentUserId = currentUser.id;
+        currentUserId = currentUser?.id;
       }
 
       // check either username or email of it is taken

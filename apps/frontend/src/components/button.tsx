@@ -1,5 +1,7 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
+
 import { useEffect, useState } from "react";
 
 import Image from "next/image";
@@ -14,7 +16,7 @@ type FormButtonProps = {
   icon?: string;
   children: string;
   outline?: boolean;
-  type?: "google" | "login" | "register";
+  type?: "google" | "login" | "register" | "guest";
   className?: string;
   disabled?: boolean;
 };
@@ -37,6 +39,7 @@ const FormButton = ({
   disabled,
 }: FormButtonProps) => {
   const router = useRouter();
+  const queryClient = useQueryClient();
   useEffect(() => {
     window.addEventListener("message", (event) => {
       if (event.data) {
@@ -49,7 +52,16 @@ const FormButton = ({
     });
   }, []);
 
-  const clickHandler = (path: string | undefined) => {
+  const signInGuest = async () => {
+    const res = await authApi.loginAsGuest();
+    if (res.status === "success") {
+      await queryClient.refetchQueries({ queryKey: ["user"] });
+      await queryClient.refetchQueries({ queryKey: ["followList"] });
+      router.push("/home");
+    }
+  };
+
+  const clickHandler = async (path: string | undefined) => {
     switch (path) {
       case "google":
         authApi.googleAuth();
@@ -59,6 +71,9 @@ const FormButton = ({
         break;
       case "login":
         router.push("/login");
+        break;
+      case "guest":
+        await signInGuest();
         break;
     }
   };

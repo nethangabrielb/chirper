@@ -1,4 +1,5 @@
 import useFollows from "@/hooks/useFollows";
+import useGuestDialog from "@/stores/guest-dialog.store";
 
 import Link from "next/link";
 
@@ -20,15 +21,16 @@ const FollowListRow = ({
   currentUser: User;
   className?: string;
 }) => {
+  const openGuestDialog = useGuestDialog((state) => state.setOpenGuestDialog);
   const { optimisticFollow, followMutation, unfollowMutation } = useFollows({
-    currentUserId: currentUser.id,
+    currentUserId: currentUser?.id,
     currentUser,
     currentUserFollowings: currentUser.followings,
-    visitedUserId: user.id,
+    visitedUserId: user?.id,
   });
 
   return (
-    <Link href={`/profile/${user.id}`}>
+    <Link href={`/profile/${user?.id}`}>
       <section
         className={cn("flex items-center justify-between group", className)}
       >
@@ -57,17 +59,25 @@ const FollowListRow = ({
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              unfollowMutation.mutate();
+              if (!currentUser.isGuest) {
+                unfollowMutation.mutate();
+              } else {
+                openGuestDialog(true);
+              }
             }}
           >
             Following
           </ActionButton>
-        ) : optimisticFollow === false && currentUser.id === user.id ? (
+        ) : optimisticFollow === false && currentUser?.id === user?.id ? (
           <ActionButton
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              followMutation.mutate();
+              if (!currentUser.isGuest) {
+                followMutation.mutate();
+              } else {
+                openGuestDialog(true);
+              }
             }}
           >
             Follow back
@@ -77,7 +87,11 @@ const FollowListRow = ({
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              followMutation.mutate();
+              if (!currentUser.isGuest) {
+                followMutation.mutate();
+              } else {
+                openGuestDialog(true);
+              }
             }}
           >
             Follow

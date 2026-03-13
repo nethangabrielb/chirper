@@ -1,21 +1,21 @@
 import { create } from "zustand";
 
-import type { User } from "@/types/user";
+import type { User, UserPartial } from "@/types/user";
 
 type UserState = {
-  user: User | {};
-  visitedUser: User | {};
-  setUser: (arg0: User) => void;
+  user: User | null | UserPartial;
+  visitedUser: User | null;
+  setUser: (arg0: User | UserPartial) => void;
   setVisitedUser: (arg0: User) => void;
   removeUser: () => void;
 };
 
 const useUser = create<UserState>((set) => ({
-  user: {},
-  visitedUser: {},
+  user: null,
+  visitedUser: null,
   setUser: (user) => set({ user }),
   setVisitedUser: (visitedUser) => set({ visitedUser }),
-  removeUser: () => set({ user: {} }),
+  removeUser: () => set({ user: null }),
 }));
 
 export default useUser;

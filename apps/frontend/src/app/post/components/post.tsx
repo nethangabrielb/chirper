@@ -3,6 +3,7 @@
 import { CurrentUserPostDropdown } from "@/app/home/components/post-controls";
 import { useBookmark } from "@/hooks/useBookmark";
 import notificationHandler from "@/socket/handlers/notification";
+import useGuestDialog from "@/stores/guest-dialog.store";
 import useUser from "@/stores/user.store";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Bookmark, Heart, MessageCircle } from "lucide-react";
@@ -39,6 +40,8 @@ const PostSingle = ({ post, className, settingsCn, buttonCn }: Props) => {
   const queryClient = useQueryClient();
   const router = useRouter();
   const user = useUser((state) => state.user) as User;
+  const openGuestDialog = useGuestDialog((state) => state.setOpenGuestDialog);
+
   // put likes in a state to use as source of truth
   // for useOptimistic hooks
   const [likes, setLikes] = useState(post?._count.Like);
@@ -91,6 +94,10 @@ const PostSingle = ({ post, className, settingsCn, buttonCn }: Props) => {
   // LIKE/UNLIKE POST API INTERFACE
   const likeMutation = useMutation({
     mutationFn: async () => {
+      if (user.isGuest) {
+        openGuestDialog(true);
+        return;
+      }
       if (userHasLiked) {
         startTransition(() => {
           addOptimisticLikes(-1);
@@ -146,7 +153,7 @@ const PostSingle = ({ post, className, settingsCn, buttonCn }: Props) => {
     <div
       className={`flex flex-col gap-4 p-4 border-b border-b-border relative transition-all ${className}`}
     >
-      <Activity mode={user.id === post.userId ? "visible" : "hidden"}>
+      <Activity mode={user?.id === post.userId ? "visible" : "hidden"}>
         <CurrentUserPostDropdown
           handleDelete={handleDelete}
           settingsCn={settingsCn}
@@ -162,7 +169,7 @@ const PostSingle = ({ post, className, settingsCn, buttonCn }: Props) => {
             </p>
             <Link
               className="text-darker font-light text-[15px] hover:underline"
-              href={`/profile/${post.user.id}`}
+              href={`/profile/${post.user?.id}`}
             >
               @{post.user.username}
             </Link>

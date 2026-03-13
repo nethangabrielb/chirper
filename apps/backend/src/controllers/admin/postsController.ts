@@ -47,7 +47,7 @@ const postsController = (() => {
     try {
       if (req.query.bookmarks && req.query.bookmarks === 'true') {
         const user = req.user as User;
-        const posts = await postService.getBookmarkedPosts(user.id);
+        const posts = await postService.getBookmarkedPosts(user?.id);
 
         res.json({
           status: 'success',
@@ -88,10 +88,10 @@ const postsController = (() => {
         const user = req.user as User;
 
         if (cursor === 'undefined') {
-          posts = await postService.getPostsByFollowingInitial(user.id);
+          posts = await postService.getPostsByFollowingInitial(user?.id);
         } else {
           posts = await postService.getPostsByFollowing(
-            user.id,
+            user?.id,
             Number(cursor)
           );
         }

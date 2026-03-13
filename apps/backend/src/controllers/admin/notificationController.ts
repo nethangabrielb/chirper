@@ -8,7 +8,7 @@ const notificationController = (() => {
   const getAll = async (req: Request, res: Response) => {
     try {
       const user = req.user as User;
-      const notifications = await notificationService.getAll(user.id);
+      const notifications = await notificationService.getAll(user?.id);
 
       return res.json({
         status: 'success',

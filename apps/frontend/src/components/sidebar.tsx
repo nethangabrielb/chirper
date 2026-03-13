@@ -2,7 +2,7 @@
 
 import useRooms from "@/app/messages/hooks/useRooms";
 import useNotifications from "@/hooks/useNotifications";
-import useMessagesNotifications from "@/stores/messages.store";
+import useGuestDialog from "@/stores/guest-dialog.store";
 import useUser from "@/stores/user.store";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -14,6 +14,7 @@ import { usePathname, useRouter } from "next/navigation";
 
 import { ActionButton } from "@/components/button";
 import FollowListRow from "@/components/follow-list";
+import GuestDialog from "@/components/guest-dialog";
 import Icon from "@/components/icon";
 import NavIcon from "@/components/navIcon";
 import { CreatePostDialog } from "@/components/post-dialog";
@@ -58,52 +59,25 @@ let links: Array<{ title: string; url: string }> = [
 
 const Sidebar = ({ children }: Props) => {
   const router = useRouter();
-  const setUser = useUser((state) => state.setUser);
   const removeUser = useUser((state) => state.removeUser);
   const user = useUser((state) => state.user) as User;
   const [visible, setVisible] = useState<boolean>(false);
   const [asideVisible, setAsideVisible] = useState<boolean>(false);
   const path = usePathname();
-  const unreadMessagesCount = useMessagesNotifications(
-    (state) => state.unreadMessages,
-  );
+  const openGuestDialog = useGuestDialog((state) => state.setOpenGuestDialog);
   const { notificationsCount, resetNotificationsCache } =
     useNotifications(user);
   const { newMessagesCount } = useRooms();
 
-  const { data } = useQuery({
-    queryKey: ["user"],
-    queryFn: async () => {
-      if (path !== "/") {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API}/api/users?current=true`,
-          {
-            credentials: "include",
-          },
-        );
-
-        if (!res.ok) {
-          throw new Error("Error fetching from the server.");
-        }
-        const data = await res.json();
-        const user = data.data;
-        setUser(user);
-        return user;
-      }
-    },
-    refetchOnWindowFocus: false,
-  });
-
   const { data: followListAside } = useQuery({
-    queryKey: ["followList", user],
+    queryKey: ["followList", user?.id],
     queryFn: async () => {
-      if (path !== "/") {
-        const res = await userApi.getUserFollowListLimit(3);
-        return res;
-      }
+      const res = await userApi.getUserFollowListLimit(3);
+      return res;
     },
     refetchOnMount: false,
     refetchOnWindowFocus: false,
+    retry: false,
   });
 
   const mutation = useMutation({
@@ -113,11 +87,13 @@ const Sidebar = ({ children }: Props) => {
     },
     onSuccess: (data) => {
       if (data.status === "success") {
-        removeUser();
         router.push("/");
       } else {
         toast.error("Error logging out", { description: data.message });
       }
+    },
+    onSettled: () => {
+      removeUser();
     },
   });
 
@@ -164,13 +140,13 @@ const Sidebar = ({ children }: Props) => {
     const updatedlinks: Array<{ title: string; url: string }> = links.map(
       (link) => {
         if (link.title === "Profile") {
-          link.url = `/profile/${user.id}`;
+          link.url = `/profile/${user?.id}`;
         }
         return link;
       },
     );
     links = updatedlinks;
-  }, [user]);
+  }, [user?.id]);
 
   const logOut = () => {
     mutation.mutate();
@@ -209,7 +185,12 @@ const Sidebar = ({ children }: Props) => {
                     "text-lg flex items-center gap-6 w-fit hover:bg-muted transition-all p-3 rounded-4xl px-8 relative",
                     path.includes("/messages") && "p-3!",
                   )}
-                  onClick={() => {
+                  onClick={(e) => {
+                    if (user?.isGuest && link.url !== "/home") {
+                      e.preventDefault();
+                      openGuestDialog(true);
+                      return;
+                    }
                     if (link.title === "Notifications") {
                       resetNotificationsCache();
                     }
@@ -254,7 +235,7 @@ const Sidebar = ({ children }: Props) => {
               </CreatePostDialog>
             </Activity>
             <LogoutDropdown
-              data={data}
+              data={user}
               logoutHandler={logOut}
               className={cn(path.includes("/messages") && "w-fit lg:w-0!")}
               shrinkView={path.includes("/messages")}
@@ -269,28 +250,36 @@ const Sidebar = ({ children }: Props) => {
             <div className="flex flex-col border border-border p-3 rounded-xl gap-4">
               <h1>Who to follow</h1>
               <section className="flex flex-col gap-4">
-                {data &&
-                  followListAside?.map((user: UserPartial) => {
+                {user &&
+                  followListAside?.map((followUser: UserPartial) => {
                     return (
                       <FollowListRow
-                        isUser={user.id === data?.id}
-                        user={user}
-                        key={user.id}
-                        currentUser={data}
+                        isUser={followUser.id === user?.id}
+                        user={followUser}
+                        key={followUser.id}
+                        currentUser={user}
                       ></FollowListRow>
                     );
                   })}
               </section>
-              <Link
-                href="/connect-people"
-                className="text-sm text-primary font-light"
+              <button
+                className="text-sm text-primary font-light hover:underline w-fit"
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (user.isGuest) {
+                    openGuestDialog(true);
+                  } else {
+                    router.push("/connect-people");
+                  }
+                }}
               >
                 Show more
-              </Link>
+              </button>
             </div>
           </aside>
         </div>
       </Activity>
+      <GuestDialog></GuestDialog>
     </div>
   );
 };

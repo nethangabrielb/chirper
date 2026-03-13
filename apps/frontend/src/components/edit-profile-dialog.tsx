@@ -103,8 +103,6 @@ const EditProfileDialog = ({ children }: { children: ReactNode }) => {
   // CREATE POSTS MUTATION
   const mutation = useMutation({
     mutationFn: async (values: EditProfile) => {
-      console.log(values);
-
       const formData = new FormData();
 
       for (const key in values) {
@@ -116,7 +114,7 @@ const EditProfileDialog = ({ children }: { children: ReactNode }) => {
         }
       }
 
-      const res = await userApi.updateUserData(user.id, formData);
+      const res = await userApi.updateUserData(user?.id, formData);
       return res;
     },
     onSuccess: async (data) => {
@@ -191,8 +189,6 @@ const EditProfileDialog = ({ children }: { children: ReactNode }) => {
   const submitHandler: SubmitHandler<EditProfile> = (values) => {
     mutation.mutate(values);
   };
-
-  console.log(mutation.isPending);
 
   return (
     <Dialog open={openDialog} onOpenChange={setOpenDialog}>

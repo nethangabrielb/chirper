@@ -21,7 +21,7 @@ async function main() {
     for (let i = 0; i < postCount; i++) {
       posts.push({
         content: faker.lorem.sentence(10),
-        userId: user.id,
+        userId: user?.id,
       });
     }
   }

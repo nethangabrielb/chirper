@@ -22,7 +22,7 @@ const Notifications = () => {
   const user = useUser((state) => state.user) as User;
   // query for user's notifications
   const { data: notifications, isPending } = useQuery({
-    queryKey: ["notifications", user.id],
+    queryKey: ["notifications", user?.id],
     queryFn: async () => {
       const notifications = await notificationsApi.getNotifications();
       return notifications.data;

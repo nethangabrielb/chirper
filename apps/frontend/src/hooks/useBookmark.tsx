@@ -1,3 +1,4 @@
+import useGuestDialog from "@/stores/guest-dialog.store";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -15,10 +16,10 @@ type Props = {
 
 export const useBookmark = ({ post, user }: Props) => {
   const queryClient = useQueryClient();
-
+  const openGuestDialog = useGuestDialog((state) => state.setOpenGuestDialog);
   const [userHasBookmarked, setUserHasBookmarked] = useState(
-    post?.bookmarks?.find((bookmark) => bookmark.userId === user.id)?.userId ===
-      user.id,
+    post?.bookmarks?.find((bookmark) => bookmark.userId === user?.id)
+      ?.userId === user?.id,
   );
 
   const [optimisticBookmark, addOptimisticBookmark] = useOptimistic(
@@ -29,19 +30,23 @@ export const useBookmark = ({ post, user }: Props) => {
 
   useEffect(() => {
     setUserHasBookmarked(
-      post?.bookmarks?.find((bookmark) => bookmark.userId === user.id)
-        ?.userId === user.id,
+      post?.bookmarks?.find((bookmark) => bookmark.userId === user?.id)
+        ?.userId === user?.id,
     );
-  }, [post, user]);
+  }, [post, user?.id]);
 
   const bookmarkMutation = useMutation({
     mutationFn: async () => {
+      if (user?.isGuest) {
+        openGuestDialog(true);
+        return;
+      }
       if (userHasBookmarked) {
         startTransition(() => {
           addOptimisticBookmark(false);
         });
         const bookmark = post?.bookmarks?.find(
-          (bookmark) => bookmark.userId === user.id,
+          (bookmark) => bookmark.userId === user?.id,
         );
         if (bookmark) {
           const res = await bookmarkApi.removeBookmarkOnPost(bookmark?.id);
@@ -51,7 +56,7 @@ export const useBookmark = ({ post, user }: Props) => {
         startTransition(() => {
           addOptimisticBookmark(true);
         });
-        const res = await bookmarkApi.bookmarkPost(user.id, post.id);
+        const res = await bookmarkApi.bookmarkPost(user?.id, post.id);
         return res;
       }
     },

@@ -32,7 +32,7 @@ const ChatRows = ({ params }: { params?: number }) => {
     <div className="flex flex-col">
       {chatRooms?.map((room: RoomType) => {
         const otherUser = room?.users.find(
-          (user) => user.id !== currentUser.id,
+          (user) => user?.id !== currentUser?.id,
         );
         const unreadMessagesCount = room.messages.filter(
           (message: MessageType) =>

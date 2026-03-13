@@ -1,5 +1,7 @@
 "use client";
 
+import useUser from "@/stores/user.store";
+
 import { useEffect, useState } from "react";
 
 import Image from "next/image";
@@ -14,7 +16,7 @@ type FormButtonProps = {
   icon?: string;
   children: string;
   outline?: boolean;
-  type?: "google" | "login" | "register";
+  type?: "google" | "login" | "register" | "guest";
   className?: string;
   disabled?: boolean;
 };
@@ -37,6 +39,7 @@ const FormButton = ({
   disabled,
 }: FormButtonProps) => {
   const router = useRouter();
+  const setUser = useUser((state) => state.setUser);
   useEffect(() => {
     window.addEventListener("message", (event) => {
       if (event.data) {
@@ -49,7 +52,23 @@ const FormButton = ({
     });
   }, []);
 
-  const clickHandler = (path: string | undefined) => {
+  const signInGuest = async () => {
+    const res = await authApi.loginAsGuest();
+    if (res.status === "success") {
+      router.push("/home");
+    }
+    setUser({
+      id: 999999999,
+      name: "Guest",
+      username: "guest_user",
+      avatar: "/default-avatar.png",
+      cover: "/blue.jpg",
+      isGuest: true,
+      _count: { Following: 0 },
+    });
+  };
+
+  const clickHandler = async (path: string | undefined) => {
     switch (path) {
       case "google":
         authApi.googleAuth();
@@ -60,6 +79,8 @@ const FormButton = ({
       case "login":
         router.push("/login");
         break;
+      case "guest":
+        await signInGuest();
     }
   };
 

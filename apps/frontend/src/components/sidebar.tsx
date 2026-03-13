@@ -64,9 +64,7 @@ const Sidebar = ({ children }: Props) => {
   const [visible, setVisible] = useState<boolean>(false);
   const [asideVisible, setAsideVisible] = useState<boolean>(false);
   const path = usePathname();
-  const unreadMessagesCount = useMessagesNotifications(
-    (state) => state.unreadMessages,
-  );
+
   const { notificationsCount, resetNotificationsCache } =
     useNotifications(user);
   const { newMessagesCount } = useRooms();
@@ -113,8 +111,8 @@ const Sidebar = ({ children }: Props) => {
     },
     onSuccess: (data) => {
       if (data.status === "success") {
-        removeUser();
         router.push("/");
+        removeUser();
       } else {
         toast.error("Error logging out", { description: data.message });
       }
@@ -164,7 +162,7 @@ const Sidebar = ({ children }: Props) => {
     const updatedlinks: Array<{ title: string; url: string }> = links.map(
       (link) => {
         if (link.title === "Profile") {
-          link.url = `/profile/${user.id}`;
+          link.url = `/profile/${user?.id}`;
         }
         return link;
       },

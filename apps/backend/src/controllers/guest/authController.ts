@@ -1,12 +1,13 @@
 import { Request, Response } from 'express';
 
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import path, { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
 import UserRepository from '../../repositories/userRepository';
 import UserService from '../../services/userService';
 import type { LoginBody, RegistrationBody } from '../../types/auth';
+import { Guest } from '../../types/guest';
 import { User } from '../../types/user';
 
 const GENERIC_ERROR_MESSAGE = 'An unknown error occurred';
@@ -42,18 +43,34 @@ const authController = (() => {
     res: Response
   ) => {
     try {
-      const token = await UserService.loginUser(req.body);
+      if (req.query.guest) {
+        const guest = { guestId: crypto.randomUUID(), isGuest: true };
+        const token = jwt.sign(guest, process.env.JWT_SECRET!);
 
-      res.clearCookie('token', { httpOnly: true });
-      res.cookie('token', token, {
-        httpOnly: true,
-        path: '/',
-        maxAge: 60 * 60 * 24 * 14,
-      });
-      res.status(200).json({
-        status: 'success',
-        message: 'Log in success!',
-      });
+        res.clearCookie('token', { httpOnly: true });
+        res.cookie('token', token, {
+          httpOnly: true,
+          path: '/',
+          maxAge: 60 * 60 * 24 * 14,
+        });
+        res.status(200).json({
+          status: 'success',
+          message: 'Log in success!',
+        });
+      } else {
+        const token = await UserService.loginUser(req.body);
+
+        res.clearCookie('token', { httpOnly: true });
+        res.cookie('token', token, {
+          httpOnly: true,
+          path: '/',
+          maxAge: 60 * 60 * 24 * 14,
+        });
+        res.status(200).json({
+          status: 'success',
+          message: 'Log in success!',
+        });
+      }
     } catch (err: unknown) {
       res.status(err instanceof Error ? 400 : 500).json({
         status: 'error',
@@ -94,9 +111,17 @@ const authController = (() => {
       return res.json({ authorized: false });
     }
 
-    const user = jwt.verify(token, process.env.JWT_SECRET!) as User;
+    const payload = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
 
-    const verifyUser = await UserRepository.findById(user?.id);
+    const user: Guest | User = payload as Guest | User;
+
+    if ('guestId' in user) {
+      if (user.guestId && user.isGuest) {
+        return res.json({ authorized: true });
+      }
+    }
+
+    const verifyUser = await UserRepository.findById((user as User)?.id);
 
     if (verifyUser) {
       return res.json({ authorized: true });

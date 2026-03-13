@@ -7,6 +7,7 @@ import { postSchema } from "@/schemas/post";
 const userSchema = z.object({
   id: z.number(),
   name: z.string(),
+  isGuest: z.boolean().optional(),
   username: z.string(),
   email: z.email(),
   password: z.string(),
@@ -44,6 +45,7 @@ const userPartialSchema = z.object({
   username: z.string(),
   avatar: z.string(),
   cover: z.string(),
+  isGuest: z.boolean(),
   _count: z
     .object({
       Following: z.number(),

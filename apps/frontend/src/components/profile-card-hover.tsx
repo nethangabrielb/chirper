@@ -34,7 +34,7 @@ export function ProfileHoverCard({ user }: Readonly<{ user: User }>) {
         </Avatar>
       </HoverCardTrigger>
       <HoverCardContent className="w-80 shadow-xl shadow-secondary bg-background relative">
-        <Activity mode={currentUser.id === user?.id ? "hidden" : "visible"}>
+        <Activity mode={currentUser?.id === user?.id ? "hidden" : "visible"}>
           {isUserFollowing ? (
             <ActionButton
               className="absolute right-0 mr-4 bg-primary text-white hover:border-red-500! hover:bg-red-500/10! hover:text-red-500 transition-all hover:border border border-primary!"
@@ -60,7 +60,7 @@ export function ProfileHoverCard({ user }: Readonly<{ user: User }>) {
         </Activity>
 
         <div className="flex flex-col justify-between">
-          <Link className="cursor-pointer" href={`/profile/${user.id}`}>
+          <Link className="cursor-pointer" href={`/profile/${user?.id}`}>
             <Avatar className="size-[72px]! mb-4">
               <AvatarImage
                 src={user.avatar}
@@ -73,7 +73,7 @@ export function ProfileHoverCard({ user }: Readonly<{ user: User }>) {
               <p className="text-[22px] text-text font-bold">{user?.name}</p>
               <Link
                 className="text-darker font-light text-[15px] hover:underline"
-                href={`/profile/${user.id}`}
+                href={`/profile/${user?.id}`}
               >
                 @{user?.username}
               </Link>

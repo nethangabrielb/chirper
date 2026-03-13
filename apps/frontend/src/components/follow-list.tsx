@@ -21,14 +21,14 @@ const FollowListRow = ({
   className?: string;
 }) => {
   const { optimisticFollow, followMutation, unfollowMutation } = useFollows({
-    currentUserId: currentUser.id,
+    currentUserId: currentUser?.id,
     currentUser,
     currentUserFollowings: currentUser.followings,
-    visitedUserId: user.id,
+    visitedUserId: user?.id,
   });
 
   return (
-    <Link href={`/profile/${user.id}`}>
+    <Link href={`/profile/${user?.id}`}>
       <section
         className={cn("flex items-center justify-between group", className)}
       >
@@ -62,7 +62,7 @@ const FollowListRow = ({
           >
             Following
           </ActionButton>
-        ) : optimisticFollow === false && currentUser.id === user.id ? (
+        ) : optimisticFollow === false && currentUser?.id === user?.id ? (
           <ActionButton
             onClick={(e) => {
               e.preventDefault();

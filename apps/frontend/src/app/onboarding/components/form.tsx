@@ -82,7 +82,7 @@ const ConfirmForm = ({ user }: Props) => {
 
       userData.append("onboarded", true as any);
 
-      return fetch(`${process.env.NEXT_PUBLIC_API}/api/users/${user.id}`, {
+      return fetch(`${process.env.NEXT_PUBLIC_API}/api/users/${user?.id}`, {
         method: "PUT",
         body: userData,
         credentials: "include",

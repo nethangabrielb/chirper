@@ -90,7 +90,7 @@ const userController = (() => {
         const currentUser = _req.user as User;
         if (_req.query.limit) {
           users = await UserService.getFollowListsLimit(
-            currentUser.id,
+            currentUser?.id,
             Number(_req.query.limit)
           );
 
@@ -104,7 +104,7 @@ const userController = (() => {
           });
         } else if (_req.query.page) {
           const pageParam = Number(_req.query.page);
-          users = await UserService.getFollowLists(currentUser.id, pageParam);
+          users = await UserService.getFollowLists(currentUser?.id, pageParam);
 
           if (!users) {
             throw new Error('Failed to fetch users');
@@ -236,7 +236,7 @@ const userController = (() => {
       if (token) {
         currentUser = jwt.verify(token, process.env.JWT_SECRET!) as User;
 
-        currentUserId = currentUser.id;
+        currentUserId = currentUser?.id;
       }
 
       // check either username or email of it is taken

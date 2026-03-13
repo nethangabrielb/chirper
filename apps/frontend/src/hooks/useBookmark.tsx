@@ -18,7 +18,7 @@ export const useBookmark = ({ post, user }: Props) => {
 
   const [userHasBookmarked, setUserHasBookmarked] = useState(
     post?.bookmarks?.find((bookmark) => bookmark.userId === user.id)?.userId ===
-      user.id,
+      user?.id,
   );
 
   const [optimisticBookmark, addOptimisticBookmark] = useOptimistic(
@@ -30,9 +30,9 @@ export const useBookmark = ({ post, user }: Props) => {
   useEffect(() => {
     setUserHasBookmarked(
       post?.bookmarks?.find((bookmark) => bookmark.userId === user.id)
-        ?.userId === user.id,
+        ?.userId === user?.id,
     );
-  }, [post, user]);
+  }, [post, user?.id]);
 
   const bookmarkMutation = useMutation({
     mutationFn: async () => {

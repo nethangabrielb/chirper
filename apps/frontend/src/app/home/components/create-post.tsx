@@ -69,7 +69,7 @@ const CreatePost = ({ refetch }: Props) => {
     resolver: zodResolver(PostSchema),
     defaultValues: {
       imageUrl: null,
-      userId: user.id,
+      userId: user?.id,
     },
   });
 
@@ -121,7 +121,7 @@ const CreatePost = ({ refetch }: Props) => {
   const createPost: SubmitHandler<NewPost> = () => {
     const values = getValues();
 
-    const updatedValues = { ...values, userId: user.id };
+    const updatedValues = { ...values, userId: user?.id };
 
     mutation.mutate(updatedValues);
   };

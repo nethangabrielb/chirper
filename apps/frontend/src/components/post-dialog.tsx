@@ -74,7 +74,7 @@ export function CreatePostDialog({ children }: { children: React.ReactNode }) {
     resolver: zodResolver(PostSchema),
     defaultValues: {
       imageUrl: null,
-      userId: user.id,
+      userId: user?.id,
     },
   });
 
@@ -129,7 +129,7 @@ export function CreatePostDialog({ children }: { children: React.ReactNode }) {
 
   const createPost: SubmitHandler<NewPost> = () => {
     const values = getValues();
-    const updatedValues = { ...values, userId: user.id };
+    const updatedValues = { ...values, userId: user?.id };
 
     mutation.mutate(updatedValues);
   };

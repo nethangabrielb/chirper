@@ -20,7 +20,9 @@ export const authMiddleware = async (
       .json({ status: 'error', message: 'No token provided' });
 
   try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET!) as User;
+    const payload = jwt.verify(token, process.env.JWT_SECRET!) as
+      | User
+      | { guestId: string; isGuest: boolean };
     req.user = payload; // attach user info to request
     next();
   } catch {

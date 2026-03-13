@@ -37,6 +37,13 @@ const LandingPage = () => {
             >
               Create an account
             </FormButton>
+            <FormButton
+              outline={true}
+              type="guest"
+              className="p-[10px] font-bold"
+            >
+              Sign in as Guest
+            </FormButton>
             <p className="text-[10px] font-medium text-muted-foreground tracking-wide">
               By signing up, you agree to the{" "}
               <span className="text-primary">Terms of Service</span> and{" "}

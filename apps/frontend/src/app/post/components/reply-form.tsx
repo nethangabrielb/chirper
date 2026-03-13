@@ -90,7 +90,7 @@ const CreateReply = ({
   } = useForm<Comment>({
     resolver: zodResolver(newComment),
     defaultValues: {
-      userId: user.id,
+      userId: user?.id,
       replyId: postId,
       imageUrl: null,
     },
@@ -147,10 +147,8 @@ const CreateReply = ({
   });
 
   const createReply: SubmitHandler<Comment> = () => {
-    console.log("yawa");
     const values = getValues();
-    console.log(values);
-    const updatedValues = { ...values, userId: user.id, replyId: postId };
+    const updatedValues = { ...values, userId: user?.id, replyId: postId };
 
     mutation.mutate(updatedValues);
   };

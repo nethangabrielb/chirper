@@ -9,6 +9,10 @@ import passport from 'passport';
 import { Server } from 'socket.io';
 
 import '../src/config/passport';
+import {
+  authMiddleware,
+  guestAuthMiddleware,
+} from './middlewares/authMiddleware';
 import bookmarkRouter from './routes/admin/bookmarkRoutes';
 import commentRouter from './routes/admin/commentRoutes';
 import followRouter from './routes/admin/followRoutes';
@@ -54,7 +58,12 @@ app.use(passport.initialize());
 dotenv.config();
 
 app.use('/api/auth', authRouter);
+
 app.use('/api/users', userRouter);
+
+app.use(authMiddleware);
+app.use(guestAuthMiddleware);
+
 app.use('/api/posts', postRouter);
 app.use('/api/comments', commentRouter);
 app.use('/api/follows', followRouter);

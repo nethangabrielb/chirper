@@ -31,6 +31,39 @@ export const authMiddleware = async (
   }
 };
 
+export const guestAuthMiddleware = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const user = req.user as User;
+
+  const writeMethods = ['POST', 'PUT', 'PATCH', 'DELETE'];
+
+  console.log(writeMethods);
+  console.log(user);
+
+  // Define public auth routes that MUST allow POST
+  const authExceptions = [
+    '/api/auth/login',
+    '/api/auth/register',
+    '/api/auth/logout',
+  ];
+
+  if (authExceptions.includes(req.path)) {
+    return next();
+  }
+
+  if (user?.isGuest && writeMethods.includes(req.method)) {
+    return res.status(403).json({
+      error: 'Forbidden',
+      message: 'Guest accounts are read-only.',
+    });
+  }
+
+  next();
+};
+
 export const isSocketValid = (socket: Socket): boolean => {
   const cookies = cookie.parseCookie(socket.handshake.headers.cookie ?? '');
   const token = cookies.token as string;

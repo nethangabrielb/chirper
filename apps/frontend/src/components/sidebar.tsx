@@ -2,6 +2,7 @@
 
 import useRooms from "@/app/messages/hooks/useRooms";
 import useNotifications from "@/hooks/useNotifications";
+import useGuestDialog from "@/stores/guest-dialog.store";
 import useUser from "@/stores/user.store";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -13,6 +14,7 @@ import { usePathname, useRouter } from "next/navigation";
 
 import { ActionButton } from "@/components/button";
 import FollowListRow from "@/components/follow-list";
+import GuestDialog from "@/components/guest-dialog";
 import Icon from "@/components/icon";
 import NavIcon from "@/components/navIcon";
 import { CreatePostDialog } from "@/components/post-dialog";
@@ -62,7 +64,7 @@ const Sidebar = ({ children }: Props) => {
   const [visible, setVisible] = useState<boolean>(false);
   const [asideVisible, setAsideVisible] = useState<boolean>(false);
   const path = usePathname();
-
+  const openGuestDialog = useGuestDialog((state) => state.setOpenGuestDialog);
   const { notificationsCount, resetNotificationsCache } =
     useNotifications(user);
   const { newMessagesCount } = useRooms();
@@ -258,16 +260,24 @@ const Sidebar = ({ children }: Props) => {
                     );
                   })}
               </section>
-              <Link
-                href="/connect-people"
-                className="text-sm text-primary font-light"
+              <button
+                className="text-sm text-primary font-light hover:underline w-fit"
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (user.isGuest) {
+                    openGuestDialog(true);
+                  } else {
+                    router.push("/connect-people");
+                  }
+                }}
               >
                 Show more
-              </Link>
+              </button>
             </div>
           </aside>
         </div>
       </Activity>
+      <GuestDialog></GuestDialog>
     </div>
   );
 };

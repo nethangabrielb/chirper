@@ -1,4 +1,5 @@
 import useFollows from "@/hooks/useFollows";
+import useGuestDialog from "@/stores/guest-dialog.store";
 
 import Link from "next/link";
 
@@ -20,6 +21,7 @@ const FollowListRow = ({
   currentUser: User;
   className?: string;
 }) => {
+  const openGuestDialog = useGuestDialog((state) => state.setOpenGuestDialog);
   const { optimisticFollow, followMutation, unfollowMutation } = useFollows({
     currentUserId: currentUser?.id,
     currentUser,
@@ -60,7 +62,7 @@ const FollowListRow = ({
               if (!currentUser.isGuest) {
                 unfollowMutation.mutate();
               } else {
-                console.log("IM GUEST");
+                openGuestDialog(true);
               }
             }}
           >
@@ -74,7 +76,7 @@ const FollowListRow = ({
               if (!currentUser.isGuest) {
                 followMutation.mutate();
               } else {
-                console.log("IM GUEST");
+                openGuestDialog(true);
               }
             }}
           >
@@ -88,7 +90,7 @@ const FollowListRow = ({
               if (!currentUser.isGuest) {
                 followMutation.mutate();
               } else {
-                console.log("IM GUEST");
+                openGuestDialog(true);
               }
             }}
           >

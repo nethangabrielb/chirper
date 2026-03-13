@@ -83,8 +83,6 @@ const NavIcon = ({ title }: Props) => {
           />
         </svg>
       );
-    case "Settings":
-      return <Settings size={24}></Settings>;
     default:
       return <></>;
   }

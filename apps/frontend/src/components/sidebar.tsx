@@ -54,10 +54,6 @@ let links: Array<{ title: string; url: string }> = [
     title: "Profile",
     url: "",
   },
-  {
-    title: "Settings",
-    url: "/settings/account",
-  },
 ];
 
 const Sidebar = ({ children }: Props) => {

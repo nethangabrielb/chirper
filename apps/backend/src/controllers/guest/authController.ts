@@ -60,7 +60,7 @@ const authController = (() => {
         res.cookie('token', token, {
           httpOnly: true,
           path: '/',
-          maxAge: 60 * 60 * 24 * 14,
+          maxAge: 1000 * 60 * 60 * 24 * 14,
         });
         res.status(200).json({
           status: 'success',
@@ -73,7 +73,7 @@ const authController = (() => {
         res.cookie('token', token, {
           httpOnly: true,
           path: '/',
-          maxAge: 60 * 60 * 24 * 14,
+          maxAge: 1000 * 60 * 60 * 24 * 14,
         });
         res.status(200).json({
           status: 'success',

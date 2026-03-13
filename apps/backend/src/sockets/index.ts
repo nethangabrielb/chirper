@@ -47,7 +47,7 @@ export const initSocket = (io: Server) => {
             const roomToJoin = rooms.find(
               room =>
                 room.id === Number(roomId) &&
-                room.users.some(user => user.id === senderId)
+                room.users.some(user => user?.id === senderId)
             );
             if (roomToJoin) {
               socket.join(roomId);
@@ -70,7 +70,7 @@ export const initSocket = (io: Server) => {
             const roomToJoin = rooms.find(
               room =>
                 room.id === Number(roomId) &&
-                room.users.some(user => user.id === senderId)
+                room.users.some(user => user?.id === senderId)
             );
             if (roomToJoin) {
               socket.leave(roomId);
@@ -92,7 +92,7 @@ export const initSocket = (io: Server) => {
         postId?: number,
         postContent?: string
       ) => {
-        if (validateEventSender(user.id, socket.data.userId)) {
+        if (validateEventSender(user?.id, socket.data.userId)) {
           let content: string = '';
           if (type === 'reply') {
             content = `${user.name} (@${user.username}) replied to your post`;
@@ -103,7 +103,7 @@ export const initSocket = (io: Server) => {
           }
 
           const notification = await notificationRepository.create({
-            senderId: user.id,
+            senderId: user?.id,
             receiverId: receiverId,
             content,
             postId: postId ?? undefined,

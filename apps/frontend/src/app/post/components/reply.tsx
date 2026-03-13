@@ -175,7 +175,7 @@ const Reply = ({ reply }: Props) => {
         </>
       ) : (
         <div className="flex flex-col border-b border-b-border relative transition-all">
-          <Activity mode={user.id === post?.userId ? "visible" : "hidden"}>
+          <Activity mode={user?.id === post?.userId ? "visible" : "hidden"}>
             <CurrentUserPostDropdown
               handleDelete={handleDelete}
             ></CurrentUserPostDropdown>
@@ -198,7 +198,7 @@ const Reply = ({ reply }: Props) => {
                 </p>
                 <Link
                   className="text-darker font-light text-[15px] hover:underline"
-                  href={`/profile/${post?.user.id}`}
+                  href={`/profile/${post?.user?.id}`}
                 >
                   @{post?.user.username}
                 </Link>

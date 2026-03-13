@@ -32,12 +32,12 @@ const userController = (() => {
         if ((_req.user as User).isGuest) {
           return res.json({ status: 'success', data: _req.user });
         }
-        const updatedUser = await UserService.getUserById(user.id);
-        const followers = await followRepository.findFollowers(user.id);
-        const followings = await followRepository.findFollowings(user.id);
-        const rooms = await roomService.getUserRooms(user.id);
+        const updatedUser = await UserService.getUserById(user?.id);
+        const followers = await followRepository.findFollowers(user?.id);
+        const followings = await followRepository.findFollowings(user?.id);
+        const rooms = await roomService.getUserRooms(user?.id);
         const modifiedUser = {
-          id: user.id,
+          id: user?.id,
           name: updatedUser.name,
           username: updatedUser.username,
           email: updatedUser.email,
@@ -50,7 +50,7 @@ const userController = (() => {
         };
         return res.json({ status: 'success', data: modifiedUser });
       } else if (_req.query.chatUsersList) {
-        const followings = await followRepository.findFollowings(user.id);
+        const followings = await followRepository.findFollowings(user?.id);
 
         if (!followings) {
           return res.json({
@@ -63,7 +63,7 @@ const userController = (() => {
           following => following.following
         );
 
-        const users = await UserService.getUserChatList(user.id, followings);
+        const users = await UserService.getUserChatList(user?.id, followings);
 
         if (!users) {
           return res.json({

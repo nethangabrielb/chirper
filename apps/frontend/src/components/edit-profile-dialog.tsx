@@ -114,7 +114,7 @@ const EditProfileDialog = ({ children }: { children: ReactNode }) => {
         }
       }
 
-      const res = await userApi.updateUserData(user.id, formData);
+      const res = await userApi.updateUserData(user?.id, formData);
       return res;
     },
     onSuccess: async (data) => {

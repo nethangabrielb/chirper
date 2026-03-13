@@ -19,7 +19,7 @@ const bookmarkController = (() => {
         throw new Error('No body payload provided');
       }
 
-      if (userId !== user.id) {
+      if (userId !== user?.id) {
         throw new Error('Unauthorized action');
       }
 
@@ -58,7 +58,7 @@ const bookmarkController = (() => {
 
       const bookmark = await bookmarkService.findById(Number(bookmarkId));
 
-      if (bookmark.userId !== user.id) {
+      if (bookmark.userId !== user?.id) {
         return res.json({
           status: 'error',
           message: 'You are unauthorized to perform this action',

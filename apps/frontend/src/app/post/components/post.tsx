@@ -146,7 +146,7 @@ const PostSingle = ({ post, className, settingsCn, buttonCn }: Props) => {
     <div
       className={`flex flex-col gap-4 p-4 border-b border-b-border relative transition-all ${className}`}
     >
-      <Activity mode={user.id === post.userId ? "visible" : "hidden"}>
+      <Activity mode={user?.id === post.userId ? "visible" : "hidden"}>
         <CurrentUserPostDropdown
           handleDelete={handleDelete}
           settingsCn={settingsCn}
@@ -162,7 +162,7 @@ const PostSingle = ({ post, className, settingsCn, buttonCn }: Props) => {
             </p>
             <Link
               className="text-darker font-light text-[15px] hover:underline"
-              href={`/profile/${post.user.id}`}
+              href={`/profile/${post.user?.id}`}
             >
               @{post.user.username}
             </Link>

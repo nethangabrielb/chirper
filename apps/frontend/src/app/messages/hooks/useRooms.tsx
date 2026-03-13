@@ -19,7 +19,7 @@ const useRooms = () => {
     queryKey: ["chatRooms", user?.id],
     queryFn: async () => {
       if (user) {
-        const res = await roomApi.getByUserId(user.id);
+        const res = await roomApi.getByUserId(user?.id);
 
         let unreadLength = 0;
 
@@ -27,7 +27,7 @@ const useRooms = () => {
           (room: RoomType) =>
             room.messages.filter(
               (message) =>
-                message.unread === true && message.senderId !== user.id,
+                message.unread === true && message.senderId !== user?.id,
             ).length,
         );
         unreadMessages.forEach((unreadCount: number) => {

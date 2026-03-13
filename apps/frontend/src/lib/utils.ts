@@ -51,7 +51,7 @@ export function chatroomExisted(
     hash.set(room.id, []);
 
     room.users.forEach((user) => {
-      if (currentUserId === user.id || visitedUserId === user.id) {
+      if (currentUserId === user?.id || visitedUserId === user?.id) {
         hash.set(room.id, [...(hash.get(room.id) as Array<number>), user?.id]);
       }
     });

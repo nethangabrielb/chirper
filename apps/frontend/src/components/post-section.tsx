@@ -115,7 +115,7 @@ const Post = ({ post, displayReplies, bookmarkedPost }: Props) => {
               <div className="flex items-center gap-1">
                 <Link
                   className="text-darker font-light text-[15px] hover:underline"
-                  href={`/profile/${post.user.id}`}
+                  href={`/profile/${post.user?.id}`}
                 >
                   @{post.user.username}
                 </Link>
@@ -132,7 +132,7 @@ const Post = ({ post, displayReplies, bookmarkedPost }: Props) => {
                 Replying to{" "}
                 <Link
                   className="text-blue-500 cursor-pointer hover:underline underline-offset-1"
-                  href={`/profile/${post.reply.user.id}`}
+                  href={`/profile/${post.reply.user?.id}`}
                 >
                   @{post.reply.user.username}
                 </Link>

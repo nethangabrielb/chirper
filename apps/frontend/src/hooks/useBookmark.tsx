@@ -17,8 +17,8 @@ export const useBookmark = ({ post, user }: Props) => {
   const queryClient = useQueryClient();
 
   const [userHasBookmarked, setUserHasBookmarked] = useState(
-    post?.bookmarks?.find((bookmark) => bookmark.userId === user.id)?.userId ===
-      user?.id,
+    post?.bookmarks?.find((bookmark) => bookmark.userId === user?.id)
+      ?.userId === user?.id,
   );
 
   const [optimisticBookmark, addOptimisticBookmark] = useOptimistic(
@@ -29,7 +29,7 @@ export const useBookmark = ({ post, user }: Props) => {
 
   useEffect(() => {
     setUserHasBookmarked(
-      post?.bookmarks?.find((bookmark) => bookmark.userId === user.id)
+      post?.bookmarks?.find((bookmark) => bookmark.userId === user?.id)
         ?.userId === user?.id,
     );
   }, [post, user?.id]);
@@ -41,7 +41,7 @@ export const useBookmark = ({ post, user }: Props) => {
           addOptimisticBookmark(false);
         });
         const bookmark = post?.bookmarks?.find(
-          (bookmark) => bookmark.userId === user.id,
+          (bookmark) => bookmark.userId === user?.id,
         );
         if (bookmark) {
           const res = await bookmarkApi.removeBookmarkOnPost(bookmark?.id);
@@ -51,7 +51,7 @@ export const useBookmark = ({ post, user }: Props) => {
         startTransition(() => {
           addOptimisticBookmark(true);
         });
-        const res = await bookmarkApi.bookmarkPost(user.id, post.id);
+        const res = await bookmarkApi.bookmarkPost(user?.id, post.id);
         return res;
       }
     },

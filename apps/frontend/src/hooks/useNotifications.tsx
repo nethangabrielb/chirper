@@ -42,7 +42,7 @@ const useNotifications = (user: User) => {
       receiverId: number,
       notification: NotificationBody,
     ) => {
-      if (receiverId === user.id) {
+      if (receiverId === user?.id) {
         queryClient.setQueryData(
           ["notifications", user?.id],
           (old: NotificationBody[]) => {

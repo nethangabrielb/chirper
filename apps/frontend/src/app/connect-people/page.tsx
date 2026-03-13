@@ -111,9 +111,9 @@ const ConnectPeople = () => {
                     {page?.data?.map((user: UserPartial) => {
                       return (
                         <FollowListRow
-                          isUser={user.id === currentUser?.id}
+                          isUser={user?.id === currentUser?.id}
                           user={user}
-                          key={user.id}
+                          key={user?.id}
                           currentUser={currentUser}
                           className="p-4 hover:bg-secondary/40"
                         ></FollowListRow>

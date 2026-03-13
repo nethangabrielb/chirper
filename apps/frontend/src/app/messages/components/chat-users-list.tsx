@@ -62,7 +62,7 @@ export const UsersDialog = ({
             users?.map((user) => {
               return (
                 <button
-                  key={user.id}
+                  key={user?.id}
                   className="flex gap-2 items-center hover:bg-accent mx-1 rounded-md p-1"
                   onClick={() => messageUser(user?.id, user)}
                 >

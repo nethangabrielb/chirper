@@ -4,6 +4,7 @@ import { CurrentUserPostDropdown } from "@/app/home/components/post-controls";
 import PostSingle from "@/app/post/components/post";
 import { useBookmark } from "@/hooks/useBookmark";
 import notificationHandler from "@/socket/handlers/notification";
+import useGuestDialog from "@/stores/guest-dialog.store";
 import useUser from "@/stores/user.store";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Bookmark, Heart, MessageCircle } from "lucide-react";
@@ -37,6 +38,8 @@ const Reply = ({ reply }: Props) => {
   const router = useRouter();
   const user = useUser((state) => state.user) as User;
   const queryClient = useQueryClient();
+  const openGuestDialog = useGuestDialog((state) => state.setOpenGuestDialog);
+
   // Fetch the post the reply is replying to
   const { data: post } = useQuery<PostType | ReplyType>({
     queryKey: ["post", reply.replyId],
@@ -79,6 +82,10 @@ const Reply = ({ reply }: Props) => {
   // LIKE/UNLIKE POST API INTERFACE
   const likeMutation = useMutation({
     mutationFn: async () => {
+      if (user.isGuest) {
+        openGuestDialog(true);
+        return;
+      }
       if (userHasLiked) {
         startTransition(() => {
           addOptimisticLikes(-1);

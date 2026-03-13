@@ -1,4 +1,5 @@
 import notificationHandler from "@/socket/handlers/notification";
+import useGuestDialog from "@/stores/guest-dialog.store";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { startTransition, useEffect, useOptimistic, useState } from "react";
@@ -11,6 +12,7 @@ import { User } from "@/types/user";
 
 export const useLikes = (post: PostType | ReplyType, user: User) => {
   const queryClient = useQueryClient();
+  const openGuestDialog = useGuestDialog((state) => state.setOpenGuestDialog);
 
   // put likes in a state to use as source of truth
   // for useOptimistic hooks
@@ -48,6 +50,10 @@ export const useLikes = (post: PostType | ReplyType, user: User) => {
   // LIKE/UNLIKE POST API INTERFACE
   const likeMutation = useMutation({
     mutationFn: async () => {
+      if (user.isGuest) {
+        openGuestDialog(true);
+        return;
+      }
       if (userHasLiked) {
         startTransition(() => {
           addOptimisticLikes(-1);

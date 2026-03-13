@@ -3,6 +3,7 @@
 import { newComment } from "@/app/post/schema/comment";
 import { Comment } from "@/app/post/types/coment";
 import notificationHandler from "@/socket/handlers/notification";
+import useGuestDialog from "@/stores/guest-dialog.store";
 import useUser from "@/stores/user.store";
 import data from "@emoji-mart/data/sets/14/twitter.json";
 import Picker from "@emoji-mart/react";
@@ -78,8 +79,8 @@ const CreateReply = ({
   const [openEmojiPicker, setOpenEmojiPicker] = useState(false);
   const [filePreview, setFilePreview] = useState<File | null>(null);
   const fileInput = useRef<null | HTMLInputElement>(null);
+  const openGuestDialog = useGuestDialog((state) => state.setOpenGuestDialog);
   const user = useUser((state) => state.user) as User;
-
   const {
     getValues,
     handleSubmit,
@@ -95,8 +96,6 @@ const CreateReply = ({
       imageUrl: null,
     },
   });
-
-  console.log(errors);
 
   // CREATE REPLY MUTATION
   const mutation = useMutation({
@@ -147,6 +146,11 @@ const CreateReply = ({
   });
 
   const createReply: SubmitHandler<Comment> = () => {
+    if (user.isGuest) {
+      openGuestDialog(true);
+      return;
+    }
+
     const values = getValues();
     const updatedValues = { ...values, userId: user?.id, replyId: postId };
 
@@ -236,7 +240,9 @@ const CreateReply = ({
         onSubmit={handleSubmit(createReply)}
         className={cn("w-full max-w-full flex flex-col gap-1")}
       >
-        <div className="border-b border-b-border pb-4">
+        <div
+          className={cn(openReplyControls && "border-b border-b-border pb-4")}
+        >
           <textarea
             {...register("content")}
             placeholder="Reply here"

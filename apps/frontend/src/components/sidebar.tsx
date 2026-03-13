@@ -188,7 +188,12 @@ const Sidebar = ({ children }: Props) => {
                     "text-lg flex items-center gap-6 w-fit hover:bg-muted transition-all p-3 rounded-4xl px-8 relative",
                     path.includes("/messages") && "p-3!",
                   )}
-                  onClick={() => {
+                  onClick={(e) => {
+                    if (user?.isGuest && link.url !== "/home") {
+                      e.preventDefault();
+                      openGuestDialog(true);
+                      return;
+                    }
                     if (link.title === "Notifications") {
                       resetNotificationsCache();
                     }

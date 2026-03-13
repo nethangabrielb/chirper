@@ -71,10 +71,15 @@ const GuestDialog = () => {
               className="size-[48px]"
             />
           </div>
-          <p className="text-darker text-center">
+          <h2 className="text-center text-lg">
+            Sorry to give you a very limited experience! 😅
+          </h2>
+          <p className="text-darker text-center text-sm">
             In order to enjoy the full experience, you need to make an account
-            and sign in.
+            and sign in. <br></br>I'd really appreciate it if you would (I
+            really worked hard on this one!)
           </p>
+
           <ActionButton className="flex-1" onClick={handler}>
             Create an account
           </ActionButton>

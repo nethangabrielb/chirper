@@ -70,13 +70,12 @@ const Sidebar = ({ children }: Props) => {
   const { data: followListAside } = useQuery({
     queryKey: ["followList", user?.id],
     queryFn: async () => {
-      if (path !== "/") {
-        const res = await userApi.getUserFollowListLimit(3);
-        return res;
-      }
+      const res = await userApi.getUserFollowListLimit(3);
+      return res;
     },
     refetchOnMount: false,
     refetchOnWindowFocus: false,
+    retry: false,
   });
 
   const mutation = useMutation({
@@ -152,6 +151,7 @@ const Sidebar = ({ children }: Props) => {
   };
 
   console.log(followListAside);
+  console.log(user);
 
   return (
     <div className={cn(visible && "flex justify-center", "h-full")}>
@@ -252,7 +252,7 @@ const Sidebar = ({ children }: Props) => {
                       <FollowListRow
                         isUser={followUser.id === user?.id}
                         user={followUser}
-                        key={user.id}
+                        key={followUser.id}
                         currentUser={user}
                       ></FollowListRow>
                     );

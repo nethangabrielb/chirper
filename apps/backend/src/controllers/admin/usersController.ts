@@ -9,7 +9,6 @@ import roomService from '../../services/roomService';
 import UserService from '../../services/userService';
 import { client } from '../../supabase/client';
 import type { RegistrationBody } from '../../types/auth';
-import { Guest } from '../../types/guest';
 import { User } from '../../types/user';
 import { GENERIC_ERROR_MESSAGE } from '../../utils/errorMessage';
 
@@ -30,7 +29,7 @@ const userController = (() => {
     try {
       const user: User = _req.user as User;
       if (_req.query.current) {
-        if ((_req.user as Guest).isGuest) {
+        if ((_req.user as User).isGuest) {
           return res.json({ status: 'success', data: _req.user });
         }
         const updatedUser = await UserService.getUserById(user.id);

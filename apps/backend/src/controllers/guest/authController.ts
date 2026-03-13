@@ -7,7 +7,6 @@ import { fileURLToPath } from 'url';
 import UserRepository from '../../repositories/userRepository';
 import UserService from '../../services/userService';
 import type { LoginBody, RegistrationBody } from '../../types/auth';
-import { Guest } from '../../types/guest';
 import { User } from '../../types/user';
 
 const GENERIC_ERROR_MESSAGE = 'An unknown error occurred';
@@ -44,7 +43,17 @@ const authController = (() => {
   ) => {
     try {
       if (req.query.guest) {
-        const guest = { guestId: crypto.randomUUID(), isGuest: true };
+        const guest = {
+          id: 999999999,
+          name: 'Guest',
+          username: 'guest_user',
+          avatar:
+            'https://bcezmxfxuctgrkiavycl.supabase.co/storage/v1/object/public/images/default.svg',
+          cover: '/blue.jpg',
+          isGuest: true,
+          _count: { Followers: 0, Followings: 0, Post: 0 },
+        };
+
         const token = jwt.sign(guest, process.env.JWT_SECRET!);
 
         res.clearCookie('token', { httpOnly: true });
@@ -113,12 +122,10 @@ const authController = (() => {
 
     const payload = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
 
-    const user: Guest | User = payload as Guest | User;
+    const user: User = payload as User;
 
-    if ('guestId' in user) {
-      if (user.guestId && user.isGuest) {
-        return res.json({ authorized: true });
-      }
+    if (user.isGuest) {
+      return res.json({ authorized: true });
     }
 
     const verifyUser = await UserRepository.findById((user as User)?.id);

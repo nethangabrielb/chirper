@@ -126,8 +126,10 @@ const UserRepository = {
         },
       },
     }),
-  findByUsername: (username: string) =>
-    prisma.user.findUnique({ where: { username } }),
+  findByUsername: (username: string, id?: number) =>
+    id
+      ? prisma.user.findUnique({ where: { username, NOT: { id } } })
+      : prisma.user.findUnique({ where: { username } }),
   findByName: (name: string) =>
     prisma.user.findMany({
       where: {

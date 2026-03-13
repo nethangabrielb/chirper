@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 
 import { decode } from 'base64-arraybuffer';
+import jwt from 'jsonwebtoken';
 import _ from 'lodash';
 
 import followRepository from '../../repositories/followRepository';
@@ -131,6 +132,12 @@ const userController = (() => {
     res: Response
   ) => {
     try {
+      const reqUser = req.user as User;
+
+      if (Number(req.params.id) !== reqUser.id) {
+        throw new Error('You are unauthorized to perform this action.');
+      }
+
       // check if there is file
       if (req.files && !Array.isArray(req.files)) {
         for (const keys in req.files) {
@@ -164,13 +171,18 @@ const userController = (() => {
           } else if (keys === 'cover') {
             req.body = { ...req.body, cover: image.publicUrl };
           }
+
+          // delete the old avatar or cover photo from the user
+          const currentUser = await UserService.getUserById(reqUser.id);
+          const imageLink =
+            keys === 'avatar' ? currentUser.avatar : currentUser.cover;
+
+          const fileName = imageLink?.split('/images/')[1];
+
+          if (fileName) {
+            await client.storage.from('images').remove([fileName]);
+          }
         }
-      }
-
-      const reqUser = req.user as User;
-
-      if (Number(req.params.id) !== reqUser.id) {
-        throw new Error('You are unauthorized to perform this action.');
       }
 
       const updatedUser = await UserService.updateUser(
@@ -213,12 +225,27 @@ const userController = (() => {
   ) => {
     try {
       let user;
+      let currentUser;
+      let currentUserId;
       const propertyToCheck = req.query.property;
       const value = req.query.value;
 
+      const cookies = req.cookies;
+      const token = cookies.token; // Bearer TOKEN
+
+      if (token) {
+        currentUser = jwt.verify(token, process.env.JWT_SECRET!) as User;
+
+        currentUserId = currentUser.id;
+      }
+
       // check either username or email of it is taken
       if (propertyToCheck === 'username') {
-        user = await UserService.getUserByUsername(value);
+        if (currentUserId) {
+          user = await UserService.getUserByUsername(value, currentUserId);
+        } else {
+          user = await UserService.getUserByUsername(value);
+        }
       } else if (propertyToCheck === 'email') {
         user = await UserService.getUserByEmail(value);
       }

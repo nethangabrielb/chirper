@@ -21,7 +21,11 @@ export const RegisterSchema = z
       })
       .refine(
         async (val) => {
-          const isUnique = await authApi.checkPropertyUnique(val, "username");
+          const isUnique = await authApi.checkPropertyUnique(
+            val,
+            "username",
+            false,
+          );
           return isUnique;
         },
         { message: "This username is already taken" },

@@ -87,8 +87,8 @@ const UserService = {
     return UserRepository.deleteById(id);
   },
 
-  getUserByUsername: async (username: string) => {
-    const user = await UserRepository.findByUsername(username);
+  getUserByUsername: async (username: string, id?: number) => {
+    const user = await UserRepository.findByUsername(username, id);
     return user;
   },
 

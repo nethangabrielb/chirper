@@ -14,9 +14,14 @@ const authApi = (() => {
     );
   };
 
-  const checkPropertyUnique = async (value: string, type: string) => {
+  const checkPropertyUnique = async (
+    value: string,
+    type: string,
+    credentials?: boolean,
+  ) => {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API}/api/users/availability?property=${type}&value=${value}`,
+      { credentials: credentials ? "include" : "omit" },
     );
     const data = await res.json();
     if (data.status === "success") {

@@ -46,7 +46,11 @@ const EditProfileSchema = z.object({
     })
     .refine(
       async (val) => {
-        const isUnique = await authApi.checkPropertyUnique(val, "username");
+        const isUnique = await authApi.checkPropertyUnique(
+          val,
+          "username",
+          true,
+        );
         return isUnique;
       },
       { message: "This username is already taken" },
@@ -84,7 +88,6 @@ const EditProfileDialog = ({ children }: { children: ReactNode }) => {
     register,
     handleSubmit,
     setValue,
-    resetField,
     reset,
     formState: { errors },
   } = useForm<EditProfile>({

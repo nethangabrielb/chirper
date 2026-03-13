@@ -4,6 +4,7 @@ import useGuestDialog from "@/stores/guest-dialog.store";
 import useUser from "@/stores/user.store";
 import { useMutation } from "@tanstack/react-query";
 import { Ban } from "lucide-react";
+import { VisuallyHidden } from "radix-ui";
 import { toast } from "sonner";
 
 import { useRouter } from "next/navigation";
@@ -52,6 +53,11 @@ const GuestDialog = () => {
   return (
     <Dialog open={openDialog} onOpenChange={openGuestDialog}>
       <DialogContent className="sm:max-w-sm flex flex-col items-center justify-center -translate-y-40">
+        <VisuallyHidden.Root>
+          <DialogTitle>
+            Guest Dialog for Unauthorized Actions by Guest
+          </DialogTitle>
+        </VisuallyHidden.Root>
         <div className="flex flex-col items-center justify-center gap-4">
           <h1 className="text-2xl font-bold rotate-x-25">Can't chirp yet!</h1>
           <div className="relative my-4">

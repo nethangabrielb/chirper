@@ -2,6 +2,7 @@
 
 import PostSchema from "@/app/home/schema/create-post.schema";
 import { NewPost } from "@/app/home/types/create-post.type";
+import useGuestDialog from "@/stores/guest-dialog.store";
 import useUser from "@/stores/user.store";
 import data from "@emoji-mart/data/sets/14/twitter.json";
 import Picker from "@emoji-mart/react";
@@ -56,6 +57,7 @@ const CreatePost = ({ refetch }: Props) => {
   const [openEmojiPicker, setOpenEmojiPicker] = useState(false);
   const [filePreview, setFilePreview] = useState<File | null>(null);
   const fileInput = useRef<null | HTMLInputElement>(null);
+  const openGuestDialog = useGuestDialog((state) => state.setOpenGuestDialog);
   const user = useUser((state) => state.user) as User;
 
   const {
@@ -119,6 +121,11 @@ const CreatePost = ({ refetch }: Props) => {
   });
 
   const createPost: SubmitHandler<NewPost> = () => {
+    if (user.isGuest) {
+      openGuestDialog(true);
+      return;
+    }
+
     const values = getValues();
 
     const updatedValues = { ...values, userId: user?.id };

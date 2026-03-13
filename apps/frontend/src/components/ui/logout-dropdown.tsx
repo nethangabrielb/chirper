@@ -39,7 +39,10 @@ export function LogoutDropdown({
           <div className={cn("mt-auto relative")}>
             <Avatar>
               <AvatarImage
-                src={data?.avatar}
+                src={
+                  data?.avatar ??
+                  "https://bcezmxfxuctgrkiavycl.supabase.co/storage/v1/object/public/images/default.svg"
+                }
                 alt="User avatar"
                 className="size-[48px] min-w-[48px]! rounded-full object-cover cursor-pointer hover:shadow-md transition-all hover:shadow-secondary"
               ></AvatarImage>
@@ -54,15 +57,20 @@ export function LogoutDropdown({
           >
             <div className="flex items-center gap-4">
               <img
-                src={data?.avatar}
+                src={
+                  data?.avatar ??
+                  "https://bcezmxfxuctgrkiavycl.supabase.co/storage/v1/object/public/images/default.svg"
+                }
                 alt="User avatar"
                 loading="eager"
                 className="size-[48px] min-w-[48px]! rounded-full object-cover"
               />
               <div className="flex flex-col">
-                <p className="text-[15px] text-text font-bold">{data?.name}</p>
+                <p className="text-[15px] text-text font-bold">
+                  {data?.name ?? "Guest"}
+                </p>
                 <p className="text-[15px] text-darker font-bold">
-                  @{data?.username}
+                  @{data?.username ?? "johndoe"}
                 </p>
               </div>
             </div>
@@ -78,7 +86,7 @@ export function LogoutDropdown({
           className="hover:bg-secondary! text-lg font-medium rotate-x-16"
           onSelect={logoutHandler}
         >
-          Log out @{data?.username}
+          Log out @{data?.username ?? "johndoe"}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

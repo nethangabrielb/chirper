@@ -46,8 +46,6 @@ const postService = {
       };
     }
 
-    console.log(updatedPost);
-
     const newPost = await postRepository.create(updatedPost);
     if (!newPost) {
       throw new Error('There was a problem making a post');

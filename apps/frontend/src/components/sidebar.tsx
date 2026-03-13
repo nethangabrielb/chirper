@@ -152,9 +152,6 @@ const Sidebar = ({ children }: Props) => {
     mutation.mutate();
   };
 
-  console.log(followListAside);
-  console.log(user);
-
   return (
     <div className={cn(visible && "flex justify-center", "h-full")}>
       <Activity mode={visible ? "visible" : "hidden"}>

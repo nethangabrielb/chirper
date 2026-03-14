@@ -5,7 +5,7 @@ import useNotifications from "@/hooks/useNotifications";
 import useGuestDialog from "@/stores/guest-dialog.store";
 import useUser from "@/stores/user.store";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Feather } from "lucide-react";
+import { Feather, LogOut, UserRound } from "lucide-react";
 import { toast } from "sonner";
 
 import { Activity, ReactNode, useEffect, useState } from "react";
@@ -19,6 +19,12 @@ import GuestDialog from "@/components/guest-dialog";
 import Icon from "@/components/icon";
 import NavIcon from "@/components/navIcon";
 import { CreatePostDialog } from "@/components/post-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { LogoutDropdown } from "@/components/ui/logout-dropdown";
 
 import { authApi } from "@/lib/api/auth";
@@ -304,40 +310,77 @@ const Sidebar = ({ children }: Props) => {
       {/* MOBILE BOTTOM NAV — visible only below md */}
       <Activity mode={visible ? "visible" : "hidden"}>
         <nav className={cn("fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-t border-t-border border-x border-x-border flex justify-around items-center py-2 md:hidden", path.includes("/messages/") ? "hidden" : "flex")}>
-          {links.map((link) => (
-            <Link
-              href={link.url}
-              key={`bottom-${link.title}`}
-              className="p-2 relative flex items-center justify-center"
-              onClick={(e) => {
-                if (user?.isGuest && link.url !== "/home") {
-                  e.preventDefault();
-                  openGuestDialog(true);
-                  return;
-                }
-                if (link.title === "Notifications") {
-                  resetNotificationsCache();
-                }
-              }}
-            >
-              <div className="relative">
-                <NavIcon title={link.title} />
-                {link.title === "Notifications" &&
-                  notificationsCount > 0 && (
-                    <p className="absolute -top-1 -right-1 bg-primary text-white w-[16px] h-[16px] text-[10px] flex justify-center items-center rounded-full">
-                      {notificationsCount}
-                    </p>
-                  )}
-                {link.title === "Messages" &&
-                  typeof newMessagesCount === "number" &&
-                  newMessagesCount > 0 && (
-                    <p className="absolute -top-1 -right-1 bg-primary text-white w-[16px] h-[16px] text-[10px] flex justify-center items-center rounded-full">
-                      {newMessagesCount}
-                    </p>
-                  )}
-              </div>
-            </Link>
-          ))}
+          {links.map((link) =>
+            link.title === "Profile" ? (
+              <DropdownMenu key={`bottom-${link.title}`}>
+                <DropdownMenuTrigger asChild>
+                  <button className="p-2 relative flex items-center justify-center cursor-pointer">
+                    <NavIcon title={link.title} />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  side="top"
+                  align="end"
+                  className="w-48 bg-background shadow-xl shadow-secondary mb-2"
+                >
+                  <DropdownMenuItem
+                    className="hover:bg-secondary! font-medium flex items-center gap-2 cursor-pointer"
+                    onSelect={(e) => {
+                      e.preventDefault();
+                      if (user?.isGuest) {
+                        openGuestDialog(true);
+                        return;
+                      }
+                      router.push(link.url)
+                    }}
+                  >
+                    <UserRound size={16} />
+                    Visit Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="hover:bg-secondary! font-medium flex items-center gap-2 cursor-pointer text-red-500"
+                    onSelect={logOut}
+                  >
+                    <LogOut size={16} />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Link
+                href={link.url}
+                key={`bottom-${link.title}`}
+                className="p-2 relative flex items-center justify-center"
+                onClick={(e) => {
+                  if (user?.isGuest && link.url !== "/home") {
+                    e.preventDefault();
+                    openGuestDialog(true);
+                    return;
+                  }
+                  if (link.title === "Notifications") {
+                    resetNotificationsCache();
+                  }
+                }}
+              >
+                <div className="relative">
+                  <NavIcon title={link.title} />
+                  {link.title === "Notifications" &&
+                    notificationsCount > 0 && (
+                      <p className="absolute -top-1 -right-1 bg-primary text-white w-[16px] h-[16px] text-[10px] flex justify-center items-center rounded-full">
+                        {notificationsCount}
+                      </p>
+                    )}
+                  {link.title === "Messages" &&
+                    typeof newMessagesCount === "number" &&
+                    newMessagesCount > 0 && (
+                      <p className="absolute -top-1 -right-1 bg-primary text-white w-[16px] h-[16px] text-[10px] flex justify-center items-center rounded-full">
+                        {newMessagesCount}
+                      </p>
+                    )}
+                </div>
+              </Link>
+            )
+          )}
         </nav>
       </Activity>
       <GuestDialog></GuestDialog>

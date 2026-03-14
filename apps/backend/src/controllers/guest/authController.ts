@@ -48,7 +48,7 @@ const authController = (() => {
           name: 'Guest',
           username: 'guest_user',
           avatar:
-            'https://bcezmxfxuctgrkiavycl.supabase.co/storage/v1/object/public/images/default.svg',
+            'https://bcezmxfxuctgrkiavycl.supabase.co/storage/v1/object/public/images/default-avatar.jpg',
           cover: '/blue.jpg',
           isGuest: true,
           _count: { Followers: 0, Followings: 0, Post: 0 },

@@ -29,7 +29,11 @@ const ChatRows = ({ params }: { params?: number }) => {
     },
   });
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col overflow-y-scroll [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar]:max-h-[90%]
+    [&::-webkit-scrollbar-track]:rounded-xl
+    [&::-webkit-scrollbar-track]:bg-background
+    [&::-webkit-scrollbar-thumb]:rounded-xl
+    [&::-webkit-scrollbar-thumb]:bg-accent">
       {chatRooms?.map((room: RoomType) => {
         const otherUser = room?.users.find(
           (user) => user?.id !== currentUser?.id,

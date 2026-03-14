@@ -1,6 +1,6 @@
 import { Mailbox, Search } from "lucide-react";
 
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, ReactNode, SetStateAction } from "react";
 
 import { ActionButton } from "@/components/button";
 import {
@@ -20,17 +20,21 @@ export const UsersDialog = ({
   setSearchUser,
   isPending,
   searchUser,
+  children
 }: {
   users: Array<{ id: number; name: string; username: string; avatar: string }>;
   messageUser: (visitedUserId: number, visitedUser: UserPartial) => void;
   setSearchUser: Dispatch<SetStateAction<string>>;
   isPending: boolean;
   searchUser: string;
+  children?: ReactNode
 }) => {
   return (
     <Dialog>
       <DialogTrigger>
-        <ActionButton className="mt-4">New Chat</ActionButton>
+        {
+          children ? children : <ActionButton className="mt-4">New Chat</ActionButton>
+        }
       </DialogTrigger>
       <DialogContent>
         <DialogHeader className="h-fit">

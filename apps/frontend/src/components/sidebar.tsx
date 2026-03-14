@@ -263,7 +263,7 @@ const Sidebar = ({ children }: Props) => {
           </div>
         </div>
       </Activity>
-      <div className={cn("pb-14 md:pb-0 w-full lg:w-auto", !path.includes("/messages") && !["/register", "/login", "/onboarding", "/"].includes(path) && "w-full lg:w-[600px]")}>
+      <div className={cn("pb-14 md:pb-0 w-full lg:w-auto", !path.includes("/messages") && !["/register", "/login", "/onboarding", "/"].includes(path) && "w-full lg:w-[600px]", path.includes("/messages") ? "pb-0" : "pb-14 md:pb-0")}>
         {children}
       </div>
       <Activity mode={asideVisible ? "visible" : "hidden"}>
@@ -303,7 +303,7 @@ const Sidebar = ({ children }: Props) => {
       </Activity>
       {/* MOBILE BOTTOM NAV — visible only below md */}
       <Activity mode={visible ? "visible" : "hidden"}>
-        <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-t border-t-border flex justify-around items-center py-2 md:hidden">
+        <nav className={cn("fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-t border-t-border border-x border-x-border flex justify-around items-center py-2 md:hidden", path.includes("/messages/") ? "hidden" : "flex")}>
           {links.map((link) => (
             <Link
               href={link.url}

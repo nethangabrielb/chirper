@@ -158,7 +158,7 @@ const ChatRoom = ({
   };
 
   return (
-    <div className="flex flex-col w-full md:w-[65%] h-svh md:h-full gap-2 relative pr-2 py-2 overflow-hidden">
+    <div className="flex flex-col w-full md:w-[65%] h-svh md:h-full gap-2 relative pr-2 py-2 ">
       <div
         className="flex flex-col gap-2 overflow-y-scroll p-4 h-full [&::-webkit-scrollbar]:w-2
         [&::-webkit-scrollbar]:max-h-[90%]

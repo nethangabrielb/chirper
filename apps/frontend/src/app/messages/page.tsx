@@ -4,8 +4,7 @@ import ChatRows from "@/app/messages/components/chat-rows";
 import { UsersDialog } from "@/app/messages/components/chat-users-list";
 import useUser from "@/stores/user.store";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Mail } from "lucide-react";
-
+import { Mail, MailPlus } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import Head from "next/head";
@@ -80,9 +79,21 @@ const Messages = () => {
         />
       </Head>
       <div className="w-full md:w-auto lg:w-[70vw] border-l border-r border-l-border border-r-border min-h-screen relative md:ml-4 flex">
-        <div className="w-full md:w-[35%] flex flex-col gap-8 md:border-r md:border-r-border h-svh pl-2">
+        <div className="w-full md:w-[35%] flex flex-col gap-2 md:border-r md:border-r-border h-svh pl-2 relative">
           <div>
             <h1 className="text-text text-xl font-bold p-4">Chat</h1>
+          </div>
+
+          <div className="md:hidden block absolute top-2 right-2 bg-background z-50">
+            <UsersDialog
+              users={data ?? []}
+              messageUser={messageUser}
+              setSearchUser={setSearchUser}
+              isPending={isPending}
+              searchUser={searchUser}
+            >
+              <MailPlus size={32}></MailPlus>
+            </UsersDialog>
           </div>
 
           {/* Chat columns with chat rows, where I will render all the chats the user have */}

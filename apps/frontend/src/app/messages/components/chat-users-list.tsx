@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/dialog";
 import { UsersListSkeleton } from "@/components/users-list-skeleton";
 
-import { UserPartial } from "@/types/user";
 
 export const UsersDialog = ({
   users,
@@ -23,7 +22,7 @@ export const UsersDialog = ({
   children
 }: {
   users: Array<{ id: number; name: string; username: string; avatar: string }>;
-  messageUser: (visitedUserId: number, visitedUser: UserPartial) => void;
+  messageUser: (visitedUserId: number, visitedUser: {id: number, name: string, username: string, avatar: string}) => void;
   setSearchUser: Dispatch<SetStateAction<string>>;
   isPending: boolean;
   searchUser: string;

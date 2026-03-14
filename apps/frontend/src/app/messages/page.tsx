@@ -34,7 +34,7 @@ const Messages = () => {
     },
   });
   const mutation = useMutation({
-    mutationFn: async (visitedUser: UserPartial) => {
+    mutationFn: async (visitedUser: {id: number, name: string, username: string, avatar: string}) => {
       if (currentUser && visitedUser) {
         const res = await roomApi.createChatRoom(currentUser, visitedUser);
         return res;
@@ -52,7 +52,7 @@ const Messages = () => {
     document.title = "Messages / Chirper";
   }, []);
 
-  const messageUser = (visitedUserId: number, visitedUser: UserPartial) => {
+  const messageUser = (visitedUserId: number, visitedUser: {id: number, name: string, username: string, avatar: string}) => {
     // Check currentUser rooms if there is a room with the user IDs of current and visited user
     const chatroom = chatroomExisted(
       currentUser?.id,

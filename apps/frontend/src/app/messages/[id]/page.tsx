@@ -36,13 +36,14 @@ const MessagesSlug = ({ params }: { params: Promise<{ id: string }> }) => {
     onSuccess: (res) => {
       if (res.status === "success") {
         queryClient.invalidateQueries({
-          queryKey: ["chatRooms", currentUser?.id],
+          queryKey: ["chatRooms"],
         });
       }
     },
   });
 
-  const updateMessagesOptimistic = async (
+
+  const updateMessagesOptimistic =  (
     newMessage: NewMessage,
     element?: HTMLDivElement,
   ) => {
@@ -51,8 +52,9 @@ const MessagesSlug = ({ params }: { params: Promise<{ id: string }> }) => {
       return [...prev, newMessage];
     });
 
-    await queryClient.invalidateQueries({
-      queryKey: ["chatRooms", currentUser?.id],
+
+    queryClient.invalidateQueries({
+      queryKey: ["chatRooms"],
     });
 
     setTimeout(() => {

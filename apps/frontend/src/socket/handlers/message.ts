@@ -41,6 +41,7 @@ const messageEventsHandler = {
               return [...updated];
             },
           );
+
         }
       },
     );

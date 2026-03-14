@@ -31,6 +31,8 @@ export const initSocket = (io: Server) => {
           }
 
           socket.to(String(message.roomId)).emit('newMessage', message);
+          
+          socket.broadcast.emit('newMessageNotification', message.receiverId);
         } else {
           console.log('Invalid socket event.');
         }

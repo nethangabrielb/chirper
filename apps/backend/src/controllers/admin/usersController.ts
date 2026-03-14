@@ -196,7 +196,7 @@ const userController = (() => {
 
           const fileName = imageLink?.split('/images/')[1];
 
-          if (fileName) {
+          if (fileName && fileName !== 'default-avatar.jpg') {
             await client.storage.from('images').remove([fileName]);
           }
         }

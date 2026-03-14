@@ -3,18 +3,18 @@ import Icon from "@/components/icon";
 
 const LandingPage = () => {
   return (
-    <div className="flex gap-4 h-svh justify-evenly items-center">
-      <div className="flex-1 flex justify-center">
+    <div className="flex flex-col lg:flex-row gap-4 min-h-svh justify-center lg:justify-evenly items-center px-6 py-12 lg:px-0 lg:py-0">
+      <div className="hidden lg:flex flex-1 justify-center">
         <Icon width={450} height={450} alt="Twitter Icon"></Icon>
       </div>
 
-      <div className="flex flex-col items-center gap-10 flex-1">
-        <div className="flex flex-col items-start gap-10">
-          <h1 className="font-extrabold text-7xl tracking-tighter rotate-x-[35deg]">
+      <div className="flex flex-col items-center lg:items-start gap-10 w-full lg:flex-1">
+        <div className="flex flex-col items-center lg:items-start gap-10 w-full max-w-[350px] lg:max-w-none mx-auto lg:mx-0">
+          <h1 className="font-extrabold text-4xl sm:text-5xl lg:text-7xl tracking-tighter rotate-x-[35deg] text-center lg:text-left">
             Happening now
           </h1>
-          <div className="flex flex-col w-[300px] gap-4">
-            <h3 className="font-bold text-4xl tracking-tighter rotate-x-[35deg]">
+          <div className="flex flex-col w-full max-w-[300px] gap-4">
+            <h3 className="font-bold text-2xl sm:text-3xl lg:text-4xl tracking-tighter rotate-x-[35deg] text-center lg:text-left">
               Join today.
             </h3>
             <FormButton

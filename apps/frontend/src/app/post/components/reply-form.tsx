@@ -234,7 +234,7 @@ const CreateReply = ({
       <img
         src={user?.avatar}
         alt={`${user?.username}'s icon`}
-        className="size-[48px] min-w-[48px]! rounded-full object-cover"
+        className="size-[40px] sm:size-[48px] min-w-[40px]! sm:min-w-[48px]! rounded-full object-cover"
       />
       <form
         onSubmit={handleSubmit(createReply)}
@@ -334,8 +334,8 @@ const CreateReply = ({
                 className={cn(
                   "absolute top-0 z-50 transition-all ease-out delay-200",
                   openEmojiPicker
-                    ? "translate-x-10 translate-y-0 visible block"
-                    : "translate-x-10 translate-y-100 opacity-80 invisible hidden h-0",
+                    ? "translate-x-0 sm:translate-x-10 translate-y-0 visible block"
+                    : "translate-x-0 sm:translate-x-10 translate-y-100 opacity-80 invisible hidden h-0",
                 )}
                 onClick={(e) => {
                   e.stopPropagation();

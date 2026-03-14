@@ -2,6 +2,7 @@
 
 import ChatRoom, { NewMessage } from "@/app/messages/components/chat-room";
 import ChatRows from "@/app/messages/components/chat-rows";
+import { ChatListSkeleton, ChatRoomSkeleton } from "@/app/messages/components/messages-skeleton";
 import { socket } from "@/socket/client";
 import useUser from "@/stores/user.store";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -35,13 +36,18 @@ const MessagesSlug = ({ params }: { params: Promise<{ id: string }> }) => {
     onSuccess: (res) => {
       if (res.status === "success") {
         queryClient.invalidateQueries({
-          queryKey: ["chatRooms", currentUser?.id],
+          queryKey: ["chatRooms"],
         });
       }
     },
   });
 
-  const updateMessagesOptimistic = async (
+   useEffect(() => {
+    setReadMutation.mutate(Number(id));
+  }, [id]);
+
+
+  const updateMessagesOptimistic =  (
     newMessage: NewMessage,
     element?: HTMLDivElement,
   ) => {
@@ -50,8 +56,8 @@ const MessagesSlug = ({ params }: { params: Promise<{ id: string }> }) => {
       return [...prev, newMessage];
     });
 
-    await queryClient.invalidateQueries({
-      queryKey: ["chatRooms", currentUser?.id],
+    queryClient.invalidateQueries({
+      queryKey: ["chatRooms"],
     });
 
     setTimeout(() => {
@@ -59,9 +65,7 @@ const MessagesSlug = ({ params }: { params: Promise<{ id: string }> }) => {
     }, 100);
   };
 
-  useEffect(() => {
-    setReadMutation.mutate(Number(id));
-  }, [id]);
+ 
 
   useEffect(() => {
     const handleReconnect = async () => refetch();
@@ -86,22 +90,26 @@ const MessagesSlug = ({ params }: { params: Promise<{ id: string }> }) => {
           content="Home page of my attempt to make a clone of Twitter"
         />
       </Head>
-      <div className="lg:w-[70vw] border-l border-r border-l-border border-r-border h-full relative ml-4 flex">
-        <div className="w-[35%] h-full flex flex-col gap-8 border-r border-r-border">
+      <div className="w-full md:w-auto lg:w-[70vw] border-l border-r border-l-border border-r-border h-full relative md:ml-4 flex">
+        <div className="hidden md:flex md:w-[35%] h-full flex-col gap-8 border-r border-r-border">
           <div>
             <h1 className="text-text text-xl font-bold p-4">Chat</h1>
           </div>
 
           {/* Chat columns with chat rows, where I will render all the chats the user have */}
-          <ChatRows params={Number(id)}></ChatRows>
+          {!currentUser ? <ChatListSkeleton /> : <ChatRows params={Number(id)}></ChatRows>}
         </div>
 
         {/* Render the chatroom from the chat rows */}
-        <ChatRoom
-          messages={data && data}
-          paramsId={Number(id)}
-          updateMessagesOptimistic={updateMessagesOptimistic}
-        ></ChatRoom>
+        {!data ? (
+          <ChatRoomSkeleton />
+        ) : (
+          <ChatRoom
+            messages={data && data}
+            paramsId={Number(id)}
+            updateMessagesOptimistic={updateMessagesOptimistic}
+          ></ChatRoom>
+        )}
       </div>
     </div>
   );

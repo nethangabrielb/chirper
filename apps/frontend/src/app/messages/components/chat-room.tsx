@@ -158,9 +158,9 @@ const ChatRoom = ({
   };
 
   return (
-    <div className="flex flex-col w-[65%] h-full gap-2 relative pr-2 py-2">
+    <div className="flex flex-col w-full md:w-[65%] h-svh md:h-full gap-2 relative pr-2 py-2 ">
       <div
-        className="flex flex-col gap-2 overflow-y-scroll p-4 [&::-webkit-scrollbar]:w-2
+        className="flex flex-col gap-2 overflow-y-scroll p-4 h-full [&::-webkit-scrollbar]:w-2
         [&::-webkit-scrollbar]:max-h-[90%]
         [&::-webkit-scrollbar-track]:rounded-xl
       [&::-webkit-scrollbar-track]:bg-background
@@ -168,7 +168,7 @@ const ChatRoom = ({
       [&::-webkit-scrollbar-thumb]:bg-accent"
       >
         <div
-          className="flex gap-4 items-center absolute left-0 pl-4 z-100 top-0 pt-4 pb-1 backdrop-blur-xs"
+          className="flex gap-2 md:gap-4 items-center absolute left-0 pl-2 md:pl-4 z-100 top-0 pt-4 pb-1 backdrop-blur-xs w-full"
           style={{
             WebkitMaskImage:
               "linear-gradient(to bottom, rgba(0,0,0,1) 90%, rgba(0,0,0,0) 100%)",
@@ -176,18 +176,38 @@ const ChatRoom = ({
               "linear-gradient(to bottom, rgba(0,0,0,1) 90%, rgba(0,0,0,0) 100%)",
           }}
         >
+          {/* Mobile back button */}
+          <button
+            onClick={() => router.push("/messages")}
+            className="md:hidden p-2 rounded-full hover:bg-neutral-500/20 transition-all cursor-pointer"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="m12 19-7-7 7-7" />
+              <path d="M19 12H5" />
+            </svg>
+          </button>
           <img
             src={roomOtherUser?.avatar}
             alt={`@${roomOtherUser?.username}'s avatar`}
-            className="rounded-full size-[64px] my-2 object-cover bg-background"
+            className="rounded-full size-[40px] md:size-[64px] my-2 object-cover bg-background"
           />
-          <h1 className="font-bold text-xl">{roomOtherUser?.name}</h1>
+          <h1 className="font-bold text-lg md:text-xl">{roomOtherUser?.name}</h1>
         </div>
-        <div className="flex flex-col items-center pt-28 pb-8">
+        <div className="flex flex-col items-center pt-20 md:pt-28 pb-4 md:pb-8">
           <img
             src={roomOtherUser?.avatar}
             alt={`@${roomOtherUser?.username}'s avatar`}
-            className="rounded-full size-[64px] my-2 object-cover"
+            className="rounded-full size-[48px] md:size-[64px] my-2 object-cover"
           />
           <div className="flex flex-col items-center">
             <h1 className="font-bold text-xl">{roomOtherUser?.name}</h1>

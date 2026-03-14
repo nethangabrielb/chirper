@@ -161,14 +161,14 @@ const PostSingle = ({ post, className, settingsCn, buttonCn }: Props) => {
         ></CurrentUserPostDropdown>
       </Activity>
       <div className="flex flex-col gap-2 w-full">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 min-w-0">
           {user && <ProfileHoverCard user={post.user}></ProfileHoverCard>}
-          <div className="flex flex-col">
-            <p className="font-bold text-text space tracking-[0.2px] text-[18px]">
+          <div className="flex flex-col min-w-0">
+            <p className="font-bold text-text tracking-[0.2px] text-base sm:text-[18px] truncate">
               {post.user.name}
             </p>
             <Link
-              className="text-darker font-light text-[15px] hover:underline"
+              className="text-darker font-light text-[14px] sm:text-[15px] hover:underline truncate"
               href={`/profile/${post.user?.id}`}
             >
               @{post.user.username}
@@ -188,7 +188,7 @@ const PostSingle = ({ post, className, settingsCn, buttonCn }: Props) => {
             ></img>
           </div>
         </Activity>
-        <p className="border-b border-b-border pb-1 text-darker font-light text-[14px]">
+        <p className="border-b border-b-border pb-1 text-darker font-light text-[13px] sm:text-[14px]">
           {formatDateSlugPost(post.createdAt)}
         </p>
 

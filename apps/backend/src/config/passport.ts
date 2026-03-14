@@ -38,7 +38,7 @@ passport.use(
             password: '',
             avatar:
               profile.photos?.[0]?.value ??
-              'https://bcezmxfxuctgrkiavycl.supabase.co/storage/v1/object/public/images/default.svg',
+              'https://bcezmxfxuctgrkiavycl.supabase.co/storage/v1/object/public/images/default-avatar.jpg',
             onboarded: false,
           });
 

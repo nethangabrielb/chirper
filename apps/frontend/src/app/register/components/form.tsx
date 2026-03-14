@@ -120,8 +120,8 @@ const RegisterForm = () => {
 
   return (
     <main className="flex flex-col">
-      <div className="flex justify-between w-fit gap-30 items-end">
-        <h1 className="font-extrabold text-4xl tracking-tighter rotate-x-[35deg]">
+      <div className="flex justify-between w-full gap-4 sm:gap-8 items-end">
+        <h1 className="font-extrabold text-2xl lg:text-4xl tracking-tighter rotate-x-[35deg]">
           Create your account
         </h1>
         <Link
@@ -133,7 +133,7 @@ const RegisterForm = () => {
       </div>
       <form
         onSubmit={handleSubmit(submitForm)}
-        className="flex flex-col gap-8 w-[70%]"
+        className="flex flex-col gap-8 w-full"
       >
         <InputSharp
           label="name"

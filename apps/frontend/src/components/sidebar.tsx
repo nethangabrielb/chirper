@@ -5,19 +5,25 @@ import useNotifications from "@/hooks/useNotifications";
 import useGuestDialog from "@/stores/guest-dialog.store";
 import useUser from "@/stores/user.store";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { Feather, LogOut, UserRound } from "lucide-react";
 import { toast } from "sonner";
 
 import { Activity, ReactNode, useEffect, useState } from "react";
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-
 import { ActionButton } from "@/components/button";
 import FollowListRow from "@/components/follow-list";
 import GuestDialog from "@/components/guest-dialog";
 import Icon from "@/components/icon";
 import NavIcon from "@/components/navIcon";
 import { CreatePostDialog } from "@/components/post-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { LogoutDropdown } from "@/components/ui/logout-dropdown";
 
 import { authApi } from "@/lib/api/auth";
@@ -68,7 +74,7 @@ const Sidebar = ({ children }: Props) => {
   const { notificationsCount, resetNotificationsCache } =
     useNotifications(user);
   const { newMessagesCount } = useRooms();
-
+   
   const { data: followListAside } = useQuery({
     queryKey: ["followList", user?.id],
     queryFn: async () => {
@@ -146,7 +152,7 @@ const Sidebar = ({ children }: Props) => {
       },
     );
     links = updatedlinks;
-  }, [user?.id]);
+  }, [user]);
 
   const logOut = () => {
     mutation.mutate();
@@ -157,24 +163,24 @@ const Sidebar = ({ children }: Props) => {
       <Activity mode={visible ? "visible" : "hidden"}>
         <div
           className={cn(
-            `gap-[8px] lg:w-[300px] relative`,
-            path.includes("/messages") && "lg:w-[50px]",
+            `gap-[8px] md:w-[70px] lg:w-[300px] relative hidden md:block min-h-screen`,
+            path.includes("/messages") && "md:w-[50px]! lg:w-[50px]!",
           )}
         >
           <div
             className={cn(
-              "flex flex-col gap-[8px] py-4 lg:w-[300px] h-full fixed",
+              "hidden md:flex flex-col justify-center px-4 lg:px-0 gap-[8px] py-4 h-svh sticky top-0 items-center lg:items-start",
               path.includes("/messages") &&
-                "w-fit! lg:w-[50px] pr-4 items-center ",
+                "w-fit! md:w-[50px]! lg:w-[50px]! pr-4 items-center! ",
             )}
           >
             <div
               className={cn(
-                "pb-3 px-8 w-fit",
-                path.includes("/messages") && "px-0",
+                "pb-3 px-4 w-fit",
+                path.includes("/messages") && "px-0! translate-x-2",
               )}
             >
-              <Icon width={36} height={36} alt="Twitter Icon"></Icon>
+              <Icon width={32} height={32} alt="Twitter Icon"></Icon>
             </div>
             {links.map((link) => {
               return (
@@ -182,8 +188,8 @@ const Sidebar = ({ children }: Props) => {
                   href={link.url}
                   key={crypto.randomUUID()}
                   className={cn(
-                    "text-lg flex items-center gap-6 w-fit hover:bg-muted transition-all p-3 rounded-4xl px-8 relative",
-                    path.includes("/messages") && "p-3!",
+                    "text-lg flex items-center gap-6 w-fit hover:bg-muted transition-all py-3 rounded-4xl lg:px-8 relative p-3!",
+                    path.includes("/messages") && "p-3! translate-x-2",
                   )}
                   onClick={(e) => {
                     if (user?.isGuest && link.url !== "/home") {
@@ -216,7 +222,7 @@ const Sidebar = ({ children }: Props) => {
                     <Activity
                       mode={path.includes("/messages") ? "hidden" : "visible"}
                     >
-                      <span>{link.title}</span>
+                      <span className="hidden lg:inline">{link.title}</span>
                     </Activity>
                   }
                 </Link>
@@ -224,28 +230,49 @@ const Sidebar = ({ children }: Props) => {
             })}
             <Activity mode={path.includes("/messages") ? "hidden" : "visible"}>
               <CreatePostDialog>
+                {/* Desktop: full Tweet button */}
                 <ActionButton
                   className={cn(
-                    "bg-primary text-white py-3! mx-8! hover:brightness-90 hover:bg-primary!",
+                    "bg-primary text-white py-3! mx-8! hover:brightness-90 hover:bg-primary! hidden lg:flex",
                     path.includes("/messages") ? "w-full lg:w-0!" : "w-[80%]",
                   )}
                 >
                   Tweet
                 </ActionButton>
               </CreatePostDialog>
+              {/* Tablet: round feather icon button */}
+              <CreatePostDialog>
+                <button
+                  className="lg:hidden bg-primary hover:brightness-90 text-white p-3 rounded-full flex items-center justify-center shadow-lg transition-all"
+                >
+                  <Feather size={22} />
+                </button>
+              </CreatePostDialog>
             </Activity>
-            <LogoutDropdown
-              data={user}
-              logoutHandler={logOut}
-              className={cn(path.includes("/messages") && "w-fit lg:w-0!")}
-              shrinkView={path.includes("/messages")}
-            ></LogoutDropdown>
+            {/* Logout: shrink on tablet, full on desktop */}
+            <div className={cn("lg:hidden block mt-auto", path.includes("/messages") && "pl-3!")}>
+              <LogoutDropdown
+                data={user}
+                logoutHandler={logOut}
+                shrinkView={true}
+              />
+            </div>
+            <div className={"hidden lg:block w-full mt-auto"}>
+              <LogoutDropdown
+                data={user}
+                logoutHandler={logOut}
+                className={cn(path.includes("/messages") && "w-fit lg:w-0!")}
+                shrinkView={path.includes("/messages")}
+              />
+            </div>
           </div>
         </div>
       </Activity>
-      {children}
+      <div className={cn("pb-14 md:pb-0 flex-1 min-w-0", !path.includes("/messages") && !["/register", "/login", "/onboarding", "/"].includes(path) && "lg:w-[600px] lg:flex-none", path.includes("/messages") ? "pb-0" : "pb-14 md:pb-0")}>
+        {children}
+      </div>
       <Activity mode={asideVisible ? "visible" : "hidden"}>
-        <div className={cn(`gap-[8px] lg:w-[450px] relative`)}>
+        <div className={cn(`gap-[8px] lg:w-[450px] relative hidden xl:block`)}>
           <aside className="p-4 font-bold px-8 lg:w-[450px] fixed">
             <div className="flex flex-col border border-border p-3 rounded-xl gap-4">
               <h1>Who to follow</h1>
@@ -278,6 +305,82 @@ const Sidebar = ({ children }: Props) => {
             </div>
           </aside>
         </div>
+      </Activity>
+      {/* MOBILE BOTTOM NAV — visible only below md */}
+      <Activity mode={visible ? "visible" : "hidden"}>
+        <nav className={cn("fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-t border-t-border border-x border-x-border flex justify-around items-center py-2 md:hidden", path.includes("/messages/") ? "hidden" : "flex")}>
+          {links.map((link) =>
+            link.title === "Profile" ? (
+              <DropdownMenu key={`bottom-${link.title}`}>
+                <DropdownMenuTrigger asChild>
+                  <button className="p-2 relative flex items-center justify-center cursor-pointer">
+                    <NavIcon title={link.title} />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  side="top"
+                  align="end"
+                  className="w-48 bg-background shadow-xl shadow-secondary mb-2"
+                >
+                  <DropdownMenuItem
+                    className="hover:bg-secondary! font-medium flex items-center gap-2 cursor-pointer"
+                    onSelect={(e) => {
+                      e.preventDefault();
+                      if (user?.isGuest) {
+                        openGuestDialog(true);
+                        return;
+                      }
+                      router.push(link.url)
+                    }}
+                  >
+                    <UserRound size={16} />
+                    Visit Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="hover:bg-secondary! font-medium flex items-center gap-2 cursor-pointer text-red-500"
+                    onSelect={logOut}
+                  >
+                    <LogOut size={16} />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Link
+                href={link.url}
+                key={`bottom-${link.title}`}
+                className="p-2 relative flex items-center justify-center"
+                onClick={(e) => {
+                  if (user?.isGuest && link.url !== "/home") {
+                    e.preventDefault();
+                    openGuestDialog(true);
+                    return;
+                  }
+                  if (link.title === "Notifications") {
+                    resetNotificationsCache();
+                  }
+                }}
+              >
+                <div className="relative">
+                  <NavIcon title={link.title} />
+                  {link.title === "Notifications" &&
+                    notificationsCount > 0 && (
+                      <p className="absolute -top-1 -right-1 bg-primary text-white w-[16px] h-[16px] text-[10px] flex justify-center items-center rounded-full">
+                        {notificationsCount}
+                      </p>
+                    )}
+                  {link.title === "Messages" &&
+                    typeof newMessagesCount === "number" &&
+                    newMessagesCount > 0 && (
+                      <p className="absolute -top-1 -right-1 bg-primary text-white w-[16px] h-[16px] text-[10px] flex justify-center items-center rounded-full">
+                        {newMessagesCount}
+                      </p>
+                    )}
+                </div>
+              </Link>
+            )
+          )}
+        </nav>
       </Activity>
       <GuestDialog></GuestDialog>
     </div>

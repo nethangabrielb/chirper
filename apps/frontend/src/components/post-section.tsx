@@ -108,21 +108,21 @@ const Post = ({ post, displayReplies, bookmarkedPost }: Props) => {
           )}
 
           <div className="flex flex-col gap-2 w-full min-w-0">
-            <div className="flex gap-1">
-              <p className="font-bold text-text space tracking-[0.2px] text-[18px]">
+            <div className="flex gap-1 flex-wrap items-baseline min-w-0">
+              <p className="font-bold text-text tracking-[0.2px] text-[18px] sm:text-[18px] text-base truncate max-w-[150px] sm:max-w-none">
                 {post.user.name}
               </p>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1 min-w-0">
                 <Link
-                  className="text-darker font-light text-[15px] hover:underline"
+                  className="text-darker font-light text-[14px] sm:text-[15px] hover:underline truncate max-w-[120px] sm:max-w-none"
                   href={`/profile/${post.user?.id}`}
                 >
                   @{post.user.username}
                 </Link>
-                <div className="text-darker font-light w-0.8 my-auto flex justify-center text-a items-center">
+                <div className="text-darker font-light w-0.8 my-auto flex justify-center items-center">
                   .
                 </div>
-                <p className="text-darker font-light text-[14px]">
+                <p className="text-darker font-light text-[13px] sm:text-[14px] whitespace-nowrap">
                   {formatDateFeedPost(post.createdAt)}
                 </p>
               </div>
@@ -151,7 +151,7 @@ const Post = ({ post, displayReplies, bookmarkedPost }: Props) => {
                 ></img>
               </div>
             </Activity>
-            <div className="flex justify-between w-[100%] ">
+            <div className="flex justify-between w-full">
               {/* render comments */}
               <div className="flex items-center group cursor-pointer">
                 <div className="p-2 rounded-full group-hover:bg-primary/20 transition-all">

@@ -14,7 +14,7 @@ const UserService = {
       ...data,
       password: encryptedPassword,
       avatar:
-        'https://bcezmxfxuctgrkiavycl.supabase.co/storage/v1/object/public/images/default.svg',
+        'https://bcezmxfxuctgrkiavycl.supabase.co/storage/v1/object/public/images/default-avatar.jpg',
     });
 
     if (!newUser) {

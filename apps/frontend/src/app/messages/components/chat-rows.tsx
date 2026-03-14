@@ -23,13 +23,17 @@ const ChatRows = ({ params }: { params?: number }) => {
     onSuccess: (res) => {
       if (res.status === "success") {
         queryClient.invalidateQueries({
-          queryKey: ["chatRooms", currentUser?.id],
+          queryKey: ["chatRooms"],
         });
       }
     },
   });
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar]:max-h-[90%]
+    [&::-webkit-scrollbar-track]:rounded-xl
+    [&::-webkit-scrollbar-track]:bg-background
+    [&::-webkit-scrollbar-thumb]:rounded-xl
+    [&::-webkit-scrollbar-thumb]:bg-accent overflow-y-scroll pb-[68.8px] md:pb-0">
       {chatRooms?.map((room: RoomType) => {
         const otherUser = room?.users.find(
           (user) => user?.id !== currentUser?.id,

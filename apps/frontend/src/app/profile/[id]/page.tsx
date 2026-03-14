@@ -2,6 +2,7 @@
 
 import FeedPost from "@/app/home/components/feed-post";
 import { FeedControlBtn } from "@/app/home/page";
+import ProfileSkeleton from "@/app/profile/components/profile-skeleton";
 import useVisitedUser from "@/app/profile/hooks/useVisitedUser";
 import useFollows from "@/hooks/useFollows";
 import useUser from "@/stores/user.store";
@@ -182,6 +183,9 @@ const Profile = () => {
           content="Home page of my attempt to make a clone of Twitter"
         />
       </Head>
+      {!user ? (
+        <ProfileSkeleton />
+      ) : (
       <div className="lg:w-[600px] h-full relative">
         <div className="flex backdrop-blur-lg top-0 w-full border-x border-x-border">
           <div className="bg-transparent flex-1 p-2 border-b border-b-border font-bold flex items-center gap-8">
@@ -442,6 +446,7 @@ const Profile = () => {
           </Activity>
         </section>
       </div>
+      )}
     </>
   );
 };

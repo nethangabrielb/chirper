@@ -2,6 +2,7 @@
 
 import ChatRows from "@/app/messages/components/chat-rows";
 import { UsersDialog } from "@/app/messages/components/chat-users-list";
+import { ChatListSkeleton } from "@/app/messages/components/messages-skeleton";
 import useUser from "@/stores/user.store";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Mail, MailPlus } from "lucide-react";
@@ -97,7 +98,7 @@ const Messages = () => {
           </div>
 
           {/* Chat columns with chat rows, where I will render all the chats the user have */}
-          <ChatRows></ChatRows>
+          {!currentUser ? <ChatListSkeleton /> : <ChatRows></ChatRows>}
         </div>
 
         {/* Render the chatroom from the chat rows */}

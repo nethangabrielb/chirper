@@ -2,6 +2,7 @@
 
 import ChatRoom, { NewMessage } from "@/app/messages/components/chat-room";
 import ChatRows from "@/app/messages/components/chat-rows";
+import { ChatListSkeleton, ChatRoomSkeleton } from "@/app/messages/components/messages-skeleton";
 import { socket } from "@/socket/client";
 import useUser from "@/stores/user.store";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -93,15 +94,19 @@ const MessagesSlug = ({ params }: { params: Promise<{ id: string }> }) => {
           </div>
 
           {/* Chat columns with chat rows, where I will render all the chats the user have */}
-          <ChatRows params={Number(id)}></ChatRows>
+          {!currentUser ? <ChatListSkeleton /> : <ChatRows params={Number(id)}></ChatRows>}
         </div>
 
         {/* Render the chatroom from the chat rows */}
-        <ChatRoom
-          messages={data && data}
-          paramsId={Number(id)}
-          updateMessagesOptimistic={updateMessagesOptimistic}
-        ></ChatRoom>
+        {!data ? (
+          <ChatRoomSkeleton />
+        ) : (
+          <ChatRoom
+            messages={data && data}
+            paramsId={Number(id)}
+            updateMessagesOptimistic={updateMessagesOptimistic}
+          ></ChatRoom>
+        )}
       </div>
     </div>
   );

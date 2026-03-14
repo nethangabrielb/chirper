@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 
 import messageService from '../../services/messageService';
+import { User } from '../../types/user';
 import { GENERIC_ERROR_MESSAGE } from '../../utils/errorMessage';
 
 const messageController = (() => {
@@ -9,6 +10,15 @@ const messageController = (() => {
     res: Response
   ) => {
     try {
+      const user = req.user as User;
+
+      if (user.isGuest) {
+        return res.status(403).json({
+          error: 'Forbidden',
+          message: 'Unauthorized access.',
+        });
+      }
+
       const messages = await messageService.getByRoomId(
         Number(req.params.roomId)
       );

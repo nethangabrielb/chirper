@@ -16,7 +16,11 @@ export async function proxy(request: NextRequest) {
   if (userAuthenticated.authorized === false) {
     return NextResponse.redirect(new URL("/", request.url));
   } else if (userAuthenticated.authorized && userAuthenticated.isGuest) {
-    if (pathname === "/home" || pathname.includes("/post")) {
+    if (
+      pathname === "/home" ||
+      pathname.includes("/post") ||
+      pathname.includes("/profile")
+    ) {
       return NextResponse.next();
     } else {
       return NextResponse.redirect(new URL("/home", request.url));

@@ -12,7 +12,6 @@ import { Activity, ReactNode, useEffect, useState } from "react";
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import useMessagesNotifications from "@/stores/messages.store";
 import { ActionButton } from "@/components/button";
 import FollowListRow from "@/components/follow-list";
 import GuestDialog from "@/components/guest-dialog";
@@ -75,9 +74,7 @@ const Sidebar = ({ children }: Props) => {
   const { notificationsCount, resetNotificationsCache } =
     useNotifications(user);
   const { newMessagesCount } = useRooms();
-    const unreadMessagesCount = useMessagesNotifications(
-    (state) => state.unreadMessages,
-  );
+   
   const { data: followListAside } = useQuery({
     queryKey: ["followList", user?.id],
     queryFn: async () => {

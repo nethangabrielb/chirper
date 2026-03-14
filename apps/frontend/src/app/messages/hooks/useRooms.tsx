@@ -1,4 +1,3 @@
-import useMessagesNotifications from "@/stores/messages.store";
 import useUser from "@/stores/user.store";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -13,9 +12,7 @@ import { User } from "@/types/user";
 const useRooms = () => {
   const user = useUser((state) => state.user) as User;
   const [newMessagesCount, setNewMessagesCount] = useState<null | number>(null);
-  const setUnreadNotifications = useMessagesNotifications(
-    (state) => state.setUnreadMessages,
-  );
+ 
   const queryClient = useQueryClient();
 
   // Global socket listener for message notifications (same pattern as useNotifications)
@@ -54,7 +51,6 @@ const useRooms = () => {
           unreadLength += unreadCount;
         });
 
-        setUnreadNotifications(unreadLength);
         setNewMessagesCount(unreadLength);
 
         return res;

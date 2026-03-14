@@ -15,12 +15,11 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { Image, Smile, X } from "lucide-react";
+import { useRouter } from "nextjs-toploader/app";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import React, { Activity, useRef, useState } from "react";
-
-import { useRouter } from "next/navigation";
 
 import { ActionButton } from "@/components/button";
 import { TooltipIcon } from "@/components/tool-tip-icon";

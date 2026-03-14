@@ -8,6 +8,7 @@ import useGuestDialog from "@/stores/guest-dialog.store";
 import useUser from "@/stores/user.store";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Bookmark, Heart, MessageCircle } from "lucide-react";
+import { useRouter } from "nextjs-toploader/app";
 import { toast } from "sonner";
 
 import {
@@ -19,7 +20,6 @@ import {
 } from "react";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 import { ProfileHoverCard } from "@/components/profile-card-hover";
 

@@ -7,11 +7,10 @@ import { socket } from "@/socket/client";
 import { messageEventsHandler } from "@/socket/handlers/message";
 import useUser from "@/stores/user.store";
 import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "nextjs-toploader/app";
 import { useForm } from "react-hook-form";
 
 import { useCallback, useEffect, useRef } from "react";
-
-import { useRouter } from "next/navigation";
 
 import { ActionButton } from "@/components/button";
 import TextInput from "@/components/input-field";
@@ -201,7 +200,9 @@ const ChatRoom = ({
             alt={`@${roomOtherUser?.username}'s avatar`}
             className="rounded-full size-[40px] md:size-[64px] my-2 object-cover bg-background"
           />
-          <h1 className="font-bold text-lg md:text-xl">{roomOtherUser?.name}</h1>
+          <h1 className="font-bold text-lg md:text-xl">
+            {roomOtherUser?.name}
+          </h1>
         </div>
         <div className="flex flex-col items-center pt-20 md:pt-28 pb-4 md:pb-8">
           <img

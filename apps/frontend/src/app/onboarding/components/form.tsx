@@ -3,13 +3,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Pencil } from "lucide-react";
+import { useRouter } from "nextjs-toploader/app";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
 
 import { useEffect, useRef, useState } from "react";
-
-import { useRouter } from "next/navigation";
 
 import { ActionButton } from "@/components/button";
 import Icon from "@/components/icon";

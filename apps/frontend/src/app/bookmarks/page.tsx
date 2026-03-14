@@ -2,11 +2,11 @@
 
 import FeedPost from "@/app/home/components/feed-post";
 import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "nextjs-toploader/app";
 
 import { useEffect } from "react";
 
 import Head from "next/head";
-import { useRouter } from "next/navigation";
 
 import postApi from "@/lib/api/post";
 

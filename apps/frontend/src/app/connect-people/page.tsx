@@ -2,11 +2,11 @@
 
 import useUser from "@/stores/user.store";
 import { useInfiniteQuery } from "@tanstack/react-query";
+import { useRouter } from "nextjs-toploader/app";
 
 import React, { useEffect, useRef, useState } from "react";
 
 import Head from "next/head";
-import { useRouter } from "next/navigation";
 
 import FollowListRow from "@/components/follow-list";
 import { Spinner } from "@/components/ui/spinner";

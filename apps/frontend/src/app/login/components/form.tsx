@@ -3,12 +3,12 @@
 import { LoginSchema } from "@/app/login/schema/loginSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "nextjs-toploader/app";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 import { FormButton } from "@/components/button";
 import { InputSharp } from "@/components/input";

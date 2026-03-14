@@ -6,10 +6,11 @@ import { ChatListSkeleton } from "@/app/messages/components/messages-skeleton";
 import useUser from "@/stores/user.store";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Mail, MailPlus } from "lucide-react";
+import { useRouter } from "nextjs-toploader/app";
+
 import { useEffect, useState } from "react";
 
 import Head from "next/head";
-import { useRouter } from "next/navigation";
 
 import roomApi from "@/lib/api/room";
 import userApi from "@/lib/api/user";
@@ -35,7 +36,12 @@ const Messages = () => {
     },
   });
   const mutation = useMutation({
-    mutationFn: async (visitedUser: {id: number, name: string, username: string, avatar: string}) => {
+    mutationFn: async (visitedUser: {
+      id: number;
+      name: string;
+      username: string;
+      avatar: string;
+    }) => {
       if (currentUser && visitedUser) {
         const res = await roomApi.createChatRoom(currentUser, visitedUser);
         return res;
@@ -53,7 +59,10 @@ const Messages = () => {
     document.title = "Messages / Chirper";
   }, []);
 
-  const messageUser = (visitedUserId: number, visitedUser: {id: number, name: string, username: string, avatar: string}) => {
+  const messageUser = (
+    visitedUserId: number,
+    visitedUser: { id: number; name: string; username: string; avatar: string },
+  ) => {
     // Check currentUser rooms if there is a room with the user IDs of current and visited user
     const chatroom = chatroomExisted(
       currentUser?.id,

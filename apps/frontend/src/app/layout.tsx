@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import NextTopLoader from "nextjs-toploader";
 
 import { Inter } from "next/font/google";
 
@@ -30,6 +31,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.className} suppressHydrationWarning>
       <body className={`antialiased min-h-svh bg-background`}>
+        <NextTopLoader />
         <Toaster position="top-right" richColors />
         <ThemeProvider
           attribute="class"

@@ -4,10 +4,9 @@ import useGuestDialog from "@/stores/guest-dialog.store";
 import useUser from "@/stores/user.store";
 import { useMutation } from "@tanstack/react-query";
 import { Ban } from "lucide-react";
+import { useRouter } from "nextjs-toploader/app";
 import { VisuallyHidden } from "radix-ui";
 import { toast } from "sonner";
-
-import { useRouter } from "next/navigation";
 
 import { ActionButton } from "@/components/button";
 import {

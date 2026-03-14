@@ -3,11 +3,11 @@
 import NotificationRow from "@/app/notifications/components/notification-row";
 import useUser from "@/stores/user.store";
 import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "nextjs-toploader/app";
 
 import { useEffect } from "react";
 
 import Head from "next/head";
-import { useRouter } from "next/navigation";
 
 import { Spinner } from "@/components/ui/spinner";
 

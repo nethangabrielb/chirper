@@ -4,6 +4,7 @@ import { RegisterSchema } from "@/app/register/schemas/registerSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { Check, X } from "lucide-react";
+import { useRouter } from "nextjs-toploader/app";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
@@ -11,7 +12,6 @@ import * as z from "zod";
 import { useState } from "react";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 import { FormButton } from "@/components/button";
 import { InputSharp } from "@/components/input";

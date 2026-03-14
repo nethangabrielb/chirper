@@ -40,9 +40,6 @@ export const guestAuthMiddleware = (
 
   const writeMethods = ['POST', 'PUT', 'PATCH', 'DELETE'];
 
-  console.log(writeMethods);
-  console.log(user);
-
   // Define public auth routes that MUST allow POST
   const authExceptions = [
     '/api/auth/login',

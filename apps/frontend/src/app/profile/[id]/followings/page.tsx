@@ -2,9 +2,10 @@
 
 import Follows from "@/app/profile/components/follows-row";
 import LinkButton from "@/app/profile/components/link-button";
+import useVisitedUser from "@/app/profile/hooks/useVisitedUser";
 import useBoxHeight from "@/hooks/useBoxHeight";
 import useUser from "@/stores/user.store";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { useEffect, useRef } from "react";
 
@@ -18,12 +19,13 @@ import { FollowType } from "@/types/follow";
 import { User } from "@/types/user";
 
 const FollowingsIndex = () => {
+  const queryClient = useQueryClient();
   const router = useRouter();
-  const visitedUser = useUser((state) => state.visitedUser) as User;
   const currentUser = useUser((state) => state.user) as User;
   const { height, setHeight } = useBoxHeight();
   const elementRef = useRef<HTMLDivElement>(null);
   const params = useParams();
+  const visitedUser = useVisitedUser({ id: params.id }).visitedUser;
   const { data: followings } = useQuery({
     queryKey: [params.id],
     queryFn: async () => {
@@ -33,6 +35,16 @@ const FollowingsIndex = () => {
       }
     },
   });
+
+  useEffect(() => {
+    const invalidateQueries = async () => {
+      await queryClient.refetchQueries({
+        queryKey: ["userProfilePage", params?.id],
+      });
+    };
+
+    invalidateQueries();
+  }, [params?.id]);
 
   useEffect(() => {
     if (elementRef?.current?.getBoundingClientRect()) {
@@ -48,8 +60,8 @@ const FollowingsIndex = () => {
   }, []);
 
   useEffect(() => {
-    document.title = `Twitter / @${visitedUser.username} Followings`;
-  }, [params.id]);
+    document.title = `Twitter / @${visitedUser?.username} Followings`;
+  }, [visitedUser?.id]);
 
   return (
     <>
@@ -68,7 +80,7 @@ const FollowingsIndex = () => {
           <div className="bg-transparent flex-1 p-2 font-bold flex items-center gap-8">
             <button
               className="p-2 rounded-full hover:bg-neutral-500/20 transition-all cursor-pointer"
-              onClick={() => router.push(`/profile/${visitedUser?.id}`)}
+              onClick={() => router.push(`/profile/${params?.id}`)}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -118,7 +130,7 @@ const FollowingsIndex = () => {
                 <Follows
                   follow={follow?.following}
                   isUser={follow?.following?.id === currentUser?.id}
-                  pathId={Number(params?.id) as number}
+                  pathId={Number(params?.id)}
                   currentUser={currentUser}
                   currentUserId={currentUser?.id}
                   visitedUserId={follow?.following?.id}

@@ -2,6 +2,7 @@
 
 import FeedPost from "@/app/home/components/feed-post";
 import { FeedControlBtn } from "@/app/home/page";
+import useVisitedUser from "@/app/profile/hooks/useVisitedUser";
 import useFollows from "@/hooks/useFollows";
 import useUser from "@/stores/user.store";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -134,7 +135,6 @@ const ProfileSideButton = ({
 };
 
 const Profile = () => {
-  const setVisitedUser = useUser((state) => state.setVisitedUser);
   const currentUser = useUser((state) => state.user) as User;
   const [feedType, setFeedType] = useState<"posts" | "replies" | "likes">(
     "posts",
@@ -142,24 +142,7 @@ const Profile = () => {
   const router = useRouter();
   const params = useParams();
   const id = params.id;
-  const { data: user } = useQuery({
-    queryKey: ["userProfilePage", id],
-    queryFn: async () => {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API}/api/users/${id}`,
-        {
-          credentials: "include",
-        },
-      );
-
-      if (!res.ok) {
-        throw new Error("Error fetching from the server.");
-      }
-      const data = await res.json();
-      setVisitedUser(data.data);
-      return data.data as User;
-    },
-  });
+  const user = useVisitedUser({ id }).visitedUser as User;
 
   const { data: posts } = useQuery({
     queryKey: ["posts", feedType],
@@ -257,7 +240,7 @@ const Profile = () => {
               pathId={Number(id)}
               currentUserFollowings={currentUser?.followings}
               currentUserId={currentUser?.id}
-              visitedUserId={user?.id!}
+              visitedUserId={user?.id}
               currentUserRooms={currentUser?.rooms}
               currentUser={currentUser}
               visitedUser={user}

@@ -263,7 +263,7 @@ const Sidebar = ({ children }: Props) => {
           </div>
         </div>
       </Activity>
-      <div className="pb-14 md:pb-0 lg:w-[600px] w-full">
+      <div className={cn("pb-14 md:pb-0", !path.includes("/messages") && "w-full lg:w-[600px]")}>
         {children}
       </div>
       <Activity mode={asideVisible ? "visible" : "hidden"}>

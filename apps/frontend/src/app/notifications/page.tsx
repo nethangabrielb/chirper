@@ -47,7 +47,7 @@ const Notifications = () => {
       </Head>
       <div
         className={cn(
-          "lg:w-[600px] min-h-svh relative border-x border-x-border",
+          "lg:w-[600px] w-full min-h-screen relative border-x border-x-border",
         )}
       >
         <div

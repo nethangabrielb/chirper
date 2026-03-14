@@ -16,7 +16,8 @@ const isAuthenticated = async (request: NextRequest) => {
   });
 
   const data = await res.json();
-  return data.authorized;
+
+  return data;
 };
 
 export default isAuthenticated;

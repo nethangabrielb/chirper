@@ -125,7 +125,7 @@ const authController = (() => {
     const user: User = payload as User;
 
     if (user.isGuest) {
-      return res.json({ authorized: true });
+      return res.json({ authorized: true, isGuest: true });
     }
 
     const verifyUser = await UserRepository.findById((user as User)?.id);

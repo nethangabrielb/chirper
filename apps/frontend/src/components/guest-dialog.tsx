@@ -77,7 +77,7 @@ const GuestDialog = () => {
           <p className="text-darker text-center text-sm">
             In order to enjoy the full experience, you need to make an account
             and sign in. <br></br>I'd really appreciate it if you would (I
-            really worked hard on this one!)
+            worked extra hard on this one!)
           </p>
 
           <ActionButton className="flex-1" onClick={handler}>

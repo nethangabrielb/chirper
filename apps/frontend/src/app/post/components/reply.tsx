@@ -199,20 +199,20 @@ const Reply = ({ reply }: Props) => {
               <div className="bg-neutral-600 w-[2px] flex-1"></div>
             </div>
             <div className="flex flex-col gap-2 w-full min-w-0">
-              <div className="flex items-center gap-1">
-                <p className="font-bold text-text space tracking-[0.2px] text-[18px]">
+              <div className="flex items-center gap-1 flex-wrap min-w-0">
+                <p className="font-bold text-text tracking-[0.2px] text-base sm:text-[18px] truncate max-w-[150px] sm:max-w-none">
                   {post?.user.name}
                 </p>
                 <Link
-                  className="text-darker font-light text-[15px] hover:underline"
+                  className="text-darker font-light text-[14px] sm:text-[15px] hover:underline truncate max-w-[120px] sm:max-w-none"
                   href={`/profile/${post?.user?.id}`}
                 >
                   @{post?.user.username}
                 </Link>
-                <div className="text-darker font-light w-0.8 my-auto flex justify-center text-a items-center">
+                <div className="text-darker font-light w-0.8 my-auto flex justify-center items-center">
                   .
                 </div>
-                <p className="text-darker font-light text-[14px]">
+                <p className="text-darker font-light text-[13px] sm:text-[14px] whitespace-nowrap">
                   {post && formatDateFeedPost(post?.createdAt)}
                 </p>
               </div>

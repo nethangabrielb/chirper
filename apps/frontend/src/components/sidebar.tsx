@@ -263,7 +263,7 @@ const Sidebar = ({ children }: Props) => {
           </div>
         </div>
       </Activity>
-      <div className="pb-14 md:pb-0">
+      <div className="pb-14 md:pb-0 lg:w-[600px] w-full">
         {children}
       </div>
       <Activity mode={asideVisible ? "visible" : "hidden"}>

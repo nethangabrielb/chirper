@@ -85,7 +85,7 @@ const Home = () => {
           content="Home page of my attempt to make a clone of Twitter"
         />
       </Head>
-      <div className="lg:w-[600px] min-h-screen relative">
+      <div className="lg:w-[600px] w-full min-h-screen relative">
         {/* FEED CONTROL UI */}
         <div className="flex backdrop-blur-xl bg-white/60 dark:bg-black/30 z-10 sticky top-0 w-full border-x border-x-border">
           <FeedControlBtn

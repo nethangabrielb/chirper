@@ -71,7 +71,7 @@ const ConnectPeople = () => {
           content="Home page of my attempt to make a clone of Twitter"
         />
       </Head>
-      <div className="lg:w-[600px] relative h-fit">
+      <div className="lg:w-[600px] w-full relative h-fit">
         <div className="flex backdrop-blur-md top-0 z-100 w-full sticky border-x border-x-border">
           <div className="bg-transparent flex-1 p-2 border-b border-b-border font-bold flex items-center gap-8">
             <button

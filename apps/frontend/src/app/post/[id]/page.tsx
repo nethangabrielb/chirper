@@ -50,10 +50,10 @@ const Post = () => {
           content="Home page of my attempt to make a clone of Twitter"
         />
       </Head>
-      <div className="lg:w-[600px] border-l border-r border-l-border border-r-border h-full relative">
+      <div className="lg:w-[600px] w-full border-l border-r border-l-border border-r-border h-full relative">
         {/* FEED CONTROL UI */}
-        <div className="flex backdrop-blur-lg absolute top-0 w-full">
-          <div className="bg-transparent flex-1 p-2 border-b border-b-border font-bold flex items-center gap-8">
+        <div className="flex backdrop-blur-xl bg-white/60 dark:bg-black/30 sticky top-0 z-10 w-full">
+          <div className="bg-transparent flex-1 p-2 border-b border-b-border font-bold flex items-center gap-4 sm:gap-8">
             <button
               className="p-2 rounded-full hover:bg-neutral-500/20 transition-all cursor-pointer"
               onClick={() => router.back()}
@@ -76,7 +76,6 @@ const Post = () => {
             <h1>Post</h1>
           </div>
         </div>
-        <div className="mt-[57.1px]"></div>
         <>
           {post && isReply ? (
             <>

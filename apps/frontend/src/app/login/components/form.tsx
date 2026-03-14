@@ -62,8 +62,8 @@ const LoginForm = () => {
   };
   return (
     <>
-      <div className="flex justify-between items-end w-[70%]">
-        <h1 className="font-extrabold text-center text-7xl tracking-tighter rotate-x-[35deg]">
+      <div className="flex justify-between items-end w-full">
+        <h1 className="font-extrabold text-center text-4xl lg:text-7xl tracking-tighter rotate-x-[35deg]">
           Login
         </h1>
         <Link
@@ -75,7 +75,7 @@ const LoginForm = () => {
       </div>
       <form
         onSubmit={handleSubmit(submitForm)}
-        className="flex flex-col gap-8 w-[70%]"
+        className="flex flex-col gap-8 w-full"
       >
         <InputSharp
           label="username"

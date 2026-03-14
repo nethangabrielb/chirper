@@ -135,16 +135,16 @@ const ConfirmForm = ({ user }: Props) => {
 
   return (
     <form
-      className="w-full m-auto min-h-svh flex flex-col justify-center items-center gap-8"
+      className="w-full m-auto min-h-svh flex flex-col justify-center items-center gap-8 px-4 sm:px-6"
       onSubmit={handleSubmit(submitForm)}
       encType="multipart/form-data"
     >
-      <div className="flex flex-col gap-4 items-center bg-card border border-border p-8 rounded-md">
+      <div className="flex flex-col gap-4 items-center bg-card border border-border p-5 sm:p-8 rounded-md w-full max-w-[420px]">
         <Icon width={48} height={48} alt="Twitter Icon"></Icon>
         <h1 className="font-extrabold text-2xl rotate-x-[20deg] mb-4">
           Confirm profile
         </h1>
-        <div className="flex flex-col gap-4 w-[350px]">
+        <div className="flex flex-col gap-4 w-full max-w-[350px]">
           <button
             className="w-[130px] h-[130px] mx-auto relative"
             onMouseOver={() => setMouseEnter(true)}

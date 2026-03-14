@@ -177,11 +177,11 @@ const Sidebar = ({ children }: Props) => {
           >
             <div
               className={cn(
-                "pb-3 px-0 lg:px-8 w-fit",
+                "pb-3 px-4 w-fit",
                 path.includes("/messages") && "px-0! translate-x-2",
               )}
             >
-              <Icon width={48} height={48} alt="Twitter Icon"></Icon>
+              <Icon width={32} height={32} alt="Twitter Icon"></Icon>
             </div>
             {links.map((link) => {
               return (

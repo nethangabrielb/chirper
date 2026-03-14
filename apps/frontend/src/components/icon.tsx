@@ -25,7 +25,13 @@ const Icon = ({ width, height, alt }: Props) => {
   return (
     <>
       {mounted ? (
-        <Image src={src} width={width} height={height} alt={alt}></Image>
+        <Image
+          src={src}
+          width={width}
+          height={height}
+          alt={alt}
+          className="max-w-none"
+        ></Image>
       ) : (
         <div style={{ width, height }}></div>
       )}

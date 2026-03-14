@@ -153,7 +153,7 @@ const Sidebar = ({ children }: Props) => {
       },
     );
     links = updatedlinks;
-  }, [user?.id]);
+  }, [user]);
 
   const logOut = () => {
     mutation.mutate();
@@ -170,15 +170,15 @@ const Sidebar = ({ children }: Props) => {
         >
           <div
             className={cn(
-              "hidden md:flex flex-col px-4 lg:px-0 gap-[8px] py-4 h-svh sticky top-0 items-center lg:items-start",
+              "hidden md:flex flex-col justify-center px-4 lg:px-0 gap-[8px] py-4 h-svh sticky top-0 items-center lg:items-start",
               path.includes("/messages") &&
                 "w-fit! md:w-[50px]! lg:w-[50px]! pr-4 items-center! ",
             )}
           >
             <div
               className={cn(
-                "pb-3 px-0 lg:px-8 w-fit translate-x-2",
-                path.includes("/messages") && "px-0!",
+                "pb-3 px-0 lg:px-8 w-fit",
+                path.includes("/messages") && "px-0! translate-x-2",
               )}
             >
               <Icon width={48} height={48} alt="Twitter Icon"></Icon>
@@ -189,8 +189,8 @@ const Sidebar = ({ children }: Props) => {
                   href={link.url}
                   key={crypto.randomUUID()}
                   className={cn(
-                    "text-lg flex items-center gap-6 w-fit hover:bg-muted transition-all p-3 rounded-4xl px-4 translate-x-2 lg:px-8 relative",
-                    path.includes("/messages") && "p-3!",
+                    "text-lg flex items-center gap-6 w-fit hover:bg-muted transition-all py-3 rounded-4xl lg:px-8 relative p-3!",
+                    path.includes("/messages") && "p-3! translate-x-2",
                   )}
                   onClick={(e) => {
                     if (user?.isGuest && link.url !== "/home") {
@@ -251,7 +251,7 @@ const Sidebar = ({ children }: Props) => {
               </CreatePostDialog>
             </Activity>
             {/* Logout: shrink on tablet, full on desktop */}
-            <div className="lg:hidden block mt-auto pl-3!">
+            <div className={cn("lg:hidden block mt-auto", path.includes("/messages") && "pl-3!")}>
               <LogoutDropdown
                 data={user}
                 logoutHandler={logOut}

@@ -79,8 +79,8 @@ const Messages = () => {
           content="Home page of my attempt to make a clone of Twitter"
         />
       </Head>
-      <div className="lg:w-[70vw] border-l border-r border-l-border border-r-border min-h-screen relative ml-4 flex">
-        <div className="w-[35%] flex flex-col gap-8 border-r border-r-border h-svh pl-2">
+      <div className="w-full md:w-auto lg:w-[70vw] border-l border-r border-l-border border-r-border min-h-screen relative md:ml-4 flex">
+        <div className="w-full md:w-[35%] flex flex-col gap-8 md:border-r md:border-r-border h-svh pl-2">
           <div>
             <h1 className="text-text text-xl font-bold p-4">Chat</h1>
           </div>
@@ -90,7 +90,7 @@ const Messages = () => {
         </div>
 
         {/* Render the chatroom from the chat rows */}
-        <div className="w-[65%] flex justify-center items-center">
+        <div className="hidden md:flex md:w-[65%] justify-center items-center">
           <div className="flex flex-col items-center gap-2">
             <div className="p-6 bg-accent rounded-full w-fit">
               <Mail size={32}></Mail>

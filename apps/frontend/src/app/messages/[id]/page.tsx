@@ -42,6 +42,10 @@ const MessagesSlug = ({ params }: { params: Promise<{ id: string }> }) => {
     },
   });
 
+   useEffect(() => {
+    setReadMutation.mutate(Number(id));
+  }, [id]);
+
 
   const updateMessagesOptimistic =  (
     newMessage: NewMessage,
@@ -52,7 +56,6 @@ const MessagesSlug = ({ params }: { params: Promise<{ id: string }> }) => {
       return [...prev, newMessage];
     });
 
-
     queryClient.invalidateQueries({
       queryKey: ["chatRooms"],
     });
@@ -62,9 +65,7 @@ const MessagesSlug = ({ params }: { params: Promise<{ id: string }> }) => {
     }, 100);
   };
 
-  useEffect(() => {
-    setReadMutation.mutate(Number(id));
-  }, [id]);
+ 
 
   useEffect(() => {
     const handleReconnect = async () => refetch();

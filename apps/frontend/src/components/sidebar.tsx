@@ -171,11 +171,11 @@ const Sidebar = ({ children }: Props) => {
           >
             <div
               className={cn(
-                "pb-3 px-0 lg:px-8 w-fit",
+                "pb-3 px-0 lg:px-8 w-fit translate-x-2",
                 path.includes("/messages") && "px-0!",
               )}
             >
-              <Icon width={36} height={36} alt="Twitter Icon"></Icon>
+              <Icon width={48} height={48} alt="Twitter Icon"></Icon>
             </div>
             {links.map((link) => {
               return (
@@ -183,7 +183,7 @@ const Sidebar = ({ children }: Props) => {
                   href={link.url}
                   key={crypto.randomUUID()}
                   className={cn(
-                    "text-lg flex items-center gap-6 w-fit hover:bg-muted transition-all p-3 rounded-4xl px-3 lg:px-8 relative",
+                    "text-lg flex items-center gap-6 w-fit hover:bg-muted transition-all p-3 rounded-4xl px-4 translate-x-2 lg:px-8 relative",
                     path.includes("/messages") && "p-3!",
                   )}
                   onClick={(e) => {
@@ -245,14 +245,14 @@ const Sidebar = ({ children }: Props) => {
               </CreatePostDialog>
             </Activity>
             {/* Logout: shrink on tablet, full on desktop */}
-            <div className="lg:hidden block mt-auto">
+            <div className="lg:hidden block mt-auto pl-3!">
               <LogoutDropdown
                 data={user}
                 logoutHandler={logOut}
                 shrinkView={true}
               />
             </div>
-            <div className={cn("hidden lg:block w-full mt-auto", path.includes("/messages") && "lg:hidden")}>
+            <div className={"hidden lg:block w-full mt-auto"}>
               <LogoutDropdown
                 data={user}
                 logoutHandler={logOut}

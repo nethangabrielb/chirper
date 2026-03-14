@@ -79,8 +79,8 @@ const Messages = () => {
           content="Home page of my attempt to make a clone of Twitter"
         />
       </Head>
-      <div className="lg:w-[70vw] border-l border-r border-l-border border-r-border min-h-svh relative ml-4 flex">
-        <div className="w-[35%] h-full flex flex-col gap-8 border-r border-r-border">
+      <div className="lg:w-[70vw] border-l border-r border-l-border border-r-border min-h-screen relative ml-4 flex">
+        <div className="w-[35%] flex flex-col gap-8 border-r border-r-border h-svh pl-2">
           <div>
             <h1 className="text-text text-xl font-bold p-4">Chat</h1>
           </div>

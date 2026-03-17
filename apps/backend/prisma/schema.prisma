@@ -35,6 +35,8 @@ model User {
   bookmarks            Bookmark[]
   NotificationSender   Notification[] @relation("NotificationSender")
   notificationReceiver Notification[] @relation("NotificationReceiver")
+
+  @@index([name])
 }
 
 model Notification {
@@ -48,6 +50,8 @@ model Notification {
   createdAt    DateTime @default(now())
   postId       Int?
   replyContent String?
+
+  @@index([receiverId, createdAt(sort: Desc)])
 }
 
 model Follow {
@@ -58,6 +62,7 @@ model Follow {
   follower    User @relation("Followers", fields: [followerId], references: [id])
 
   @@unique([followerId, followingId])
+  @@index([followingId])
 }
 
 model Post {
@@ -77,6 +82,8 @@ model Post {
   Like          PostLike[]
   bookmarks     Bookmark[]
   notifications Notification[]
+
+  @@index([userId, createdAt(sort: Desc)])
 }
 
 model PostLike {
@@ -101,6 +108,8 @@ model Message {
   sender     User     @relation("Sender", fields: [senderId], references: [id])
   senderId   Int
   unread     Boolean
+
+  @@index([roomId, createdAt(sort: Asc)])
 }
 
 model Room {

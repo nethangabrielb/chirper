@@ -1,5 +1,6 @@
 import express from 'express';
 
+import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -25,6 +26,8 @@ import userRouter from './routes/admin/userRoutes';
 import authRouter from './routes/guest/authRoutes';
 import { initSocket } from './sockets';
 
+dotenv.config();
+
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
@@ -40,6 +43,8 @@ const io = new Server(httpServer, {
   },
 });
 
+app.use(compression());
+
 initSocket(io);
 
 app.use(express.static('public'));
@@ -54,8 +59,6 @@ app.use(
   })
 );
 app.use(passport.initialize());
-
-dotenv.config();
 
 app.use('/api/auth', authRouter);
 

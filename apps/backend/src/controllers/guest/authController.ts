@@ -109,7 +109,11 @@ const authController = (() => {
       const token = jwt.sign(req.user, process.env.JWT_SECRET!);
 
       res.setHeader('Set-Cookie', `token=${token}; HttpOnly; Secure; Path=/`);
-      res.sendFile(path.join(ROOT_DIR, 'public', 'redirect.html'));
+
+      // session has served its purpose. need to destroy it immediately to prevent storing session in memory
+      req.session.destroy(() => {
+        res.sendFile(path.join(ROOT_DIR, 'public', 'redirect.html'));
+      });
     }
   };
 

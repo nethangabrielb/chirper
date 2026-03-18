@@ -6,8 +6,6 @@ import { useRouter } from "nextjs-toploader/app";
 
 import { useEffect } from "react";
 
-import Head from "next/head";
-
 import postApi from "@/lib/api/post";
 
 import { PostType } from "@/types/post";
@@ -29,13 +27,6 @@ const Bookmarks = () => {
 
   return (
     <>
-      <Head>
-        <title>{document.title}</title>
-        <meta
-          name="description"
-          content="Home page of my attempt to make a clone of Twitter"
-        />
-      </Head>
       <div className="lg:w-[600px] border-l border-r border-l-border border-r-border h-full relative min-h-svh">
         <div className="flex backdrop-blur-md top-0 z-100 w-full sticky">
           <div className="bg-transparent flex-1 p-2 border-b border-b-border font-bold flex items-center gap-8">

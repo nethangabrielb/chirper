@@ -12,7 +12,6 @@ import { Calendar, Mail } from "lucide-react";
 
 import { Activity, useEffect, useState } from "react";
 
-import Head from "next/head";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 
@@ -176,13 +175,6 @@ const Profile = () => {
 
   return (
     <>
-      <Head>
-        <title>{document.title}</title>
-        <meta
-          name="description"
-          content="Home page of my attempt to make a clone of Twitter"
-        />
-      </Head>
       {!user ? (
         <ProfileSkeleton />
       ) : (

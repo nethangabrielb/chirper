@@ -9,7 +9,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { use, useEffect } from "react";
 
-import Head from "next/head";
 
 import messageApi from "@/lib/api/message";
 
@@ -83,13 +82,6 @@ const MessagesSlug = ({ params }: { params: Promise<{ id: string }> }) => {
 
   return (
     <div className="h-svh">
-      <Head>
-        <title>{document.title}</title>
-        <meta
-          name="description"
-          content="Home page of my attempt to make a clone of Twitter"
-        />
-      </Head>
       <div className="w-full md:w-auto lg:w-[70vw] border-l border-r border-l-border border-r-border h-full relative md:ml-4 flex">
         <div className="hidden md:flex md:w-[35%] h-full flex-col gap-8 border-r border-r-border">
           <div>

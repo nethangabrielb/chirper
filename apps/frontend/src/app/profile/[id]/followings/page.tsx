@@ -9,7 +9,6 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { useEffect, useRef } from "react";
 
-import Head from "next/head";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 
@@ -65,13 +64,6 @@ const FollowingsIndex = () => {
 
   return (
     <>
-      <Head>
-        <title>{document.title}</title>
-        <meta
-          name="description"
-          content="Home page of my attempt to make a clone of Twitter"
-        />
-      </Head>
       <div className="lg:w-[600px] min-h-svh relative border-l border-r border-l-border border-r-border">
         <div
           className="flex backdrop-blur-lg absolute top-0 w-full flex-col border-b border-b-border"

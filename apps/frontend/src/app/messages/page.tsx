@@ -10,7 +10,6 @@ import { useRouter } from "nextjs-toploader/app";
 
 import { useEffect, useState } from "react";
 
-import Head from "next/head";
 
 import roomApi from "@/lib/api/room";
 import userApi from "@/lib/api/user";
@@ -81,13 +80,6 @@ const Messages = () => {
 
   return (
     <>
-      <Head>
-        <title>{document.title}</title>
-        <meta
-          name="description"
-          content="Home page of my attempt to make a clone of Twitter"
-        />
-      </Head>
       <div className="w-full md:w-auto lg:w-[70vw] border-l border-r border-l-border border-r-border min-h-screen relative md:ml-4 flex">
         <div className="w-full md:w-[35%] flex flex-col gap-2 md:border-r md:border-r-border h-svh pl-2 relative">
           <div>

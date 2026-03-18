@@ -6,7 +6,6 @@ import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 
 import React, { Activity, useEffect, useRef, useState } from "react";
 
-import Head from "next/head";
 
 import { Spinner } from "@/components/ui/spinner";
 
@@ -78,13 +77,6 @@ const Home = () => {
 
   return (
     <>
-      <Head>
-        <title>{document.title}</title>
-        <meta
-          name="description"
-          content="Home page of my attempt to make a clone of Twitter"
-        />
-      </Head>
       <div className="lg:w-[600px] w-full min-h-screen relative">
         {/* FEED CONTROL UI */}
         <div className="flex backdrop-blur-xl bg-white/60 dark:bg-black/30 z-10 sticky top-0 w-full border-x border-x-border">

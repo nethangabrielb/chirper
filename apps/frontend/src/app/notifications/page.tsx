@@ -7,7 +7,6 @@ import { useRouter } from "nextjs-toploader/app";
 
 import { useEffect } from "react";
 
-import Head from "next/head";
 
 import { Spinner } from "@/components/ui/spinner";
 
@@ -38,13 +37,6 @@ const Notifications = () => {
 
   return (
     <>
-      <Head>
-        <title>{document.title}</title>
-        <meta
-          name="description"
-          content="Home page of my attempt to make a clone of Twitter"
-        />
-      </Head>
       <div
         className={cn(
           "lg:w-[600px] w-full min-h-screen relative border-x border-x-border",

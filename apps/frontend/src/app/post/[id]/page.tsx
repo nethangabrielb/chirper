@@ -8,7 +8,6 @@ import { useQuery } from "@tanstack/react-query";
 
 import React, { useEffect, useState } from "react";
 
-import Head from "next/head";
 import { useParams, useRouter } from "next/navigation";
 
 import postApi from "@/lib/api/post";
@@ -43,13 +42,6 @@ const Post = () => {
 
   return (
     <>
-      <Head>
-        <title>{document.title}</title>
-        <meta
-          name="description"
-          content="Home page of my attempt to make a clone of Twitter"
-        />
-      </Head>
       <div className="lg:w-[600px] w-full border-l border-r border-l-border border-r-border h-full relative">
         {/* FEED CONTROL UI */}
         <div className="flex backdrop-blur-xl bg-white/60 dark:bg-black/30 sticky top-0 z-10 w-full">

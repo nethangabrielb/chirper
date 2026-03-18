@@ -1,0 +1,40 @@
+# Dependency directories
+node_modules
+**/node_modules
+npm-debug.log
+pnpm-debug.log
+*.log
+*.pid
+
+# Build artifacts
+dist
+**/dist
+.next
+.turbo
+coverage
+
+# Environment secrets (CRITICAL)
+.env
+*.env
+.env.*
+!.env.example
+
+# Version control
+.git
+.gitignore
+.gitattributes
+
+# IDE / editor metadata
+.vscode
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Large media or unnecessary folders
+frontend/
+docs/
+temp/
+
+# Generated Prisma client artifacts (re-generated in image)
+apps/backend/generated/

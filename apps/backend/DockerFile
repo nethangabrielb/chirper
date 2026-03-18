@@ -1,0 +1,41 @@
+# Build stage
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+RUN npm install -g pnpm@10.17.1
+
+COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
+COPY packages ./packages
+COPY apps/backend ./apps/backend
+
+RUN pnpm install --frozen-lockfile
+
+# Compile TypeScript
+WORKDIR /app/apps/backend
+RUN pnpm exec tsc
+
+# Runtime stage
+FROM node:20-alpine
+
+WORKDIR /app
+
+RUN npm install -g pnpm@10.17.1
+
+COPY --from=builder /app/pnpm-lock.yaml /app/package.json /app/pnpm-workspace.yaml ./
+COPY --from=builder /app/packages ./packages
+COPY --from=builder /app/apps/backend/dist ./apps/backend/dist
+COPY --from=builder /app/apps/backend/package.json ./apps/backend/
+
+RUN cd /app/apps/backend && pnpm install --frozen-lockfile --prod
+
+RUN cd /app/apps/backend && pnpm exec prisma generate
+
+WORKDIR /app/apps/backend
+
+EXPOSE 3000
+
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3000/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
+
+CMD ["node", "./dist/app.js"]

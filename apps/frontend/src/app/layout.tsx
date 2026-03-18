@@ -18,6 +18,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  icons: {
+    icon: "/twitter.svg",
+  },
   title: "Chirper",
   description:
     "A twitter-inspired social media platform I created for learning purposes",

@@ -18,6 +18,7 @@
   "license": "ISC",
   "packageManager": "pnpm@10.17.1",
   "dependencies": {
+    "@faker-js/faker": "^10.3.0",
     "@prisma/client": "6.16.2",
     "@supabase/supabase-js": "^2.79.0",
     "@twitter-clone/shared": "workspace:*",
@@ -42,7 +43,6 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
-    "@faker-js/faker": "^10.3.0",
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
     "@types/compression": "^1.8.1",
     "@types/cookie-parser": "^1.4.9",

@@ -31,6 +31,7 @@ COPY --from=builder /app/apps/backend/dist ./apps/backend/dist
 COPY --from=builder /app/apps/backend/generated ./apps/backend/generated
 COPY --from=builder /app/apps/backend/public ./apps/backend/public
 COPY --from=builder /app/apps/backend/package.json ./apps/backend/
+COPY --from=builder /app/apps/backend/prisma ./apps/backend/prisma
 
 RUN cd /app/apps/backend && pnpm install --frozen-lockfile --prod
 

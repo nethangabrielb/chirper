@@ -1,4 +1,4 @@
-import { prisma } from '../prisma/client';
+import { prisma } from '../prisma/client.js';
 
 async function main() {
   await prisma.notification.deleteMany();

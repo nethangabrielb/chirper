@@ -1,5 +1,5 @@
-import { prisma } from '../prisma/client';
-import { NotificationBody } from '../types/notification';
+import { prisma } from '../prisma/client.js';
+import { NotificationBody } from '../types/notification.js';
 
 const notificationRepository = {
   create: (data: NotificationBody) =>

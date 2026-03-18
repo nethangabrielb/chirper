@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 
-import { postLikeService } from '../../services/likeService';
-import { User } from '../../types/user';
-import { GENERIC_ERROR_MESSAGE } from '../../utils/errorMessage';
+import { postLikeService } from '../../services/likeService.js';
+import { User } from '../../types/user.js';
+import { GENERIC_ERROR_MESSAGE } from '../../utils/errorMessage.js';
 
 const postLikesController = (() => {
   const createLike = async (

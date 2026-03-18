@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import { postLikesController } from '../../controllers/admin/likesController';
+import { postLikesController } from '../../controllers/admin/likesController.js';
 
 const likesRouter = Router();
 

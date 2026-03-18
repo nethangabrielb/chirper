@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 
-import postService from '../../services/postService';
-import { Post } from '../../types/post';
-import { User } from '../../types/user';
-import { GENERIC_ERROR_MESSAGE } from '../../utils/errorMessage';
+import postService from '../../services/postService.js';
+import { Post } from '../../types/post.js';
+import { User } from '../../types/user.js';
+import { GENERIC_ERROR_MESSAGE } from '../../utils/errorMessage.js';
 
 const postsController = (() => {
   const createPost = async (

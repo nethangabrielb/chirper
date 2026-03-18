@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 
-import { prisma } from '../prisma/client';
+import { prisma } from '../prisma/client.js';
 
 async function main() {
   console.log('🌱 Seeding database...');

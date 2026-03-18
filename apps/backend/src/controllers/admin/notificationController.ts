@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 
-import notificationService from '../../services/notificationService';
-import { User } from '../../types/user';
-import { GENERIC_ERROR_MESSAGE } from '../../utils/errorMessage';
+import notificationService from '../../services/notificationService.js';
+import { User } from '../../types/user.js';
+import { GENERIC_ERROR_MESSAGE } from '../../utils/errorMessage.js';
 
 const notificationController = (() => {
   const getAll = async (req: Request, res: Response) => {

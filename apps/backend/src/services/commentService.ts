@@ -1,9 +1,9 @@
 import { decode } from 'base64-arraybuffer';
 
-import commentRepository from '../repositories/commentRepository';
-import postRepository from '../repositories/postRepository';
-import { client } from '../supabase/client';
-import { CommentBody } from '../types/comment';
+import commentRepository from '../repositories/commentRepository.js';
+import postRepository from '../repositories/postRepository.js';
+import { client } from '../supabase/client.js';
+import { CommentBody } from '../types/comment.js';
 
 const commentService = {
   createComment: async (

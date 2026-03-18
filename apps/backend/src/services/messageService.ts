@@ -1,6 +1,6 @@
 import { ChatMessage } from '@twitter-clone/shared';
 
-import messageRepository from '../repositories/messageRepository';
+import messageRepository from '../repositories/messageRepository.js';
 
 const messageService = {
   createMessage: (message: ChatMessage) => messageRepository.create(message),

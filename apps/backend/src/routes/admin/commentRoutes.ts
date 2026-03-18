@@ -2,7 +2,7 @@ import { Router } from 'express';
 
 import multer from 'multer';
 
-import commentsController from '../../controllers/admin/commentsController';
+import commentsController from '../../controllers/admin/commentsController.js';
 
 const upload = multer();
 const commentRouter = Router();

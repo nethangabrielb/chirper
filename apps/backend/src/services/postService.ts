@@ -1,8 +1,8 @@
 import { decode } from 'base64-arraybuffer';
 
-import postRepository from '../repositories/postRepository';
-import { client } from '../supabase/client';
-import { Post } from '../types/post';
+import postRepository from '../repositories/postRepository.js';
+import { client } from '../supabase/client.js';
+import { Post } from '../types/post.js';
 
 const postService = {
   createPost: async (post: Post, file: Express.Multer.File | null) => {

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import messageController from '../../controllers/admin/messagesController';
+import messageController from '../../controllers/admin/messagesController.js';
 
 const messageRouter = Router();
 

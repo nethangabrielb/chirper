@@ -1,5 +1,5 @@
-import { prisma } from '../prisma/client';
-import type { Follow } from '../types/follow';
+import { prisma } from '../prisma/client.js';
+import type { Follow } from '../types/follow.js';
 
 const followRepository = {
   create: (data: Follow) => prisma.follow.create({ data }),

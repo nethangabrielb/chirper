@@ -1,5 +1,5 @@
-import { postLikeRepository } from '../repositories/likeRepository';
-import { User } from '../types/user';
+import { postLikeRepository } from '../repositories/likeRepository.js';
+import { User } from '../types/user.js';
 
 const postLikeService = {
   createLike: async (postId: number, user: User) => {

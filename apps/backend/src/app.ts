@@ -9,22 +9,22 @@ import { createServer } from 'node:http';
 import passport from 'passport';
 import { Server } from 'socket.io';
 
-import '../src/config/passport';
+import './config/passport.js';
 import {
   authMiddleware,
   guestAuthMiddleware,
-} from './middlewares/authMiddleware';
-import bookmarkRouter from './routes/admin/bookmarkRoutes';
-import commentRouter from './routes/admin/commentRoutes';
-import followRouter from './routes/admin/followRoutes';
-import likesRouter from './routes/admin/likeRoutes';
-import messageRouter from './routes/admin/messageRoutes';
-import notificationRouter from './routes/admin/notificationRoutes';
-import postRouter from './routes/admin/postRoutes';
-import roomRouter from './routes/admin/roomRoutes';
-import userRouter from './routes/admin/userRoutes';
-import authRouter from './routes/guest/authRoutes';
-import { initSocket } from './sockets';
+} from './middlewares/authMiddleware.js';
+import bookmarkRouter from './routes/admin/bookmarkRoutes.js';
+import commentRouter from './routes/admin/commentRoutes.js';
+import followRouter from './routes/admin/followRoutes.js';
+import likesRouter from './routes/admin/likeRoutes.js';
+import messageRouter from './routes/admin/messageRoutes.js';
+import notificationRouter from './routes/admin/notificationRoutes.js';
+import postRouter from './routes/admin/postRoutes.js';
+import roomRouter from './routes/admin/roomRoutes.js';
+import userRouter from './routes/admin/userRoutes.js';
+import authRouter from './routes/guest/authRoutes.js';
+import { initSocket } from './sockets/index.js';
 
 dotenv.config();
 

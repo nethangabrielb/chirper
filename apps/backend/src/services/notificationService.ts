@@ -1,4 +1,4 @@
-import notificationRepository from '../repositories/notificationRepository';
+import notificationRepository from '../repositories/notificationRepository.js';
 
 const notificationService = {
   getAll: async (userId: number) => {

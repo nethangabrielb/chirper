@@ -1,5 +1,5 @@
-import { prisma } from '../prisma/client';
-import type { RegistrationBody } from '../types/auth';
+import { prisma } from '../prisma/client.js';
+import type { RegistrationBody } from '../types/auth.js';
 
 /*
   In this case, because of how the schema is designed:

@@ -1,6 +1,6 @@
 import { Room } from '@twitter-clone/shared';
 
-import roomRepository from '../repositories/roomRepository';
+import roomRepository from '../repositories/roomRepository.js';
 
 const roomService = {
   createRoom: async (room: Room) => {

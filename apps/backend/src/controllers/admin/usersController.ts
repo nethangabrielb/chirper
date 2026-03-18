@@ -4,13 +4,13 @@ import { decode } from 'base64-arraybuffer';
 import jwt from 'jsonwebtoken';
 import _ from 'lodash';
 
-import followRepository from '../../repositories/followRepository';
-import roomService from '../../services/roomService';
-import UserService from '../../services/userService';
-import { client } from '../../supabase/client';
-import type { RegistrationBody } from '../../types/auth';
-import { User } from '../../types/user';
-import { GENERIC_ERROR_MESSAGE } from '../../utils/errorMessage';
+import followRepository from '../../repositories/followRepository.js';
+import roomService from '../../services/roomService.js';
+import UserService from '../../services/userService.js';
+import { client } from '../../supabase/client.js';
+import type { RegistrationBody } from '../../types/auth.js';
+import { User } from '../../types/user.js';
+import { GENERIC_ERROR_MESSAGE } from '../../utils/errorMessage.js';
 
 const userController = (() => {
   const getUser = async (req: Request<{ id: string }>, res: Response) => {

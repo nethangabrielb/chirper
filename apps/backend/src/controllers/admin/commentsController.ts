@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 
-import commentService from '../../services/commentService';
-import { CommentBody } from '../../types/comment';
-import { User } from '../../types/user';
-import { GENERIC_ERROR_MESSAGE } from '../../utils/errorMessage';
+import commentService from '../../services/commentService.js';
+import { CommentBody } from '../../types/comment.js';
+import { User } from '../../types/user.js';
+import { GENERIC_ERROR_MESSAGE } from '../../utils/errorMessage.js';
 
 const commentsController = (() => {
   const createComment = async (

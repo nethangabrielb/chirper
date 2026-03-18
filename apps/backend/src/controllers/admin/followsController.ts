@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 
-import FollowService from '../../services/followService';
-import type { Follow } from '../../types/follow';
-import { GENERIC_ERROR_MESSAGE } from '../../utils/errorMessage';
+import FollowService from '../../services/followService.js';
+import type { Follow } from '../../types/follow.js';
+import { GENERIC_ERROR_MESSAGE } from '../../utils/errorMessage.js';
 
 const followsController = (() => {
   const createFollow = async (

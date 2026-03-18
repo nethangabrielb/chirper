@@ -1,5 +1,5 @@
-import { prisma } from '../prisma/client';
-import { Post } from '../types/post';
+import { prisma } from '../prisma/client.js';
+import { Post } from '../types/post.js';
 
 const postRepository = {
   create: (data: Post) => prisma.post.create({ data }),

@@ -2,9 +2,9 @@ import { Request, Response } from 'express';
 
 import { Room } from '@twitter-clone/shared';
 
-import roomService from '../../services/roomService';
-import { User } from '../../types/user';
-import { GENERIC_ERROR_MESSAGE } from '../../utils/errorMessage';
+import roomService from '../../services/roomService.js';
+import { User } from '../../types/user.js';
+import { GENERIC_ERROR_MESSAGE } from '../../utils/errorMessage.js';
 
 const roomController = (() => {
   const createRoom = async (

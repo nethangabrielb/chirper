@@ -16,6 +16,7 @@
 
 > 💡 **No account needed** — click **Continue as Guest** on the landing page for instant read-only access.
 
+> ⚠️ **Note:** Frontend and database are fully deployed. Backend is live but pending SSL certification via an [is-a.dev](https://is-a.dev) domain — full frontend-backend integration is in progress.
 ---
 
 ## 📖 About the Project

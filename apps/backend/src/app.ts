@@ -60,6 +60,10 @@ app.use(
 );
 app.use(passport.initialize());
 
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
+});
+
 app.use('/api/auth', authRouter);
 
 app.use('/api/users', userRouter);

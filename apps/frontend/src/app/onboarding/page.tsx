@@ -2,10 +2,9 @@
 
 import ConfirmForm from "@/app/onboarding/components/form";
 import useUser from "@/stores/user.store";
+import { useRouter } from "nextjs-toploader/app";
 
 import { useEffect } from "react";
-
-import { useRouter } from "next/navigation";
 
 import { User } from "@/types/user";
 

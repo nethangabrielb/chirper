@@ -40,17 +40,33 @@ const FormButton = ({
 }: FormButtonProps) => {
   const router = useRouter();
   const queryClient = useQueryClient();
+
   useEffect(() => {
-    window.addEventListener("message", (event) => {
-      if (event.data) {
-        if (event.data.success) {
-          globalThis.location.href = `/onboarding`;
-        } else if (event.data.success === false) {
-          globalThis.location.href = `/`;
-        }
+    const handler = async (event: MessageEvent<{ success?: boolean }>) => {
+      const apiOrigin = process.env.NEXT_PUBLIC_API
+        ? new URL(process.env.NEXT_PUBLIC_API).origin
+        : null;
+
+      if (apiOrigin && event.origin !== apiOrigin) {
+        return;
       }
-    });
-  }, []);
+
+      if (!event.data) {
+        return;
+      }
+
+      if (event.data.success) {
+        await queryClient.refetchQueries({ queryKey: ["user"] });
+        await queryClient.refetchQueries({ queryKey: ["followList"] });
+        router.push("/onboarding");
+      } else if (event.data.success === false) {
+        router.push("/");
+      }
+    };
+
+    window.addEventListener("message", handler);
+    return () => window.removeEventListener("message", handler);
+  }, [queryClient, router]);
 
   const signInGuest = async () => {
     const res = await authApi.loginAsGuest();

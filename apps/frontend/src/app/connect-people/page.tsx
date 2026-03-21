@@ -6,7 +6,6 @@ import { useRouter } from "nextjs-toploader/app";
 
 import React, { useEffect, useRef, useState } from "react";
 
-import Head from "next/head";
 
 import FollowListRow from "@/components/follow-list";
 import { Spinner } from "@/components/ui/spinner";
@@ -64,13 +63,6 @@ const ConnectPeople = () => {
 
   return (
     <>
-      <Head>
-        <title>{document.title}</title>
-        <meta
-          name="description"
-          content="Home page of my attempt to make a clone of Twitter"
-        />
-      </Head>
       <div className="lg:w-[600px] w-full relative h-fit">
         <div className="flex backdrop-blur-md top-0 z-100 w-full sticky border-x border-x-border">
           <div className="bg-transparent flex-1 p-2 border-b border-b-border font-bold flex items-center gap-8">

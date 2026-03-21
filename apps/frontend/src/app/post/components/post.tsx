@@ -209,7 +209,11 @@ const PostSingle = ({ post, className, settingsCn, buttonCn }: Props) => {
           {/* render likes */}
           <button
             className="flex items-center flex-1 group cursor-pointer"
-            onClick={() => likeMutation.mutate()}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              likeMutation.mutate();
+            }}
           >
             <div className="p-2 rounded-full group-hover:bg-red-500/20 transition-all bg-transparent group">
               <Heart
@@ -232,6 +236,7 @@ const PostSingle = ({ post, className, settingsCn, buttonCn }: Props) => {
             className="flex items-center group cursor-pointer"
             onClick={(e) => {
               e.preventDefault();
+              e.stopPropagation();
               bookmarkMutation.mutate();
             }}
           >

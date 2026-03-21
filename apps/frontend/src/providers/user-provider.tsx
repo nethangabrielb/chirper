@@ -8,18 +8,22 @@ import { ReactNode } from "react";
 const UserProvider = ({ children }: { children: ReactNode }) => {
   const setUser = useUser((state) => state.setUser);
 
-  const { data } = useQuery({
+  useQuery({
     queryKey: ["user"],
     queryFn: async () => {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API}/api/users?current=true`,
+        `/api/users?current=true`,
         {
           credentials: "include",
         },
       );
 
       if (!res.ok) {
-        throw new Error("Error fetching from the server.");
+        const error = new Error("Error fetching from the server.") as Error & {
+          status?: number;
+        };
+        error.status = res.status;
+        throw error;
       }
 
       const data = await res.json();
@@ -29,6 +33,13 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
       return user;
     },
     refetchOnWindowFocus: false,
+    retry: (failureCount, error) => {
+      const status = (error as { status?: number })?.status;
+      if (status === 401 || status === 403) {
+        return false;
+      }
+      return failureCount < 2;
+    },
   });
 
   return <>{children}</>;

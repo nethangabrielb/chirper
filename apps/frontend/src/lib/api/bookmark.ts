@@ -1,6 +1,6 @@
 const bookmarkApi = (() => {
   const bookmarkPost = async (userId: number, postId: number) => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API}/api/bookmarks`, {
+    const res = await fetch(`/api/bookmarks`, {
       credentials: "include",
       method: "POST",
       headers: {
@@ -19,7 +19,7 @@ const bookmarkApi = (() => {
 
   const removeBookmarkOnPost = async (bookmarkId: number) => {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API}/api/bookmarks/${bookmarkId}`,
+      `/api/bookmarks/${bookmarkId}`,
       {
         credentials: "include",
         method: "DELETE",

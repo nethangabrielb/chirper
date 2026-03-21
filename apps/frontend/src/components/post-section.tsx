@@ -4,6 +4,7 @@ import { useLikes } from "@/hooks/useLikes";
 import useUser from "@/stores/user.store";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Bookmark, Heart, MessageCircle } from "lucide-react";
+import { useRouter } from "nextjs-toploader/app";
 import { toast } from "sonner";
 
 import React, { Activity } from "react";
@@ -30,7 +31,7 @@ const Post = ({ post, displayReplies, bookmarkedPost }: Props) => {
   const queryClient = useQueryClient();
   const user = useUser((state) => state.user) as User;
   const likesHook = useLikes(post, user);
-
+  const router = useRouter();
   const { optimisticBookmark, bookmarkMutation } = useBookmark({
     post,
     user,
@@ -86,12 +87,16 @@ const Post = ({ post, displayReplies, bookmarkedPost }: Props) => {
           </div>
         </div>
       ) : (
-        <Link
+        <button
           className={cn(
-            "flex gap-4 relative hover:bg-secondary/40 items-stretch transition-all",
+            "flex gap-4 relative hover:bg-secondary/40 items-stretch transition-all text-start",
             displayReplies && post?.replies?.length > 0 ? "pt-4 px-4" : "p-4",
           )}
-          href={`/post/${post.id}`}
+          onClick={(e) => {
+            e.preventDefault();
+
+            router.push(`/post/${post.id}`);
+          }}
         >
           <Activity mode={user?.id === post.userId ? "visible" : "hidden"}>
             <CurrentUserPostDropdown
@@ -169,6 +174,7 @@ const Post = ({ post, displayReplies, bookmarkedPost }: Props) => {
               <button
                 className="flex items-center group cursor-pointer"
                 onClick={(e) => {
+                  e.stopPropagation();
                   e.preventDefault();
                   likesHook.likeMutation.mutate();
                 }}
@@ -193,6 +199,7 @@ const Post = ({ post, displayReplies, bookmarkedPost }: Props) => {
               <button
                 className="flex items-center group cursor-pointer"
                 onClick={(e) => {
+                  e.stopPropagation();
                   e.preventDefault();
                   bookmarkMutation.mutate();
                 }}
@@ -211,7 +218,7 @@ const Post = ({ post, displayReplies, bookmarkedPost }: Props) => {
               </button>
             </div>
           </div>
-        </Link>
+        </button>
       )}
     </>
   );

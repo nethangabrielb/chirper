@@ -3,7 +3,7 @@ import { EditProfile } from "@/components/edit-profile-dialog";
 const userApi = (() => {
   const getUsersChatlist = async () => {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API}/api/users?chatUsersList=true`,
+      `/api/users?chatUsersList=true`,
       {
         credentials: "include",
       },
@@ -18,7 +18,7 @@ const userApi = (() => {
 
   const getUserSearchResults = async (user: string) => {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API}/api/users?user=${user}`,
+      `/api/users?user=${user}`,
       {
         credentials: "include",
       },
@@ -33,7 +33,7 @@ const userApi = (() => {
 
   const getUserFollowList = async (pageParam: number) => {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API}/api/users?list=followList&page=${pageParam}`,
+      `/api/users?list=followList&page=${pageParam}`,
       {
         credentials: "include",
       },
@@ -48,7 +48,7 @@ const userApi = (() => {
 
   const getUserFollowListLimit = async (limit: number) => {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API}/api/users?list=followList&limit=${limit}`,
+      `/api/users?list=followList&limit=${limit}`,
       {
         credentials: "include",
       },
@@ -63,7 +63,7 @@ const userApi = (() => {
 
   const updateUserData = async (userId: number, userData: FormData) => {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API}/api/users/${userId}`,
+      `/api/users/${userId}`,
       {
         method: "PUT",
         credentials: "include",

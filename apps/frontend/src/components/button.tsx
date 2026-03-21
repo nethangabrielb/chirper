@@ -40,17 +40,6 @@ const FormButton = ({
 }: FormButtonProps) => {
   const router = useRouter();
   const queryClient = useQueryClient();
-  useEffect(() => {
-    window.addEventListener("message", (event) => {
-      if (event.data) {
-        if (event.data.success) {
-          globalThis.location.href = `/onboarding`;
-        } else if (event.data.success === false) {
-          globalThis.location.href = `/`;
-        }
-      }
-    });
-  }, []);
 
   const signInGuest = async () => {
     const res = await authApi.loginAsGuest();

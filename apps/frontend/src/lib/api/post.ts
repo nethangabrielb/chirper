@@ -7,7 +7,7 @@ import { PostType } from "@/types/post";
 const postApi = (() => {
   const getPosts = async (pageParam: number | undefined) => {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API}/api/posts?cursor=${pageParam}`,
+      `/api/posts?cursor=${pageParam}`,
       {
         credentials: "include",
       },
@@ -22,7 +22,7 @@ const postApi = (() => {
 
   const getFollowingsPosts = async (pageParam: number | undefined) => {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API}/api/posts?filter=following&cursorFollowing=${pageParam}`,
+      `/api/posts?filter=following&cursorFollowing=${pageParam}`,
       {
         credentials: "include",
       },
@@ -37,7 +37,7 @@ const postApi = (() => {
   };
 
   const getPost = async (id: ParamValue | Number) => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API}/api/posts/${id}`, {
+    const res = await fetch(`/api/posts/${id}`, {
       credentials: "include",
     });
 
@@ -49,7 +49,7 @@ const postApi = (() => {
   };
 
   const createPost = async (values: FormData) => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API}/api/posts`, {
+    const res = await fetch(`/api/posts`, {
       credentials: "include",
       method: "POST",
       body: values,
@@ -65,7 +65,7 @@ const postApi = (() => {
 
   const deletePost = async (postId: number) => {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API}/api/posts/${postId}`,
+      `/api/posts/${postId}`,
       {
         credentials: "include",
         method: "DELETE",
@@ -82,7 +82,7 @@ const postApi = (() => {
 
   const likePost = async (postId: number) => {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API}/api/likes/posts/${postId}`,
+      `/api/likes/posts/${postId}`,
       {
         credentials: "include",
         method: "POST",
@@ -99,7 +99,7 @@ const postApi = (() => {
 
   const unlikePost = async (postId: number) => {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API}/api/likes/posts/${postId}`,
+      `/api/likes/posts/${postId}`,
       {
         credentials: "include",
         method: "DELETE",
@@ -116,7 +116,7 @@ const postApi = (() => {
 
   const getUserReplies = async (userId: number) => {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API}/api/posts/replies/users/${userId}`,
+      `/api/posts/replies/users/${userId}`,
       {
         credentials: "include",
       },
@@ -132,7 +132,7 @@ const postApi = (() => {
 
   const getUserLiked = async (userId: number) => {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API}/api/posts/liked/users/${userId}`,
+      `/api/posts/liked/users/${userId}`,
       {
         credentials: "include",
       },
@@ -147,7 +147,7 @@ const postApi = (() => {
 
   const getUserBookmarkedPosts = async () => {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API}/api/posts?bookmarks=true`,
+      `/api/posts?bookmarks=true`,
       {
         credentials: "include",
       },

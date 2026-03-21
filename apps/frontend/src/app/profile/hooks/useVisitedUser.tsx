@@ -13,7 +13,7 @@ const useVisitedUser = ({ id }: { id: ParamValue }) => {
     queryKey: ["userProfilePage", id],
     queryFn: async () => {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API}/api/users/${id}`,
+        `/api/users/${id}`,
         {
           credentials: "include",
         },

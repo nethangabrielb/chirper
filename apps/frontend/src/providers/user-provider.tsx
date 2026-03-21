@@ -7,8 +7,9 @@ import { ReactNode } from "react";
 
 const UserProvider = ({ children }: { children: ReactNode }) => {
   const setUser = useUser((state) => state.setUser);
+  const removeUser = useUser((state) => state.removeUser);
 
-  const { data } = useQuery({
+  useQuery({
     queryKey: ["user"],
     queryFn: async () => {
       const res = await fetch(
@@ -19,7 +20,16 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
       );
 
       if (!res.ok) {
-        throw new Error("Error fetching from the server.");
+        if (res.status === 401 || res.status === 403) {
+          removeUser();
+          return null;
+        }
+
+        const error = new Error("Error fetching from the server.") as Error & {
+          status?: number;
+        };
+        error.status = res.status;
+        throw error;
       }
 
       const data = await res.json();
@@ -29,6 +39,13 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
       return user;
     },
     refetchOnWindowFocus: false,
+    retry: (failureCount, error) => {
+      const status = (error as { status?: number })?.status;
+      if (status === 401 || status === 403) {
+        return false;
+      }
+      return failureCount < 2;
+    },
   });
 
   return <>{children}</>;

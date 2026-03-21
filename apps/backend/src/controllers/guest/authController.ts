@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import path, { dirname, join } from 'path';
+import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
 import UserRepository from '../../repositories/userRepository.js';
@@ -113,18 +113,12 @@ const authController = (() => {
 
   const redirect = (req: Request, res: Response) => {
     if (req.user) {
-      const token = jwt.sign(req.user, process.env.JWT_SECRET!);
-
-      res.cookie('token', token, {
-        httpOnly: true,
-        secure: isProduction,
-        sameSite: isProduction ? ('none' as const) : ('lax' as const),
-        path: '/',
-        maxAge: 1000 * 60 * 60 * 24 * 14,
+      const token = jwt.sign(req.user, process.env.JWT_SECRET!, {
+        expiresIn: '14d',
       });
 
       req.session.destroy(() => {
-        res.sendFile(path.join(ROOT_DIR, 'public', 'redirect.html'));
+        res.redirect(`${process.env.CLIENT_URL}/auth/callback?token=${token}`);
       });
     }
   };

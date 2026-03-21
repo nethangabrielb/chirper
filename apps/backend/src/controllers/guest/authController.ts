@@ -112,14 +112,17 @@ const authController = (() => {
   };
 
   const redirect = (req: Request, res: Response) => {
-    // create a token for the user
     if (req.user) {
       const token = jwt.sign(req.user, process.env.JWT_SECRET!);
 
-      res.clearCookie('token', clearTokenCookieOptions);
-      res.cookie('token', token, tokenCookieOptions);
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? ('none' as const) : ('lax' as const),
+        path: '/',
+        maxAge: 1000 * 60 * 60 * 24 * 14,
+      });
 
-      // session has served its purpose. need to destroy it immediately to prevent storing session in memory
       req.session.destroy(() => {
         res.sendFile(path.join(ROOT_DIR, 'public', 'redirect.html'));
       });

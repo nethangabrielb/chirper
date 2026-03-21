@@ -11,12 +11,9 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
   useQuery({
     queryKey: ["user"],
     queryFn: async () => {
-      const res = await fetch(
-        `/api/users?current=true`,
-        {
-          credentials: "include",
-        },
-      );
+      const res = await fetch(`/api/users?current=true`, {
+        credentials: "include",
+      });
 
       if (!res.ok) {
         const error = new Error("Error fetching from the server.") as Error & {
@@ -40,6 +37,8 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
       }
       return failureCount < 2;
     },
+    staleTime: 0, // ← always consider data stale
+    refetchOnMount: true,
   });
 
   return <>{children}</>;

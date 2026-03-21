@@ -4,10 +4,16 @@ export async function GET(req: NextRequest) {
   const token = req.nextUrl.searchParams.get("token");
 
   if (!token) {
-    return NextResponse.redirect(new URL("/", req.url));
+    return new NextResponse(
+      `<script>window.opener.postMessage({ success: false }, '*'); window.close();</script>`,
+      { headers: { "Content-Type": "text/html" } },
+    );
   }
 
-  const response = NextResponse.redirect(new URL("/onboarding", req.url));
+  const response = new NextResponse(
+    `<script>window.opener.postMessage({ success: true }, '*'); window.close();</script>`,
+    { headers: { "Content-Type": "text/html" } },
+  );
 
   response.cookies.set("token", token, {
     httpOnly: true,

@@ -41,6 +41,23 @@ const FormButton = ({
   const router = useRouter();
   const queryClient = useQueryClient();
 
+  useEffect(() => {
+    const handler = (event: MessageEvent) => {
+      if (event.data?.success) {
+        setTimeout(async () => {
+          await queryClient.invalidateQueries({ queryKey: ["user"] });
+          await queryClient.refetchQueries({ queryKey: ["user"] });
+          globalThis.location.href = `/onboarding`;
+        }, 500);
+        globalThis.location.href = `/onboarding`;
+      } else if (event.data?.success === false) {
+        globalThis.location.href = `/`;
+      }
+    };
+    window.addEventListener("message", handler);
+    return () => window.removeEventListener("message", handler);
+  }, []);
+
   const signInGuest = async () => {
     const res = await authApi.loginAsGuest();
     if (res.status === "success") {

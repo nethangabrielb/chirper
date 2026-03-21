@@ -29,11 +29,6 @@ const Onboarding = () => {
       return;
     }
 
-    if (!user) {
-      router.replace("/login");
-      return;
-    }
-
     if (user?.onboarded) {
       router.replace("/home");
     }
@@ -47,6 +42,10 @@ const Onboarding = () => {
     );
   }
 
+  if (user?.onboarded) {
+    return null;
+  }
+
   if (!user) {
     return (
       <div className="w-full min-h-svh flex items-center justify-center text-darker">
@@ -55,7 +54,9 @@ const Onboarding = () => {
     );
   }
 
-  return <ConfirmForm user={user}></ConfirmForm>;
+  if (user?.onboarded === false) {
+    return <ConfirmForm user={user}></ConfirmForm>;
+  }
 };
 
 export default Onboarding;

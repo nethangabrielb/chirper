@@ -1,7 +1,7 @@
 const followApi = (() => {
   const getFollowers = async (userId: number) => {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API}/api/follows/followers/${userId}`,
+      `/api/follows/followers/${userId}`,
       {
         credentials: "include",
       },
@@ -17,7 +17,7 @@ const followApi = (() => {
 
   const getFollowings = async (userId: number) => {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API}/api/follows/followings/${userId}`,
+      `/api/follows/followings/${userId}`,
       {
         credentials: "include",
       },
@@ -32,7 +32,7 @@ const followApi = (() => {
   };
 
   const createFollow = async (followerId: number, followingId: number) => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API}/api/follows`, {
+    const res = await fetch(`/api/follows`, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -51,7 +51,7 @@ const followApi = (() => {
 
   const deleteFollow = async (followId: number) => {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API}/api/follows/${followId}`,
+      `/api/follows/${followId}`,
       {
         credentials: "include",
         method: "DELETE",

@@ -12,7 +12,7 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
     queryKey: ["user"],
     queryFn: async () => {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API}/api/users?current=true`,
+        `/api/users?current=true`,
         {
           credentials: "include",
         },

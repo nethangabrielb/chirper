@@ -8,7 +8,7 @@ const isAuthenticated = async (request: NextRequest) => {
     return false;
   }
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API}/api/auth/user`, {
+  const res = await fetch(`${request.nextUrl.origin}/api/auth/user`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${value}`,

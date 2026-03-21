@@ -8,7 +8,7 @@ const authApi = (() => {
     const top = window.screenY + (window.outerHeight - height) / 2;
 
     window.open(
-      `${process.env.NEXT_PUBLIC_API}/api/auth/login/google`,
+      `/api/auth/login/google`,
       "googleAuthPopup",
       `width=${width},height=${height},left=${left},top=${top},resizable=no,scrollbars=no,status=no`,
     );
@@ -20,7 +20,7 @@ const authApi = (() => {
     credentials?: boolean,
   ) => {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API}/api/users/availability?property=${type}&value=${value}`,
+      `/api/users/availability?property=${type}&value=${value}`,
       { credentials: credentials ? "include" : "omit" },
     );
     const data = await res.json();
@@ -32,7 +32,7 @@ const authApi = (() => {
   };
 
   const logout = async () => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API}/api/auth/logout`, {
+    const res = await fetch(`/api/auth/logout`, {
       method: "POST",
       credentials: "include",
     });
@@ -47,7 +47,7 @@ const authApi = (() => {
 
   const loginAsGuest = async () => {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API}/api/auth/login?guest=true`,
+      `/api/auth/login?guest=true`,
       {
         method: "POST",
         credentials: "include",

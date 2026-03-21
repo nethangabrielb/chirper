@@ -1,7 +1,7 @@
 const messageApi = (() => {
   const getMessagesByRoom = async (roomId: number) => {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API}/api/messages/${roomId}`,
+      `/api/messages/${roomId}`,
       {
         credentials: "include",
       },
@@ -17,7 +17,7 @@ const messageApi = (() => {
 
   const setMessagesRead = async (roomId: number) => {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API}/api/messages/${roomId}`,
+      `/api/messages/${roomId}`,
       {
         credentials: "include",
         method: "PATCH",

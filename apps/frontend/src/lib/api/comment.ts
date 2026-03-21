@@ -13,7 +13,7 @@ const commentApi = (() => {
       }
     }
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API}/api/comments`, {
+    const res = await fetch(`/api/comments`, {
       credentials: "include",
       method: "POST",
       body: formData,

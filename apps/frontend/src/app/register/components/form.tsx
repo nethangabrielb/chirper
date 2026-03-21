@@ -44,7 +44,7 @@ const RegisterForm = () => {
   const mutation = useMutation({
     mutationFn: async (data: Register) => {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API}/api/auth/register`,
+        `/api/auth/register`,
         {
           method: "POST",
           headers: {

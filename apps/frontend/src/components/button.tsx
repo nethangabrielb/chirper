@@ -43,11 +43,7 @@ const FormButton = ({
 
   useEffect(() => {
     const handler = async (event: MessageEvent<{ success?: boolean }>) => {
-      const apiOrigin = process.env.NEXT_PUBLIC_API
-        ? new URL(process.env.NEXT_PUBLIC_API).origin
-        : null;
-
-      if (apiOrigin && event.origin !== apiOrigin) {
+      if (event.origin !== globalThis.location.origin) {
         return;
       }
 

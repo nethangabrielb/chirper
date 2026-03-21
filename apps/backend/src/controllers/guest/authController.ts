@@ -61,6 +61,7 @@ const authController = (() => {
           httpOnly: true,
           path: '/',
           maxAge: 1000 * 60 * 60 * 24 * 14,
+          sameSite: false,
         });
         res.status(200).json({
           status: 'success',
@@ -74,6 +75,7 @@ const authController = (() => {
           httpOnly: true,
           path: '/',
           maxAge: 1000 * 60 * 60 * 24 * 14,
+          sameSite: false,
         });
         res.status(200).json({
           status: 'success',
@@ -108,7 +110,10 @@ const authController = (() => {
     if (req.user) {
       const token = jwt.sign(req.user, process.env.JWT_SECRET!);
 
-      res.setHeader('Set-Cookie', `token=${token}; HttpOnly; Secure; Path=/`);
+      res.setHeader(
+        'Set-Cookie',
+        `token=${token}; HttpOnly; Secure; SameSite=None; Path=/`
+      );
 
       // session has served its purpose. need to destroy it immediately to prevent storing session in memory
       req.session.destroy(() => {

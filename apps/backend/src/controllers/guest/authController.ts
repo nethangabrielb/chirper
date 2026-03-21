@@ -16,6 +16,22 @@ const __dirname = dirname(__filename);
 
 export const ROOT_DIR = join(__dirname, '../../../');
 
+const isProduction = process.env.NODE_ENV === 'production';
+const tokenCookieOptions = {
+  httpOnly: true,
+  secure: isProduction,
+  sameSite: isProduction ? ('none' as const) : ('lax' as const),
+  path: '/',
+  maxAge: 1000 * 60 * 60 * 24 * 14,
+};
+
+const clearTokenCookieOptions = {
+  httpOnly: true,
+  secure: isProduction,
+  sameSite: isProduction ? ('none' as const) : ('lax' as const),
+  path: '/',
+};
+
 const authController = (() => {
   const register = async (
     req: Request<object, object, RegistrationBody>,
@@ -56,14 +72,8 @@ const authController = (() => {
 
         const token = jwt.sign(guest, process.env.JWT_SECRET!);
 
-        res.clearCookie('token', { httpOnly: true });
-        res.cookie('token', token, {
-          httpOnly: true,
-          path: '/',
-          maxAge: 1000 * 60 * 60 * 24 * 14,
-          sameSite: 'none',
-          secure: true,
-        });
+        res.clearCookie('token', clearTokenCookieOptions);
+        res.cookie('token', token, tokenCookieOptions);
         res.status(200).json({
           status: 'success',
           message: 'Log in success!',
@@ -71,14 +81,8 @@ const authController = (() => {
       } else {
         const token = await UserService.loginUser(req.body);
 
-        res.clearCookie('token', { httpOnly: true });
-        res.cookie('token', token, {
-          httpOnly: true,
-          path: '/',
-          maxAge: 1000 * 60 * 60 * 24 * 14,
-          sameSite: 'none',
-          secure: true,
-        });
+        res.clearCookie('token', clearTokenCookieOptions);
+        res.cookie('token', token, tokenCookieOptions);
         res.status(200).json({
           status: 'success',
           message: 'Log in success!',
@@ -94,12 +98,7 @@ const authController = (() => {
 
   const logout = async (req: Request, res: Response) => {
     try {
-      res.clearCookie('token', {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'none',
-        path: '/',
-      });
+      res.clearCookie('token', clearTokenCookieOptions);
       res.status(200).json({
         status: 'success',
         message: 'Log out success!',
@@ -117,10 +116,8 @@ const authController = (() => {
     if (req.user) {
       const token = jwt.sign(req.user, process.env.JWT_SECRET!);
 
-      res.setHeader(
-        'Set-Cookie',
-        `token=${token}; HttpOnly; Secure; SameSite=None; Path=/`
-      );
+      res.clearCookie('token', clearTokenCookieOptions);
+      res.cookie('token', token, tokenCookieOptions);
 
       // session has served its purpose. need to destroy it immediately to prevent storing session in memory
       req.session.destroy(() => {

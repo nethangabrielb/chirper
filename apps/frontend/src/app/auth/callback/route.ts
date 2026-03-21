@@ -3,6 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(req: NextRequest) {
   const token = req.nextUrl.searchParams.get("token");
 
+  console.log("Token received:", !!token); // ← add this
+  console.log("Redirecting to:", new URL("/onboarding", req.url).toString()); // ← and this
+
   if (!token) {
     return new NextResponse(
       `<script>window.opener.postMessage({ success: false }, '*'); window.close();</script>`,

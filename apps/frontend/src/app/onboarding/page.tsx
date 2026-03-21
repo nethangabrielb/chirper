@@ -3,21 +3,29 @@
 import ConfirmForm from "@/app/onboarding/components/form";
 import useUser from "@/stores/user.store";
 
-import { redirect } from "next/navigation";
+import { useEffect } from "react";
+
+import { useRouter } from "next/navigation";
 
 import { User } from "@/types/user";
 
 const Onboarding = () => {
+  const router = useRouter();
   const user = useUser((state) => state.user) as User;
 
-  if (user) {
-    if (user?.onboarded) {
-      redirect(`/home`);
-    } else {
-      // onboarding page should fetch user info using token
-      return <ConfirmForm user={user}></ConfirmForm>;
+  useEffect(() => {
+    if (user) {
+      if (user?.onboarded) {
+        router.push("/home");
+      }
     }
+  }, [user, router]);
+
+  if (!user) {
+    return null; // Wait for hydration
   }
+
+  return <ConfirmForm user={user}></ConfirmForm>;
 };
 
 export default Onboarding;

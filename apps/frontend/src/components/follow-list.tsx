@@ -1,7 +1,6 @@
 import useFollows from "@/hooks/useFollows";
 import useGuestDialog from "@/stores/guest-dialog.store";
-
-import Link from "next/link";
+import { useRouter } from "nextjs-toploader/app";
 
 import { ActionButton } from "@/components/button";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
@@ -21,6 +20,7 @@ const FollowListRow = ({
   currentUser: User;
   className?: string;
 }) => {
+  const router = useRouter();
   const openGuestDialog = useGuestDialog((state) => state.setOpenGuestDialog);
   const { optimisticFollow, followMutation, unfollowMutation } = useFollows({
     currentUserId: currentUser?.id,
@@ -30,7 +30,14 @@ const FollowListRow = ({
   });
 
   return (
-    <Link href={`/profile/${user?.id}`}>
+    <button
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        router.push(`/profile/${user?.id}`);
+      }}
+      className="text-start"
+    >
       <section
         className={cn("flex items-center justify-between group", className)}
       >
@@ -98,7 +105,7 @@ const FollowListRow = ({
           </ActionButton>
         )}
       </section>
-    </Link>
+    </button>
   );
 };
 

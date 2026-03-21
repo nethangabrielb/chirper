@@ -6,12 +6,14 @@ import useGuestDialog from "@/stores/guest-dialog.store";
 import useUser from "@/stores/user.store";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Feather, LogOut, UserRound } from "lucide-react";
+import { useRouter } from "nextjs-toploader/app";
 import { toast } from "sonner";
 
 import { Activity, ReactNode, useEffect, useState } from "react";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
+
 import { ActionButton } from "@/components/button";
 import FollowListRow from "@/components/follow-list";
 import GuestDialog from "@/components/guest-dialog";
@@ -74,7 +76,7 @@ const Sidebar = ({ children }: Props) => {
   const { notificationsCount, resetNotificationsCache } =
     useNotifications(user);
   const { newMessagesCount } = useRooms();
-   
+
   const { data: followListAside } = useQuery({
     queryKey: ["followList", user?.id],
     queryFn: async () => {
@@ -184,18 +186,20 @@ const Sidebar = ({ children }: Props) => {
             </div>
             {links.map((link) => {
               return (
-                <Link
-                  href={link.url}
+                <button
                   key={crypto.randomUUID()}
                   className={cn(
                     "text-lg flex items-center gap-6 w-fit hover:bg-muted transition-all py-3 rounded-4xl lg:px-8 relative p-3!",
                     path.includes("/messages") && "p-3! translate-x-2",
                   )}
                   onClick={(e) => {
+                    e.preventDefault();
                     if (user?.isGuest && link.url !== "/home") {
                       e.preventDefault();
                       openGuestDialog(true);
                       return;
+                    } else {
+                      router.push(link.url);
                     }
                     if (link.title === "Notifications") {
                       resetNotificationsCache();
@@ -225,7 +229,7 @@ const Sidebar = ({ children }: Props) => {
                       <span className="hidden lg:inline">{link.title}</span>
                     </Activity>
                   }
-                </Link>
+                </button>
               );
             })}
             <Activity mode={path.includes("/messages") ? "hidden" : "visible"}>
@@ -242,15 +246,18 @@ const Sidebar = ({ children }: Props) => {
               </CreatePostDialog>
               {/* Tablet: round feather icon button */}
               <CreatePostDialog>
-                <button
-                  className="lg:hidden bg-primary hover:brightness-90 text-white p-3 rounded-full flex items-center justify-center shadow-lg transition-all"
-                >
+                <button className="lg:hidden bg-primary hover:brightness-90 text-white p-3 rounded-full flex items-center justify-center shadow-lg transition-all">
                   <Feather size={22} />
                 </button>
               </CreatePostDialog>
             </Activity>
             {/* Logout: shrink on tablet, full on desktop */}
-            <div className={cn("lg:hidden block mt-auto", path.includes("/messages") && "pl-3!")}>
+            <div
+              className={cn(
+                "lg:hidden block mt-auto",
+                path.includes("/messages") && "pl-3!",
+              )}
+            >
               <LogoutDropdown
                 data={user}
                 logoutHandler={logOut}
@@ -268,7 +275,15 @@ const Sidebar = ({ children }: Props) => {
           </div>
         </div>
       </Activity>
-      <div className={cn("pb-14 md:pb-0 flex-1 min-w-0", !path.includes("/messages") && !["/register", "/login", "/onboarding", "/"].includes(path) && "lg:w-[600px] lg:flex-none", path.includes("/messages") ? "pb-0" : "pb-14 md:pb-0")}>
+      <div
+        className={cn(
+          "pb-14 md:pb-0 flex-1 min-w-0",
+          !path.includes("/messages") &&
+            !["/register", "/login", "/onboarding", "/"].includes(path) &&
+            "lg:w-[600px] lg:flex-none",
+          path.includes("/messages") ? "pb-0" : "pb-14 md:pb-0",
+        )}
+      >
         {children}
       </div>
       <Activity mode={asideVisible ? "visible" : "hidden"}>
@@ -308,7 +323,12 @@ const Sidebar = ({ children }: Props) => {
       </Activity>
       {/* MOBILE BOTTOM NAV — visible only below md */}
       <Activity mode={visible ? "visible" : "hidden"}>
-        <nav className={cn("fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-t border-t-border border-x border-x-border flex justify-around items-center py-2 md:hidden", path.includes("/messages/") ? "hidden" : "flex")}>
+        <nav
+          className={cn(
+            "fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-t border-t-border border-x border-x-border flex justify-around items-center py-2 md:hidden",
+            path.includes("/messages/") ? "hidden" : "flex",
+          )}
+        >
           {links.map((link) =>
             link.title === "Profile" ? (
               <DropdownMenu key={`bottom-${link.title}`}>
@@ -330,7 +350,7 @@ const Sidebar = ({ children }: Props) => {
                         openGuestDialog(true);
                         return;
                       }
-                      router.push(link.url)
+                      router.push(link.url);
                     }}
                   >
                     <UserRound size={16} />
@@ -346,15 +366,16 @@ const Sidebar = ({ children }: Props) => {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Link
-                href={link.url}
+              <button
                 key={`bottom-${link.title}`}
                 className="p-2 relative flex items-center justify-center"
                 onClick={(e) => {
+                  e.preventDefault();
                   if (user?.isGuest && link.url !== "/home") {
-                    e.preventDefault();
                     openGuestDialog(true);
                     return;
+                  } else {
+                    router.push(link.url);
                   }
                   if (link.title === "Notifications") {
                     resetNotificationsCache();
@@ -363,12 +384,11 @@ const Sidebar = ({ children }: Props) => {
               >
                 <div className="relative">
                   <NavIcon title={link.title} />
-                  {link.title === "Notifications" &&
-                    notificationsCount > 0 && (
-                      <p className="absolute -top-1 -right-1 bg-primary text-white w-[16px] h-[16px] text-[10px] flex justify-center items-center rounded-full">
-                        {notificationsCount}
-                      </p>
-                    )}
+                  {link.title === "Notifications" && notificationsCount > 0 && (
+                    <p className="absolute -top-1 -right-1 bg-primary text-white w-[16px] h-[16px] text-[10px] flex justify-center items-center rounded-full">
+                      {notificationsCount}
+                    </p>
+                  )}
                   {link.title === "Messages" &&
                     typeof newMessagesCount === "number" &&
                     newMessagesCount > 0 && (
@@ -377,8 +397,8 @@ const Sidebar = ({ children }: Props) => {
                       </p>
                     )}
                 </div>
-              </Link>
-            )
+              </button>
+            ),
           )}
         </nav>
       </Activity>

@@ -1,5 +1,4 @@
-import { NextResponse } from "next/server";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 import isAuthenticated from "@/lib/auth/isAuthenticated";
 
@@ -12,7 +11,7 @@ export async function proxy(request: NextRequest) {
   }
 
   const userAuthenticated = await isAuthenticated(request);
-  console.log(pathname);
+
   if (userAuthenticated.authorized === false) {
     return NextResponse.redirect(new URL("/", request.url));
   } else if (userAuthenticated.authorized && userAuthenticated.isGuest) {
@@ -25,6 +24,8 @@ export async function proxy(request: NextRequest) {
     } else {
       return NextResponse.redirect(new URL("/home", request.url));
     }
+  } else {
+    return NextResponse.next();
   }
 }
 

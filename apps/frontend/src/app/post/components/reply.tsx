@@ -188,9 +188,12 @@ const Reply = ({ reply }: Props) => {
             ></CurrentUserPostDropdown>
           </Activity>
 
-          <Link
-            className="flex w-full gap-2 p-4 pb-0! hover:bg-secondary/40 items-stretch"
-            href={`/post/${post?.id}`}
+          <button
+            className="text-start flex w-full gap-2 p-4 pb-0! hover:bg-secondary/40 items-stretch"
+            onClick={(e) => {
+              e.preventDefault();
+              router.push(`/post/${post?.id}`);
+            }}
           >
             <div className="self-stretch items-center flex flex-col">
               {post?.user && (
@@ -250,6 +253,7 @@ const Reply = ({ reply }: Props) => {
                   className="flex items-center flex-1 group cursor-pointer"
                   onClick={(e) => {
                     e.preventDefault();
+                    e.stopPropagation();
                     likeMutation.mutate();
                   }}
                 >
@@ -274,6 +278,7 @@ const Reply = ({ reply }: Props) => {
                   className="flex items-center group cursor-pointer"
                   onClick={(e) => {
                     e.preventDefault();
+                    e.stopPropagation();
                     bookmarkMutation.mutate();
                   }}
                 >
@@ -291,7 +296,7 @@ const Reply = ({ reply }: Props) => {
                 </button>
               </div>
             </div>
-          </Link>
+          </button>
           <PostSingle
             post={reply}
             className="p-4 pt-0!"

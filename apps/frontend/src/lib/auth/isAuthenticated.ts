@@ -4,6 +4,10 @@ const isAuthenticated = async (request: NextRequest) => {
   const cookie = request.cookies.get("token");
   const value = cookie?.value;
 
+  console.log("origin:", request.nextUrl.origin);
+  console.log("BACKEND_URL:", process.env.BACKEND_URL);
+  console.log("cookie:", !!cookie);
+
   if (!cookie || !value) {
     return { authorized: false };
   }

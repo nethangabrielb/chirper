@@ -5,10 +5,10 @@ const isAuthenticated = async (request: NextRequest) => {
   const value = cookie?.value;
 
   if (!cookie || !value) {
-    return false;
+    return { authorized: false };
   }
 
-  const res = await fetch(`${request.nextUrl.origin}/api/auth/user`, {
+  const res = await fetch(`${process.env.BACKEND_URL}/api/auth/user`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${value}`,

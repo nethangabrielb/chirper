@@ -41,29 +41,6 @@ const FormButton = ({
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  useEffect(() => {
-    const handler = async (event: MessageEvent<{ success?: boolean }>) => {
-      if (event.origin !== globalThis.location.origin) {
-        return;
-      }
-
-      if (!event.data) {
-        return;
-      }
-
-      if (event.data.success) {
-        await queryClient.refetchQueries({ queryKey: ["user"] });
-        await queryClient.refetchQueries({ queryKey: ["followList"] });
-        router.push("/onboarding");
-      } else if (event.data.success === false) {
-        router.push("/");
-      }
-    };
-
-    window.addEventListener("message", handler);
-    return () => window.removeEventListener("message", handler);
-  }, [queryClient, router]);
-
   const signInGuest = async () => {
     const res = await authApi.loginAsGuest();
     if (res.status === "success") {

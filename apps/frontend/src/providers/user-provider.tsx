@@ -7,7 +7,6 @@ import { ReactNode } from "react";
 
 const UserProvider = ({ children }: { children: ReactNode }) => {
   const setUser = useUser((state) => state.setUser);
-  const removeUser = useUser((state) => state.removeUser);
 
   useQuery({
     queryKey: ["user"],
@@ -20,11 +19,6 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
       );
 
       if (!res.ok) {
-        if (res.status === 401 || res.status === 403) {
-          removeUser();
-          return null;
-        }
-
         const error = new Error("Error fetching from the server.") as Error & {
           status?: number;
         };

@@ -61,7 +61,8 @@ const authController = (() => {
           httpOnly: true,
           path: '/',
           maxAge: 1000 * 60 * 60 * 24 * 14,
-          sameSite: false,
+          sameSite: 'none',
+          secure: true,
         });
         res.status(200).json({
           status: 'success',
@@ -75,7 +76,8 @@ const authController = (() => {
           httpOnly: true,
           path: '/',
           maxAge: 1000 * 60 * 60 * 24 * 14,
-          sameSite: false,
+          sameSite: 'none',
+          secure: true,
         });
         res.status(200).json({
           status: 'success',
@@ -92,7 +94,12 @@ const authController = (() => {
 
   const logout = async (req: Request, res: Response) => {
     try {
-      res.clearCookie('token', { httpOnly: true });
+      res.clearCookie('token', {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+        path: '/',
+      });
       res.status(200).json({
         status: 'success',
         message: 'Log out success!',

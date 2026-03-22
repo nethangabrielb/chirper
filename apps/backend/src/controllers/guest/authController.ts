@@ -119,11 +119,11 @@ const authController = (() => {
 
       req.session.destroy(() => {
         res.send(`
-        <script>
-          window.opener.postMessage({ success: true, token: '${token}' }, '${process.env.CLIENT_URL}');
-          window.close();
-        </script>
-      `);
+          <script>
+            window.opener.postMessage({ success: true, token: '${token}' }, '*');
+            window.close();
+          </script>
+        `);
       });
     }
   };

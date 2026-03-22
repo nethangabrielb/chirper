@@ -46,8 +46,7 @@ const FormButton = ({
       if (!event.data?.token && event.data?.success !== false) return;
 
       if (event.data?.success && event.data?.token) {
-        await fetch(`/auth/callback?token=${event.data.token}`);
-        globalThis.location.href = "/onboarding";
+        globalThis.location.href = `/auth/callback?token=${event.data.token}`;
       } else if (event.data?.success === false) {
         globalThis.location.href = "/";
       }

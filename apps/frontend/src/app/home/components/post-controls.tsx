@@ -29,7 +29,10 @@ export function CurrentUserPostDropdown({
       <DropdownMenuTrigger
         asChild
         className={`absolute top-0 right-0 m-3 ${settingsCn}`}
-        onClick={(e) => e.preventDefault()}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
       >
         <Button
           variant="outline"
@@ -46,15 +49,12 @@ export function CurrentUserPostDropdown({
       >
         <DropdownMenuItem
           className="hover:bg-secondary/60! w-full"
-          onSelect={(e) => e.preventDefault()}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
         >
           <DeleteDialog deleteHandler={handleDelete}></DeleteDialog>
-        </DropdownMenuItem>
-        <DropdownMenuItem className="hover:bg-secondary/60!">
-          <div className="flex items-center gap-2 text-text">
-            <Pin className="flex items-center gap-2 text-text"></Pin>
-            <p className="font-bold">Pin</p>
-          </div>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -42,14 +42,12 @@ const FormButton = ({
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    const handler = (event: MessageEvent) => {
-      if (event.origin !== process.env.NEXT_PUBLIC_CLIENT_URL) return;
+    const handler = async (event: MessageEvent) => {
+      if (!event.data?.token && event.data?.success !== false) return;
 
       if (event.data?.success && event.data?.token) {
-        // store token via your Next.js route handler
-        fetch(`/auth/callback?token=${event.data.token}`).then(() => {
-          globalThis.location.href = "/onboarding";
-        });
+        await fetch(`/auth/callback?token=${event.data.token}`);
+        globalThis.location.href = "/onboarding";
       } else if (event.data?.success === false) {
         globalThis.location.href = "/";
       }

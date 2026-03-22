@@ -12,11 +12,10 @@
 **[View Live App]({https://chirper-frontend.vercel.app/})**
 
 <img width="1919" height="1050" alt="image" src="https://github.com/user-attachments/assets/2a23f92a-133b-485c-8e1b-e9e9bc49bea3" />
+<img width="1919" height="1053" alt="image" src="https://github.com/user-attachments/assets/a8134070-bc09-46e0-90b5-8ca26cd971d8" />
 
 
 > 💡 **No account needed** — click **Continue as Guest** on the landing page for instant read-only access.
-
-> ⚠️ **Note:** Frontend and database are fully deployed. Backend is live but pending SSL certification via an [is-a.dev](https://is-a.dev) domain — full frontend-backend integration is in progress.
 ---
 
 ## 📖 About the Project

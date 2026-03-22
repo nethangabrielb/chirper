@@ -43,17 +43,18 @@ const FormButton = ({
 
   useEffect(() => {
     const handler = (event: MessageEvent) => {
-      if (event.data?.success) {
-        setTimeout(async () => {
-          await queryClient.invalidateQueries({ queryKey: ["user"] });
-          await queryClient.refetchQueries({ queryKey: ["user"] });
-          globalThis.location.href = `/onboarding`;
-        }, 500);
-        globalThis.location.href = `/onboarding`;
+      if (event.origin !== process.env.NEXT_PUBLIC_CLIENT_URL) return;
+
+      if (event.data?.success && event.data?.token) {
+        // store token via your Next.js route handler
+        fetch(`/auth/callback?token=${event.data.token}`).then(() => {
+          globalThis.location.href = "/onboarding";
+        });
       } else if (event.data?.success === false) {
-        globalThis.location.href = `/`;
+        globalThis.location.href = "/";
       }
     };
+
     window.addEventListener("message", handler);
     return () => window.removeEventListener("message", handler);
   }, []);
